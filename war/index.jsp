@@ -3,6 +3,7 @@
 <%@ page language="java"%>
 <%@ page import="java.lang.*"%>
 <%@ page import="java.util.*"%>
+<%@ page import="com.google.appengine.api.datastore.*"%>
 <!DOCTYPE html>
 <!-- saved from url=(0047)http://foundation.zurb.com/templates/store.html -->
 <html
@@ -13,7 +14,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Foundation Template | Store | <% out.print(request.getSession(true).getAttribute("cica")); %></title>
+<title>Foundation Template | Store | <%
+	out.print(request.getSession(true).getAttribute("cica"));
+%></title>
 
 
 <meta name="description"
@@ -169,75 +172,79 @@
 				<div class="large-8 columns">
 					<div class="row">
 						<%
-							List entities = (List)request.getAttribute("thumbList");
-						        		Iterator it = entities.iterator();
-						        		while ( it.hasNext() ) {
-						        			String thumbUrl = (String)it.next();
-						        			out.print("<div class=\"large-4 small-6 columns\"><img src=\"" +
-						        		thumbUrl
-						        		+"\"><div class=\"panel\"><h5>Item Name</h5><h6 class=\"subheader\">$000.00</h6></div></div>");
-						        		}
+							List<Entity> entities = (List<Entity>) request.getAttribute("entities");
+							Iterator<Entity> it = entities.iterator();
+							while (it.hasNext()) {
+								Entity e = (Entity) it.next();
+
+								out.print("<div class=\"large-4 small-6 columns\"><a href=\"entity.jsp?name=" 
+										+(String) e.getKey().getName()+"\"><img src=\""  
+										+ (String) e.getProperty("thumb_src")
+										+ "\"></a><div class=\"panel\"><h5>"
+										+ (String) e.getKey().getName()
+										+ "</h5><h6 class=\"subheader\">$000.00</h6></div></div>");
+							}
 						%>
 
-						<div class="large-4 small-6 columns">
-							<img src="./static/Thumbnail.jpg">
+						<!-- 						<div class="large-4 small-6 columns"> -->
+						<!-- 							<img src="./static/Thumbnail.jpg"> -->
 
-							<div class="panel">
-								<h5>Item Name</h5>
+						<!-- 							<div class="panel"> -->
+						<!-- 								<h5>Item Name</h5> -->
 
-								<h6 class="subheader">$000.00</h6>
-							</div>
-						</div>
+						<!-- 								<h6 class="subheader">$000.00</h6> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 
-						<div class="large-4 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
+						<!-- 						<div class="large-4 small-6 columns"> -->
+						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
 
-							<div class="panel">
-								<h5>Item Name</h5>
+						<!-- 							<div class="panel"> -->
+						<!-- 								<h5>Item Name</h5> -->
 
-								<h6 class="subheader">$000.00</h6>
-							</div>
-						</div>
+						<!-- 								<h6 class="subheader">$000.00</h6> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 
-						<div class="large-4 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
+						<!-- 						<div class="large-4 small-6 columns"> -->
+						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
 
-							<div class="panel">
-								<h5>Item Name</h5>
+						<!-- 							<div class="panel"> -->
+						<!-- 								<h5>Item Name</h5> -->
 
-								<h6 class="subheader">$000.00</h6>
-							</div>
-						</div>
+						<!-- 								<h6 class="subheader">$000.00</h6> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 
-						<div class="large-4 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
+						<!-- 						<div class="large-4 small-6 columns"> -->
+						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
 
-							<div class="panel">
-								<h5>Item Name</h5>
+						<!-- 							<div class="panel"> -->
+						<!-- 								<h5>Item Name</h5> -->
 
-								<h6 class="subheader">$000.00</h6>
-							</div>
-						</div>
+						<!-- 								<h6 class="subheader">$000.00</h6> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 
-						<div class="large-4 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
+						<!-- 						<div class="large-4 small-6 columns"> -->
+						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
 
-							<div class="panel">
-								<h5>Item Name</h5>
+						<!-- 							<div class="panel"> -->
+						<!-- 								<h5>Item Name</h5> -->
 
-								<h6 class="subheader">$000.00</h6>
-							</div>
-						</div>
+						<!-- 								<h6 class="subheader">$000.00</h6> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 
-						<div class="large-4 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
+						<!-- 						<div class="large-4 small-6 columns"> -->
+						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
 
-							<div class="panel">
-								<h5>Item Name</h5>
+						<!-- 							<div class="panel"> -->
+						<!-- 								<h5>Item Name</h5> -->
 
-								<h6 class="subheader">$000.00</h6>
-							</div>
-						</div>
+						<!-- 								<h6 class="subheader">$000.00</h6> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 					</div>
 					<!-- End Thumbnails -->
 					<!-- Managed By -->
