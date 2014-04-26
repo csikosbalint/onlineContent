@@ -1,9 +1,13 @@
+<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="view" uri="WEB-INF/view.tld"%>
+<%@page language="java"%>
+<%@page import="hu.fnf.devel.onlinecontent.model.Content"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
-<%@ page language="java"%>
-<%@ page import="java.lang.*"%>
-<%@ page import="java.util.*"%>
-<%@ page import="com.google.appengine.api.datastore.*"%>
+<%@page import="java.lang.*"%>
+<%@page import="java.util.*"%>
+<%@page import="com.google.appengine.api.datastore.*"%>
 <!DOCTYPE html>
 <!-- saved from url=(0047)http://foundation.zurb.com/templates/store.html -->
 <html
@@ -165,86 +169,22 @@
 							<h6>99&nbsp; items in your cart</h6>
 						</div>
 					</a>
-				</div>
+				</div>		
 				<!-- End Side Bar -->
 				<!-- Thumbnails -->
 
 				<div class="large-8 columns">
 					<div class="row">
-						<%
-							List<Entity> entities = (List<Entity>) request.getAttribute("entities");
-							Iterator<Entity> it = entities.iterator();
-							while (it.hasNext()) {
-								Entity e = (Entity) it.next();
+						<c:forEach items="${requestScope.entitylist}" var="entity">
+							<div class="large-4 small-6 columns">
+								<a href="entity.jsp?name=test"><view:ContentThumbnailImg entity="${entity}"/></a>
 
-								out.print("<div class=\"large-4 small-6 columns\"><a href=\"entity.jsp?name=" 
-										+(String) e.getKey().getName()+"\"><img src=\""  
-										+ (String) e.getProperty("thumb_src")
-										+ "\"></a><div class=\"panel\"><h5>"
-										+ (String) e.getKey().getName()
-										+ "</h5><h6 class=\"subheader\">$000.00</h6></div></div>");
-							}
-						%>
-
-						<!-- 						<div class="large-4 small-6 columns"> -->
-						<!-- 							<img src="./static/Thumbnail.jpg"> -->
-
-						<!-- 							<div class="panel"> -->
-						<!-- 								<h5>Item Name</h5> -->
-
-						<!-- 								<h6 class="subheader">$000.00</h6> -->
-						<!-- 							</div> -->
-						<!-- 						</div> -->
-
-						<!-- 						<div class="large-4 small-6 columns"> -->
-						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
-
-						<!-- 							<div class="panel"> -->
-						<!-- 								<h5>Item Name</h5> -->
-
-						<!-- 								<h6 class="subheader">$000.00</h6> -->
-						<!-- 							</div> -->
-						<!-- 						</div> -->
-
-						<!-- 						<div class="large-4 small-6 columns"> -->
-						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
-
-						<!-- 							<div class="panel"> -->
-						<!-- 								<h5>Item Name</h5> -->
-
-						<!-- 								<h6 class="subheader">$000.00</h6> -->
-						<!-- 							</div> -->
-						<!-- 						</div> -->
-
-						<!-- 						<div class="large-4 small-6 columns"> -->
-						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
-
-						<!-- 							<div class="panel"> -->
-						<!-- 								<h5>Item Name</h5> -->
-
-						<!-- 								<h6 class="subheader">$000.00</h6> -->
-						<!-- 							</div> -->
-						<!-- 						</div> -->
-
-						<!-- 						<div class="large-4 small-6 columns"> -->
-						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
-
-						<!-- 							<div class="panel"> -->
-						<!-- 								<h5>Item Name</h5> -->
-
-						<!-- 								<h6 class="subheader">$000.00</h6> -->
-						<!-- 							</div> -->
-						<!-- 						</div> -->
-
-						<!-- 						<div class="large-4 small-6 columns"> -->
-						<!-- 							<img src="./static/Thumbnail500.jpg"> -->
-
-						<!-- 							<div class="panel"> -->
-						<!-- 								<h5>Item Name</h5> -->
-
-						<!-- 								<h6 class="subheader">$000.00</h6> -->
-						<!-- 							</div> -->
-						<!-- 						</div> -->
+								<div class="panel">
+									<h5><view:ContentDisplayName entity="${entity}"/></h5>
+<%-- 								<h6 class="subheader"><view:ContentShortDescrition entity="${name}"/></h6> --%>
+								</div>
+							</div>
+						</c:forEach>
 					</div>
 					<!-- End Thumbnails -->
 					<!-- Managed By -->

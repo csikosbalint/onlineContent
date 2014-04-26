@@ -1,0 +1,41 @@
+<taglib>
+	<tlib-version>1.0</tlib-version>
+	<jsp-version>2.0</jsp-version>
+	<short-name>OnlineContent TLD</short-name>
+	<tag>
+		<name>ContentThumbnailImg</name>
+		<tag-class>hu.fnf.devel.onlinecontent.view.ContentThumbnailImg
+		</tag-class>
+		<body-content>scriptless</body-content>
+		<attribute>
+			<name>entity</name>
+			<required>true</required>
+			<type>com.google.appengine.api.datastore.Entity</type>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>ContentDisplayName</name>
+		<tag-class>hu.fnf.devel.onlinecontent.view.ContentDisplayName
+		</tag-class>
+		<body-content>scriptless</body-content>
+		<attribute>
+			<name>entity</name>
+			<required>true</required>
+			<type>com.google.appengine.api.datastore.Entity</type>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>ContentShortDescrition</name>
+		<tag-class>hu.fnf.devel.onlinecontent.view.ContentShortDescrition
+		</tag-class>
+		<body-content>scriptless</body-content>
+		<attribute>
+			<name>entity</name>
+			<required>true</required>
+			<type>com.google.appengine.api.datastore.Entity</type>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+</taglib>
