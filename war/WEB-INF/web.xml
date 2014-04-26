@@ -9,8 +9,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-class>hu.fnf.devel.onlinecontent.controller.OnlineContentServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>Upload</servlet-name>
-		<servlet-class>hu.fnf.devel.onlinecontent.controller.Upload</servlet-class>
+		<servlet-name>Receiver</servlet-name>
+		<servlet-class>hu.fnf.devel.onlinecontent.controller.Receiver</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>Serve</servlet-name>
@@ -18,8 +18,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Upload</servlet-name>
-		<url-pattern>/upload</url-pattern>
+		<servlet-name>Receiver</servlet-name>
+		<url-pattern>/receiver</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Serve</servlet-name>

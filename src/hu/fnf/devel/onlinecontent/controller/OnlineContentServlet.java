@@ -34,28 +34,28 @@ public class OnlineContentServlet extends HttpServlet {
 	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 	
 	public OnlineContentServlet() {
-		Vector<String> ents = new Vector<String>();
-		ents.add("alma");
-		ents.add("korte");
-		ents.add("cica");
-		ents.add("kutya");
-		ents.add("kata");
-		ents.add("fel");
-		ents.add("kelt");
-		
-		for (String ent : ents) {
-			Query q = new Query("Entity").addFilter(Entity.KEY_RESERVED_PROPERTY, Query.FilterOperator.EQUAL,KeyFactory.createKey("Entity", ent));
-			if ( datastore.prepare(q).asList(FetchOptions.Builder.withDefaults()).size() == 0 ) {
-				Entity e = new Entity("Entity", ent);
-				String thumbUrl = "http://placehold.it/500x500&text=" + ent;
-				String gameUrl = "http://www.freeonlinegames.com/game/heavy-crane-parking";
-				e.setProperty("url", gameUrl);
-				e.setProperty("thumbnail", thumbUrl);
-				e.setProperty("thumb_src", saveBlobFromUrl(thumbUrl));
-
-				datastore.put(e);
-			}
-		}
+//		Vector<String> ents = new Vector<String>();
+//		ents.add("alma");
+//		ents.add("korte");
+//		ents.add("cica");
+//		ents.add("kutya");
+//		ents.add("kata");
+//		ents.add("fel");
+//		ents.add("kelt");
+//		
+//		for (String ent : ents) {
+//			Query q = new Query("Entity").addFilter(Entity.KEY_RESERVED_PROPERTY, Query.FilterOperator.EQUAL,KeyFactory.createKey("Entity", ent));
+//			if ( datastore.prepare(q).asList(FetchOptions.Builder.withDefaults()).size() == 0 ) {
+//				Entity e = new Entity("Entity", ent);
+//				String thumbUrl = "http://placehold.it/500x500&text=" + ent;
+//				String gameUrl = "http://www.freeonlinegames.com/game/heavy-crane-parking";
+//				e.setProperty("url", gameUrl);
+//				e.setProperty("thumbnail", thumbUrl);
+//				e.setProperty("thumb_src", saveBlobFromUrl(thumbUrl));
+//
+//				datastore.put(e);
+//			}
+//		}
 	}
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -84,30 +84,4 @@ public class OnlineContentServlet extends HttpServlet {
 
 	}
 
-	private String saveBlobFromUrl(String thumbUrl) {
-		URL surl;
-		FileService fileService = null;
-		AppEngineFile file = null;
-		FileWriteChannel writeChannel;
-		byte[] byteArray;
-		try {
-			surl = new URL(thumbUrl);
-
-			byteArray = URLFetchServiceFactory.getURLFetchService().fetch(surl).getContent();
-
-			fileService = FileServiceFactory.getFileService();
-
-			file = fileService.createNewBlobFile("image/jpg");
-			log("id: " + file.getFullPath());
-
-			writeChannel = fileService.openWriteChannel(file, true);
-
-			writeChannel.write(ByteBuffer.wrap(byteArray));
-			writeChannel.closeFinally();
-			return "/serve?blob-key=" + fileService.getBlobKey(file).getKeyString();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "/static/noimage.gif";
-		}
-	}
 }
