@@ -1,22 +1,22 @@
 package hu.fnf.devel.onlinecontent.view;
 
+import hu.fnf.devel.onlinecontent.model.Content;
+
 import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
-import com.google.appengine.api.datastore.Entity;
-
 public class ContentDisplayName extends SimpleTagSupport {
-	private Entity entity;
+	private Content content;
 
-	public void setEntity(Entity entity) {
-		this.entity = entity;
+	public void setContent(Content content) {
+		this.content = content;
 	}
 
 	@Override
 	public void doTag() throws JspException, IOException {
-		getJspContext().getOut().print(entity.getKey().getName());
+		getJspContext().getOut().print(content.getDisplayName());
 	}
 
 }

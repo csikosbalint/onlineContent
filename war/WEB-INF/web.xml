@@ -23,7 +23,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Serve</servlet-name>
-		<url-pattern>/serve</url-pattern>
+		<url-pattern>/static/serve</url-pattern>
 	</servlet-mapping>
 
 

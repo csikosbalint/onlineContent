@@ -15,6 +15,18 @@
 	lang="en"
 	data-useragent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36">
 <head>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-50437809-1', 'xahcieyei4.appspot.com');
+  ga('require', 'displayfeatures');
+  ga('require', 'linkid', 'linkid.js');
+  ga('send', 'pageview');
+  
+</script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +69,7 @@
 
 							<li class="name">
 								<h1>
-									<a href="#">Top Bar Title</a>
+									<a href="/">Home</a>
 								</h1>
 							</li>
 
@@ -175,12 +187,12 @@
 
 				<div class="large-8 columns">
 					<div class="row">
-						<c:forEach items="${requestScope.entitylist}" var="entity">
+						<c:forEach items="${requestScope.entityList}" var="content">
 							<div class="large-4 small-6 columns">
-								<a href="entity.jsp?name=test"><view:ContentThumbnailImg entity="${entity}"/></a>
-
+								<a href="entity.jsp?name=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>"><view:ContentThumbnailImg content="${content}"/></a>
+<%-- 		<a href="entity.jsp?name=test"><view:ContentThumbnailImg content="${content}"/></a> --%>
 								<div class="panel">
-									<h5><view:ContentDisplayName entity="${entity}"/></h5>
+									<h5><view:ContentDisplayName content="${content}"/></h5>
 <%-- 								<h6 class="subheader"><view:ContentShortDescrition entity="${name}"/></h6> --%>
 								</div>
 							</div>
@@ -223,13 +235,12 @@
 
 						<div class="large-6 columns">
 							<ul class="inline-list right">
-								<li><a href="#">Link 1</a></li>
-
-								<li><a href="#">Link 2</a></li>
-
-								<li><a href="#">Link 3</a></li>
-
-								<li><a href="#">Link 4</a></li>
+							    <li>Pages:</li>
+							<c:forEach var="i" begin="1" end="${requestScope.listSize}">
+   								<li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li>
+								<!-- <li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li> -->
+							</c:forEach>
+							
 							</ul>
 						</div>
 					</div>

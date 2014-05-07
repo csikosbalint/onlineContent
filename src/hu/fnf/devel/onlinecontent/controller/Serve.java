@@ -19,6 +19,7 @@ public class Serve extends HttpServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		res.setHeader("Cache-Control", "public, max-age=3600");
 		BlobKey blobKey = new BlobKey(req.getParameter("blob-key"));
 		blobstoreService.serve(blobKey, res);
 	}

@@ -1,3 +1,4 @@
+<%@taglib prefix="view" uri="WEB-INF/view.tld"%>
 <!DOCTYPE html>
 <!-- saved from url=(0046)http://foundation.zurb.com/templates/boxy.html -->
 <html class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" lang="en" data-useragent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -149,41 +150,42 @@
  
           <div class="large-6 columns">
  
-            <img src="http://placehold.it/500x500&text=<%= request.getParameter("name") %>"><br>
+<%--             <img src="http://placehold.it/500x500&text=<%= request.getParameter("name") %>"><br> --%>
+			<view:ContentEmbedTag content="<%= request.getParameter(\"name\") %>"></view:ContentEmbedTag>
  
           </div>
  
  
-          <div class="large-6 columns">
+<!--           <div class="large-6 columns"> -->
  
-            <h3 class="show-for-small">Header<hr></h3>
+<!--             <h3 class="show-for-small">Header<hr></h3> -->
  
-            <div class="panel">
-              <h4 class="hide-for-small">Header<hr></h4>
-            <h5 class="subheader">Fusce ullamcorper mauris in eros dignissim molestie posuere felis blandit. Aliquam erat volutpat. Mauris ultricies posuere vehicula. Sed sit amet posuere erat. Quisque in ipsum non augue euismod dapibus non et eros. Pellentesque consectetur tempus mi iaculis bibendum. Ut vel dolor sed eros tincidunt volutpat ac eget leo.</h5>
-            </div>
+<!--             <div class="panel"> -->
+<!--               <h4 class="hide-for-small">Header<hr></h4> -->
+<!--             <h5 class="subheader">Fusce ullamcorper mauris in eros dignissim molestie posuere felis blandit. Aliquam erat volutpat. Mauris ultricies posuere vehicula. Sed sit amet posuere erat. Quisque in ipsum non augue euismod dapibus non et eros. Pellentesque consectetur tempus mi iaculis bibendum. Ut vel dolor sed eros tincidunt volutpat ac eget leo.</h5> -->
+<!--             </div> -->
 
-					<div class="row">
-						<div class="large-6 small-6 columns">
-							<div class="panel">
-								<h5>Header</h5>
-								<h6 class="subheader">Praesent placerat dui tincidunt elit
-									suscipit sed.</h6>
-								<a href="#" class="small button">BUTTON TIME!</a>
-							</div>
-						</div>
+<!-- 					<div class="row"> -->
+<!-- 						<div class="large-6 small-6 columns"> -->
+<!-- 							<div class="panel"> -->
+<!-- 								<h5>Header</h5> -->
+<!-- 								<h6 class="subheader">Praesent placerat dui tincidunt elit -->
+<!-- 									suscipit sed.</h6> -->
+<!-- 								<a href="#" class="small button">BUTTON TIME!</a> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
 
-						<div class="large-6 small-6 columns">
-							<div class="panel">
-								<h5>Header</h5>
-								<h6 class="subheader">Praesent placerat dui tincidunt elit
-									suscipit sed.</h6>
-								<a href="#" class="small button">BUTTON TIME!</a>
-							</div>
-						</div>
-					</div>
+<!-- 						<div class="large-6 small-6 columns"> -->
+<!-- 							<div class="panel"> -->
+<!-- 								<h5>Header</h5> -->
+<!-- 								<h6 class="subheader">Praesent placerat dui tincidunt elit -->
+<!-- 									suscipit sed.</h6> -->
+<!-- 								<a href="#" class="small button">BUTTON TIME!</a> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
 
-				</div>
+<!-- 				</div> -->
  
         </div>
  

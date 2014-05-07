@@ -8,9 +8,9 @@
 		</tag-class>
 		<body-content>scriptless</body-content>
 		<attribute>
-			<name>entity</name>
+			<name>content</name>
 			<required>true</required>
-			<type>com.google.appengine.api.datastore.Entity</type>
+			<type>hu.fnf.devel.onlinecontent.model.Content</type>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
@@ -20,9 +20,9 @@
 		</tag-class>
 		<body-content>scriptless</body-content>
 		<attribute>
-			<name>entity</name>
+			<name>content</name>
 			<required>true</required>
-			<type>com.google.appengine.api.datastore.Entity</type>
+			<type>hu.fnf.devel.onlinecontent.model.Content</type>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
@@ -32,10 +32,22 @@
 		</tag-class>
 		<body-content>scriptless</body-content>
 		<attribute>
-			<name>entity</name>
+			<name>content</name>
 			<required>true</required>
-			<type>com.google.appengine.api.datastore.Entity</type>
+			<type>hu.fnf.devel.onlinecontent.model.Content</type>
 			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	<tag>
+		<name>ContentEmbedTag</name>
+		<tag-class>hu.fnf.devel.onlinecontent.view.ContentEmbedTag
+		</tag-class>
+		<body-content>scriptless</body-content>
+		<attribute>
+			<name>content</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.String</type>
 		</attribute>
 	</tag>
 </taglib>
