@@ -27,12 +27,13 @@ import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 
+@SuppressWarnings("deprecation")
 public class Receiver extends HttpServlet {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -4652372274004877168L;
-	private static PersistenceManager pm = PMF.get().getPersistenceManager();
+	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -48,8 +49,7 @@ public class Receiver extends HttpServlet {
 			if (DatastoreServiceFactory.getDatastoreService().prepare(q).asList(FetchOptions.Builder.withDefaults())
 					.size() == 0) {
 				
-
-				content.setThumbBlobUrl(srcUri(content.getThumbSourceUrl()));
+				content.setThumbBlobUrl(srcUri(content.getThumbSourceUrl(), content));
 
 				pm.makePersistent(content);
 			}
@@ -59,8 +59,10 @@ public class Receiver extends HttpServlet {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	public static String srcUri(String thumbUrl) {
+	public static String srcUri(String thumbUrl, Content content) {
+		if ( !thumbUrl.contains("http") ) {
+			return thumbUrl;
+		}
 		URL surl;
 		FileService fileService = null;
 		AppEngineFile file = null;
@@ -78,35 +80,7 @@ public class Receiver extends HttpServlet {
 			Image image250 = ImagesServiceFactory.getImagesService().applyTransform(resize, image);
 
 			fileService = FileServiceFactory.getFileService();
-			file = fileService.createNewBlobFile("image/jpg");
-
-			writeChannel = fileService.openWriteChannel(file, true);
-
-			// resized image
-			writeChannel.write(ByteBuffer.wrap(image250.getImageData()));
-			writeChannel.closeFinally();
-			return "/static/serve?blob-key=" + fileService.getBlobKey(file).getKeyString();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "/static/noimage.gif";
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private String saveData(byte[] byteArray) {
-		FileService fileService = null;
-		AppEngineFile file = null;
-		FileWriteChannel writeChannel;
-		try {
-			// resize image
-			Image image = ImagesServiceFactory.makeImage(byteArray);
-
-			com.google.appengine.api.images.Transform resize = ImagesServiceFactory.makeResize(250, 250);
-
-			Image image250 = ImagesServiceFactory.getImagesService().applyTransform(resize, image);
-
-			fileService = FileServiceFactory.getFileService();
-			file = fileService.createNewBlobFile("image/jpg");
+			file = fileService.createNewBlobFile("image/jpg", content.getDisplayName() + " thumb");
 
 			writeChannel = fileService.openWriteChannel(file, true);
 

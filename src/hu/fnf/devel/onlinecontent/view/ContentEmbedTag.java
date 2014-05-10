@@ -11,7 +11,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 public class ContentEmbedTag extends SimpleTagSupport {
-	private static PersistenceManager pm = PMF.get().getPersistenceManager();
+	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 	private Content content;
 
 	public void setContent(String name) {

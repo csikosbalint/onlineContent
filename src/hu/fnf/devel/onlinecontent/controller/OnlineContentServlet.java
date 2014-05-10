@@ -19,7 +19,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static final String LIST = "entityList";
 	private static final String LISTSIZE = "listSize";
 	private static final int pageSize = 15;
-	private static PersistenceManager pm = PMF.get().getPersistenceManager();
+	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		HttpSession session = req.getSession(true);

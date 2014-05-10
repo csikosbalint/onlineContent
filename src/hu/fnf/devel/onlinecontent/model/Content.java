@@ -1,6 +1,7 @@
 package hu.fnf.devel.onlinecontent.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -13,7 +14,7 @@ public class Content implements Serializable {
 	/**
 	 * Uploader uploads serialized content
 	 */
-	private static final long serialVersionUID = 1988L;
+	private static final long serialVersionUID = 1990L;
 
 	public static final String THUMBNAIL_SOURCE_URL = "thumbSourceUrl";
 	public static final String THUMBNAIL_STORED_URL = "thumbBlobUrl";
@@ -41,6 +42,26 @@ public class Content implements Serializable {
 	private String displayName;
 	@Persistent
 	private byte[] thumbData;
+	@Persistent
+	private String[] searchKeyWords;
+	@Persistent
+	private Date creationData;
+	
+	public Date getCreationData() {
+		return creationData;
+	}
+	
+	public void setCreationData(Date creationData) {
+		this.creationData = creationData;
+	}
+
+	public String[] getSearchKeyWords() {
+		return searchKeyWords;
+	}
+
+	public void setSearchKeyWords(String[] searchKeyWords) {
+		this.searchKeyWords = searchKeyWords;
+	}
 
 	public String getDisplayName() {
 		return displayName;

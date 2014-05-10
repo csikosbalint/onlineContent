@@ -187,13 +187,25 @@
 
 				<div class="large-8 columns">
 					<div class="row">
+					<!-- List<Content> list = (List<Content>) pm.newQuery(Content.class).execute();
+		int listSize = (list.size()/pageSize)+1;
+		if ( list.size() > pageSize ) {
+			String pageNum = req.getParameter("page") == null ? "1" : req.getParameter("page");
+			int page = Integer.parseInt(pageNum);
+			int start = -1 + page * pageSize;
+			if ( page * pageSize > list.size() ) {
+				start = 0;
+			}
+			int stop = start+pageSize > list.size() ? list.size() : start+pageSize;
+			list = list.subList(start, stop);
+		} -->
 						<c:forEach items="${requestScope.entityList}" var="content">
 							<div class="large-4 small-6 columns">
-								<a href="entity.jsp?name=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>"><view:ContentThumbnailImg content="${content}"/></a>
-<%-- 		<a href="entity.jsp?name=test"><view:ContentThumbnailImg content="${content}"/></a> --%>
+							
+								<a href="entity.jsp?name=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>">
+								<view:ContentThumbnailImg content="${content}"/></a>
 								<div class="panel">
 									<h5><view:ContentDisplayName content="${content}"/></h5>
-<%-- 								<h6 class="subheader"><view:ContentShortDescrition entity="${name}"/></h6> --%>
 								</div>
 							</div>
 						</c:forEach>
