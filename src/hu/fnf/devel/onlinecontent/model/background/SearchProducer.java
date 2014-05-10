@@ -71,7 +71,7 @@ public class SearchProducer extends WebCrawler {
 					String srcSwf = line.substring(line.indexOf("http"), line.indexOf(".swf", line.indexOf("http"))
 							+ ".swf".length());
 					System.out.println("swf: " + srcSwf);
-					content.setContentEmbedUrl(srcSwf);
+					content.setContentSourceUrl(srcSwf);
 				}
 			}
 			results.add(content);

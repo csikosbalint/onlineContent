@@ -28,7 +28,7 @@ public class ContentEmbedTag extends SimpleTagSupport {
 			getJspContext()
 				.getOut()
 				.print("<embed src=\""
-						+ content.getContentEmbedUrl()
+						+ content.getContentSourceUrl()
 						+ "\"quality=high pluginspage=\"http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash\" type=\"application/x-shockwave-flash\" width=\"720\" height=\"540\"></embed>");
 		} else {
 			getJspContext()

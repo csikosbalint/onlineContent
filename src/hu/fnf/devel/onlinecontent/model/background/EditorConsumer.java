@@ -51,7 +51,8 @@ public class EditorConsumer {
 		 * URLs that are fetched and then the crawler starts following links
 		 * which are found in these pages
 		 */
-		String[] crawlDomains = new String[] { "http://www.onlinegames7.com", "http://www.netesjatekok.hu" };
+		String[] crawlDomains = new String[] { "http://www.onlinegames7.com", "http://www.netesjatekok.hu",
+				"http://jatek-online.hu" };
 
 		for (String domain : crawlDomains) {
 			controller.addSeed(domain);

@@ -16,34 +16,31 @@ public class Content implements Serializable {
 	 */
 	private static final long serialVersionUID = 1990L;
 
-	public static final String THUMBNAIL_SOURCE_URL = "thumbSourceUrl";
-	public static final String THUMBNAIL_STORED_URL = "thumbBlobUrl";
-	public static final String CATEGORIES_CSV = "categories";
-	public static final String DESCRIPTION = "description";
-	public static final String CONTENT_EMBED_URL = "contentEmbedUrl";
-	public static final String CONTENT_SOURCE_URL = "contentSourceUrl";
+	public static final String THUMBNAIL_SOURCE_URL = "thumbRemoteUrl";
+	public static final String THUMBNAIL_STORED_URL = "thumbLocaleUrl";
+	public static final String CATEGORIES_CSV		= "categories";
+	public static final String DESCRIPTION 			= "description";
+	public static final String CONTENT_SOURCE_URL 	= "contentSourceUrl";
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private String nameKey;
 	@Persistent
-	private String thumbSourceUrl;
+	private String displayName;
 	@Persistent
-	private String thumbBlobUrl;
+	private String contentSourceUrl;
+	@Persistent
+	private String thumbRemoteUrl;
+	@Persistent
+	private String thumbLocaleUrl;
 	@Persistent
 	private List<String> categories;
 	@Persistent
 	private String description;
+
+
 	@Persistent
-	private String contentEmbedUrl;
-	@Persistent
-	private String contentSourceUrl;
-	@Persistent
-	private String displayName;
-	@Persistent
-	private byte[] thumbData;
-	@Persistent
-	private String[] searchKeyWords;
+	private String[] thumbSearchKeyWords;
 	@Persistent
 	private Date creationData;
 	
@@ -56,11 +53,11 @@ public class Content implements Serializable {
 	}
 
 	public String[] getSearchKeyWords() {
-		return searchKeyWords;
+		return thumbSearchKeyWords;
 	}
 
 	public void setSearchKeyWords(String[] searchKeyWords) {
-		this.searchKeyWords = searchKeyWords;
+		this.thumbSearchKeyWords = searchKeyWords;
 	}
 
 	public String getDisplayName() {
@@ -69,14 +66,6 @@ public class Content implements Serializable {
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
-	}
-
-	public byte[] getThumbData() {
-		return thumbData;
-	}
-
-	public void setThumbData(byte[] thumbData) {
-		this.thumbData = thumbData;
 	}
 
 	public Content(String name) {
@@ -92,19 +81,19 @@ public class Content implements Serializable {
 	}
 
 	public String getThumbSourceUrl() {
-		return thumbSourceUrl;
+		return thumbRemoteUrl;
 	}
 
 	public void setThumbSourceUrl(String thumbSourceUrl) {
-		this.thumbSourceUrl = thumbSourceUrl;
+		this.thumbRemoteUrl = thumbSourceUrl;
 	}
 
 	public String getThumbBlobUrl() {
-		return thumbBlobUrl;
+		return thumbLocaleUrl;
 	}
 
 	public void setThumbBlobUrl(String thumbBlobUrl) {
-		this.thumbBlobUrl = thumbBlobUrl;
+		this.thumbLocaleUrl = thumbBlobUrl;
 	}
 
 	public List<String> getCategories() {
@@ -121,14 +110,6 @@ public class Content implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getContentEmbedUrl() {
-		return contentEmbedUrl;
-	}
-
-	public void setContentEmbedUrl(String contentEmbedUrl) {
-		this.contentEmbedUrl = contentEmbedUrl;
 	}
 
 	public String getContentSourceUrl() {
