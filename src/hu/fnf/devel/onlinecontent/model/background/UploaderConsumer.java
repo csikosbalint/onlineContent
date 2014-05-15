@@ -45,8 +45,10 @@ public class UploaderConsumer implements Runnable {
 			}
 			try {
 				connection.connect();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("Unable to upload: " + e.getMessage());
+				// TODO: handle unsuccessful upload and store data as to-upload
+				continue;
 			}
 			ObjectOutputStream oos = null;
 			try {
@@ -62,7 +64,7 @@ public class UploaderConsumer implements Runnable {
 				System.out.print("upload: " + content.getNameKey());
 				System.out.println(" res: " + connection.getResponseCode());
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Unable to upload: " + e.getMessage());
 			}
 			connection.disconnect();
 		}
