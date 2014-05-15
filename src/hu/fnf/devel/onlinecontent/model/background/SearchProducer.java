@@ -3,6 +3,7 @@ package hu.fnf.devel.onlinecontent.model.background;
 import hu.fnf.devel.onlinecontent.model.Content;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.concurrent.BlockingQueue;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
@@ -12,8 +13,9 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class SearchProducer implements Runnable {
-    private final BlockingQueue<Content> sharedQueue;
-    
+
+	private final BlockingQueue<Content> sharedQueue;
+
 	public SearchProducer(BlockingQueue<Content> sharedQueue) {
 		super();
 		this.sharedQueue = sharedQueue;
@@ -26,14 +28,10 @@ public class SearchProducer implements Runnable {
 		int numberOfCrawlers = 7;
 
 		CrawlConfig config = new CrawlConfig();
+
 		config.setCrawlStorageFolder(crawlStorageFolder);
-
-		/*
-		 * Since images are binary content, we need to set this parameter to
-		 * true to make sure they are included in the crawl.
-		 */
 		config.setIncludeBinaryContentInCrawling(true);
-
+		config.setResumableCrawling(true);
 		/*
 		 * Instantiate the controller for this crawl.
 		 */
@@ -68,15 +66,17 @@ public class SearchProducer implements Runnable {
 		 * will reach the line after this only when crawling is finished.
 		 */
 		controller.startNonBlocking(SwfCrawler.class, numberOfCrawlers);
-		// controller.start(ContentCrawler.class, numberOfCrawlers);
-		try {
-			Thread.sleep(30000);
-			controller.shutdown();
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		while (!Thread.currentThread().isInterrupted()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				break;
+			}
 		}
+		System.out.println(Thread.currentThread().getName() + ": stopping crawling...");
+		controller.shutdown();
+		controller.waitUntilFinish();
 	}
-	
+
 }

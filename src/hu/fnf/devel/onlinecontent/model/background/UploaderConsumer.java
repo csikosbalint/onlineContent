@@ -11,12 +11,12 @@ import java.net.URL;
 import java.util.concurrent.BlockingQueue;
 
 public class UploaderConsumer implements Runnable {
-	private final BlockingQueue<Content> blockingQueue;
+	private final BlockingQueue<Content> sharedQueue;
 	private final URL url;
 
 	public UploaderConsumer(BlockingQueue<Content> sharedQueue, URL url) {
 		super();
-		this.blockingQueue = sharedQueue;
+		this.sharedQueue = sharedQueue;
 		this.url = url;
 	}
 
@@ -26,7 +26,7 @@ public class UploaderConsumer implements Runnable {
 
 			Content content = null;
 			try {
-				content = blockingQueue.take();
+				content = sharedQueue.take();
 			} catch (InterruptedException ex) {
 				continue;
 			}

@@ -8,6 +8,13 @@
 <%@page import="java.lang.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.google.appengine.api.datastore.*"%>
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <!-- saved from url=(0047)http://foundation.zurb.com/templates/store.html -->
 <html
@@ -15,26 +22,12 @@
 	lang="en"
 	data-useragent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36">
 <head>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-50437809-1', 'xahcieyei4.appspot.com');
-  ga('require', 'displayfeatures');
-  ga('require', 'linkid', 'linkid.js');
-  ga('send', 'pageview');
-  
-</script>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Foundation Template | Store | <%
 	out.print(request.getSession(true).getAttribute("cica"));
 %></title>
-
-
 <meta name="description"
 	content="Documentation and reference library for ZURB Foundation. JavaScript, CSS, components, grid and more.">
 
@@ -43,6 +36,7 @@
 <meta name="copyright" content="ZURB, inc. Copyright (c) 2013">
 
 <link rel="stylesheet" href="static/foundation.css">
+<script src="./static/google.js" </script>
 <script src="./static/modernizr.js"></script>
 <style type="text/css"></style>
 <meta class="foundation-data-attribute-namespace">
@@ -187,25 +181,12 @@
 
 				<div class="large-8 columns">
 					<div class="row">
-					<!-- List<Content> list = (List<Content>) pm.newQuery(Content.class).execute();
-		int listSize = (list.size()/pageSize)+1;
-		if ( list.size() > pageSize ) {
-			String pageNum = req.getParameter("page") == null ? "1" : req.getParameter("page");
-			int page = Integer.parseInt(pageNum);
-			int start = -1 + page * pageSize;
-			if ( page * pageSize > list.size() ) {
-				start = 0;
-			}
-			int stop = start+pageSize > list.size() ? list.size() : start+pageSize;
-			list = list.subList(start, stop);
-		} -->
 						<c:forEach items="${requestScope.entityList}" var="content">
 							<div class="large-4 small-6 columns">
-							
-								<a href="entity.jsp?name=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>">
-								<view:ContentThumbnailImg content="${content}"/></a>
+								<a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>">
+								<img src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" /></a>
 								<div class="panel">
-									<h5><view:ContentDisplayName content="${content}"/></h5>
+									<h5><%= ((Content) pageContext.getAttribute("content")).getDisplayName() %></h5>
 								</div>
 							</div>
 						</c:forEach>
@@ -249,10 +230,15 @@
 							<ul class="inline-list right">
 							    <li>Pages:</li>
 							<c:forEach var="i" begin="1" end="${requestScope.listSize}">
-   								<li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li>
-								<!-- <li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li> -->
+   								<c:choose>
+    							    <c:when test="${i eq requestScope.pageActual}">
+            							<li underline><c:out value="${i}"/></li>
+        							</c:when>
+        							<c:otherwise>
+            							<li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li>
+        							</c:otherwise>
+    							</c:choose>
 							</c:forEach>
-							
 							</ul>
 						</div>
 					</div>

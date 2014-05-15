@@ -4,26 +4,41 @@ import hu.fnf.devel.onlinecontent.model.Content;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class EditorConsumer {
-	static class Message extends Thread {
+	final static BlockingQueue<Content> searchQueue = new LinkedBlockingQueue<>();
+	final static BlockingQueue<Content> uploadQueue = new LinkedBlockingQueue<>();
+
+	final static Thread search = new Thread(new SearchProducer(searchQueue));
+	
+	static class ShutdownThread extends Thread {
 
 		public void run() {
-			System.out.println("Bye.");
+			System.out.println("interrupting search...");
+			search.interrupt();
+			while ( searchQueue.size() != 0 && uploadQueue.size() != 0) {
+				try {
+					System.out.println("search: " + searchQueue.size());
+					System.out.println("upload: " + uploadQueue.size());
+					Thread.sleep(1000);
+				} catch (InterruptedException ex) {
+
+				}
+			}
+			System.exit(0);
 		}
 	}
 
 	public static void main(String args[]) {
 
-		Runtime.getRuntime().addShutdownHook(new Message());
+		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 
+		// System.out.println(5/0);
 		System.out.println("crawling...");
-		BlockingQueue<Content> searchQueue = new LinkedBlockingQueue<>();
-		BlockingQueue<Content> uploadQueue = new LinkedBlockingQueue<>();
 
-		Thread search = new Thread(new SearchProducer(searchQueue));
 		Thread upload = null;
 		String url = "http://localhost:8888/receiver";
 		// String url = "http://localhost:8888/receiver";
@@ -44,7 +59,7 @@ public class EditorConsumer {
 			} catch (InterruptedException ex) {
 				continue;
 			}
-
+			s.setContentCreation(new Date());
 			try {
 				uploadQueue.put(s);
 			} catch (InterruptedException e) {

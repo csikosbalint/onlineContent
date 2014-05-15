@@ -1,4 +1,12 @@
-<%@taglib prefix="view" uri="WEB-INF/view.tld"%>
+<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page language="java"%>
+<%@page import="hu.fnf.devel.onlinecontent.model.Content"%>
+<%@page import="java.util.Iterator"%>
+<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
+<%@page import="java.lang.*"%>
+<%@page import="java.util.*"%>
+<%@page import="com.google.appengine.api.datastore.*"%>
 <!DOCTYPE html>
 <!-- saved from url=(0046)http://foundation.zurb.com/templates/boxy.html -->
 <html class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" lang="en" data-useragent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -14,8 +22,11 @@
 
     <link rel="stylesheet" href="http://foundation.zurb.com/assets/css/templates/foundation.css">
     <script src="./static/modernizr.js"></script>
+    <script src="./static/google.js"></script>
   <meta class="foundation-data-attribute-namespace"><meta class="foundation-mq-xxlarge"><meta class="foundation-mq-xlarge"><meta class="foundation-mq-large"><meta class="foundation-mq-medium"><meta class="foundation-mq-small"><style></style><meta class="foundation-mq-topbar"><style type="text/css"></style></head>
-  <body>
+  
+
+ <body>
     
 
  <div class="row">
@@ -150,8 +161,8 @@
  
           <div class="large-6 columns">
  
-<%--             <img src="http://placehold.it/500x500&text=<%= request.getParameter("name") %>"><br> --%>
-			<view:ContentEmbedTag content="<%= request.getParameter(\"name\") %>"></view:ContentEmbedTag>
+<!--            <img src="http://placehold.it/500x500&text=<%= ((Content) request.getAttribute("content")).getNameKey() %>"><br> -->
+			<embed src="<%= ((Content) request.getAttribute("content")).getContentSourceUrl()%>" quality=high pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="720" height="540"></embed>
  
           </div>
  

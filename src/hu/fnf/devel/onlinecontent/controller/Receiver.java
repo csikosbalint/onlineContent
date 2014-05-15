@@ -60,7 +60,7 @@ public class Receiver extends HttpServlet {
 	}
 
 	public static String srcUri(String thumbUrl, Content content) {
-		if ( !thumbUrl.contains("http") ) {
+		if ( thumbUrl == null || !thumbUrl.contains("http") ) {
 			return thumbUrl;
 		}
 		URL surl;

@@ -10,7 +10,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
-public class Content implements Serializable {
+public class Content implements Serializable, Comparable<Content> {
 	/**
 	 * Uploader uploads serialized content
 	 */
@@ -18,10 +18,10 @@ public class Content implements Serializable {
 
 	public static final String THUMBNAIL_SOURCE_URL = "thumbRemoteUrl";
 	public static final String THUMBNAIL_STORED_URL = "thumbLocaleUrl";
-	public static final String CATEGORIES_CSV		= "categories";
-	public static final String DESCRIPTION 			= "description";
-	public static final String CONTENT_SOURCE_URL 	= "contentSourceUrl";
-
+	public static final String CATEGORIES_CSV = "categories";
+	public static final String DESCRIPTION = "description";
+	public static final String CONTENT_SOURCE_URL = "contentSourceUrl";
+	public static final String CONTENT_CREATION = "contentCreation";
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private String nameKey;
@@ -37,19 +37,25 @@ public class Content implements Serializable {
 	private List<String> categories;
 	@Persistent
 	private String description;
-
-
 	@Persistent
 	private String[] thumbSearchKeyWords;
 	@Persistent
-	private Date creationData;
-	
-	public Date getCreationData() {
-		return creationData;
+	private Date contentCreation;
+
+	public Content(String nameKey, String contentSourceUrl, String[] thumbSearchKeyWords, Date contentCreation) {
+		super();
+		this.nameKey = nameKey;
+		this.contentSourceUrl = contentSourceUrl;
+		this.thumbSearchKeyWords = thumbSearchKeyWords;
+		this.contentCreation = contentCreation;
 	}
-	
-	public void setCreationData(Date creationData) {
-		this.creationData = creationData;
+
+	public Date getContentCreation() {
+		return contentCreation;
+	}
+
+	public void setContentCreation(Date contentCreation) {
+		this.contentCreation = contentCreation;
 	}
 
 	public String[] getSearchKeyWords() {
@@ -68,7 +74,11 @@ public class Content implements Serializable {
 		this.displayName = displayName;
 	}
 
+	private Content() {
+		// TODO Auto-generated constructor stub
+	}
 	public Content(String name) {
+		this();
 		this.nameKey = name;
 	}
 
@@ -118,5 +128,10 @@ public class Content implements Serializable {
 
 	public void setContentSourceUrl(String contentSourceUrl) {
 		this.contentSourceUrl = contentSourceUrl;
+	}
+
+	@Override
+	public int compareTo(Content o) {
+		return o.contentCreation.compareTo(this.contentCreation);
 	}
 }
