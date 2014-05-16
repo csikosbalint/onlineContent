@@ -48,6 +48,12 @@ public class SwfCrawler extends WebCrawler {
 			storageFolder.mkdirs();
 		}
 	}
+	
+	@Override
+	public void onBeforeExit() {
+		super.onBeforeExit();
+		System.out.println(Thread.currentThread().getName() + ": crawler onBeforeExit()...");
+	}
 
 	@Override
 	public void visit(Page page) {

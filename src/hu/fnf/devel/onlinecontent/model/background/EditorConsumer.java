@@ -21,6 +21,7 @@ public class EditorConsumer {
 			search.interrupt();
 			while ( searchQueue.size() != 0 && uploadQueue.size() != 0) {
 				try {
+					System.out.println("waiting for consumer(s) to empty lists...");
 					System.out.println("search: " + searchQueue.size());
 					System.out.println("upload: " + uploadQueue.size());
 					Thread.sleep(1000);
@@ -28,7 +29,7 @@ public class EditorConsumer {
 
 				}
 			}
-			System.exit(0);
+			System.out.println("exit");
 		}
 	}
 
@@ -41,7 +42,7 @@ public class EditorConsumer {
 
 		Thread upload = null;
 		String url = "http://localhost:8888/receiver";
-		// String url = "http://localhost:8888/receiver";
+		// String url = "http://xahcieyei4.appspot.com/receiver";
 		try {
 			upload = new Thread(new UploaderConsumer(uploadQueue, new URL(url)));
 		} catch (MalformedURLException e) {

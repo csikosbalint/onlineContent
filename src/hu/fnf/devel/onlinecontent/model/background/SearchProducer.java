@@ -53,7 +53,7 @@ public class SearchProducer implements Runnable {
 		 * which are found in these pages
 		 */
 		String[] crawlDomains = new String[] { "http://www.onlinegames7.com", "http://www.netesjatekok.hu",
-				"http://jatek-online.hu" };
+				"http://jatek-online.hu", "http://www.miniclip.com/games/en/" };
 
 		for (String domain : crawlDomains) {
 			controller.addSeed(domain);
@@ -70,11 +70,12 @@ public class SearchProducer implements Runnable {
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
 				Thread.sleep(1000);
+				System.out.println("working...");
 			} catch (InterruptedException e) {
 				break;
 			}
 		}
-		System.out.println(Thread.currentThread().getName() + ": stopping crawling...");
+		System.out.println(Thread.currentThread().getName() + ": interrputed...");
 		controller.shutdown();
 		controller.waitUntilFinish();
 	}

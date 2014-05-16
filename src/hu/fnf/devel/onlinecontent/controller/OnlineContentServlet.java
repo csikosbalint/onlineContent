@@ -49,10 +49,12 @@ public class OnlineContentServlet extends HttpServlet {
 		instances.put(this, this);
 		classCount++;
 		if (req.getParameter("debug") != null ) {
-			list = new TreeSet<>((List<Content>)pm.newQuery(Content.class).execute());
 			out.println("<pre>There are currently " + instances.size() + " instances.</pre>");
 			out.println("<pre>Instance has been accessed " + count + " times.</pre>");
 			out.println("<pre>Class has been accessed " + classCount + " times.</pre>");
+		}
+		if (req.getParameter("force-reload") != null ) {
+			list = new TreeSet<Content>((List<Content>)pm.newQuery(Content.class).execute());
 		}
 		RequestDispatcher view;
 		if ( req.getParameter("contentname") != null ) {
