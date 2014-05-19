@@ -41,8 +41,8 @@ public class EditorConsumer {
 		System.out.println("crawling...");
 
 		Thread upload = null;
-		String url = "http://localhost:8888/receiver";
-		// String url = "http://xahcieyei4.appspot.com/receiver";
+//		String url = "http://localhost:8888/receiver";
+		String url = "http://xahcieyei4.appspot.com/receiver";
 		try {
 			upload = new Thread(new UploaderConsumer(uploadQueue, new URL(url)));
 		} catch (MalformedURLException e) {

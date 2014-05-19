@@ -1,5 +1,5 @@
 <%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="view" uri="WEB-INF/view.tld"%>
 <%@page language="java"%>
 <%@page import="hu.fnf.devel.onlinecontent.model.Content"%>
@@ -186,7 +186,8 @@
 								<a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>">
 								<img src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" /></a>
 								<div class="panel">
-									<h5><%= ((Content) pageContext.getAttribute("content")).getDisplayName() %></h5>
+									<!-- <h5><%= ((Content) pageContext.getAttribute("content")).getDisplayName() %></h5> -->
+									<h5><view:ContentThumbnailImg content="${content}"/></h5>
 								</div>
 							</div>
 						</c:forEach>
@@ -228,17 +229,77 @@
 
 						<div class="large-6 columns">
 							<ul class="inline-list right">
-							    <li>Pages:</li>
-							<c:forEach var="i" begin="1" end="${requestScope.listSize}">
-   								<c:choose>
-    							    <c:when test="${i eq requestScope.pageActual}">
-            							<li underline><c:out value="${i}"/></li>
-        							</c:when>
-        							<c:otherwise>
-            							<li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li>
-        							</c:otherwise>
-    							</c:choose>
-							</c:forEach>
+							
+							
+							<c:choose>
+								<c:when test="${requestScope.pageActual > 4 &&  requestScope.pageActual <= requestScope.listSize-4}">
+									<li><a href="/?page=${requestScope.pageActual - 1}"><-</a></li>
+									<li><a href="/?page=1">1</a></li>
+									<li>...</li>
+									
+									<c:forEach var="i" begin="${requestScope.pageActual-2}" end="${requestScope.pageActual+2}">
+   										<c:choose>
+    							  			<c:when test="${i == requestScope.pageActual}">
+            									<li underline><c:out value="${i}"/></li>
+        									</c:when>
+        									<c:otherwise>
+            									<li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li>
+        									</c:otherwise>
+    									</c:choose>
+									</c:forEach>
+									
+									<li>...</li>
+									<li><a href="/?page=${requestScope.listSize}">${requestScope.listSize}</a></li>
+									<li><a href="/?page=${requestScope.pageActual + 1}">-></a></li>
+									
+								</c:when>
+								<c:otherwise>
+									<c:choose>
+										<c:when test="${requestScope.pageActual <= 4}">
+											<c:choose>
+												<c:when test="${requestScope.pageActual != 1}">
+													<li><a href="/?page=${requestScope.pageActual - 1}"><-</a></li>
+												</c:when>
+											</c:choose>				
+											<c:forEach var="i" begin="1" end="${requestScope.pageActual+2}">
+   												<c:choose>
+    							    				<c:when test="${i == requestScope.pageActual}">
+            											<li underline><c:out value="${i}"/></li>
+        											</c:when>
+        											<c:otherwise>
+            											<li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li>
+        											</c:otherwise>
+    											</c:choose>
+											</c:forEach>
+									
+											<li>...</li>
+											<li><a href="/?page=${requestScope.listSize}">${requestScope.listSize}</a></li>
+											<li><a href="/?page=${requestScope.pageActual + 1}">-></a></li>
+										</c:when>
+										<c:otherwise>
+											<li><a href="/?page=${requestScope.pageActual - 1}"><-</a></li>
+											<li><a href="/?page=1">1</a></li>
+											<li>...</li>
+											
+											<c:forEach var="i" begin="${requestScope.pageActual-2}" end="${requestScope.listSize}">
+	   											<c:choose>
+    							  					<c:when test="${i == requestScope.pageActual}">
+	            										<li underline><c:out value="${i}"/></li>
+        											</c:when>
+        											<c:otherwise>
+	            										<li><a href="?page=<c:out value="${i}"/>"><c:out value="${i}"/></a></li>
+        											</c:otherwise>
+    											</c:choose>
+											</c:forEach>
+											<c:choose>
+												<c:when test="${requestScope.pageActual != requestScope.listSize}">
+													<li><a href="/?page=${requestScope.pageActual + 1}">-></a></li>
+												</c:when>
+											</c:choose>
+										</c:otherwise>
+									</c:choose>
+								</c:otherwise>
+							</c:choose>			
 							</ul>
 						</div>
 					</div>
