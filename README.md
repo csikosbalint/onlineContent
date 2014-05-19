@@ -10,3 +10,7 @@ BASIC FEATURES: (milestone-0)
   * continous background search, edit and store
 
 ADVENCED FEATURES: (milestione-1)
+
+Collaborators:
+Laszlo Hallai
+Balint Csikos
