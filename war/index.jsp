@@ -16,7 +16,7 @@
 
 
 <!DOCTYPE html>
-<!-- saved from url=(0047)http://foundation.zurb.com/templates/store.html -->
+
 <html
 	class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"
 	lang="en"
@@ -29,14 +29,13 @@
 	out.print(request.getSession(true).getAttribute("cica"));
 %></title>
 <meta name="description"
-	content="Documentation and reference library for ZURB Foundation. JavaScript, CSS, components, grid and more.">
-
+	content="Database of online flash games.">
 <meta name="author"
-	content="ZURB, inc. ZURB network also includes zurb.com">
-<meta name="copyright" content="ZURB, inc. Copyright (c) 2013">
+	content="">
+<meta name="copyright" content="Copyright (c) 2014">
 
-<link rel="stylesheet" href="static/foundation.css">
-<script src="./static/google.js" </script>
+<link rel="stylesheet" href="./static/foundation.css">
+<script src="./static/google.js" ></script>
 <script src="./static/modernizr.js"></script>
 <style type="text/css"></style>
 <meta class="foundation-data-attribute-namespace">
@@ -49,113 +48,17 @@
 <meta class="foundation-mq-topbar">
 </head>
 <body>
-
+<div id="top_part">
+	<div class="top_logo">
+		<img src="./static/logo.png" />
+	</div>
+</div>
+	<div id="menu_bar">		
+	</div>
+	<div id="content_frame">
 
 	<div class="row">
 		<div class="large-12 columns">
-			<!-- Navigation -->
-
-			<div class="row">
-				<div class="large-12 columns">
-					<nav class="top-bar" data-topbar="">
-						<ul class="title-area">
-							<!-- Title Area -->
-
-							<li class="name">
-								<h1>
-									<a href="/">Home</a>
-								</h1>
-							</li>
-
-							<li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a>
-							</li>
-						</ul>
-
-
-						<section class="top-bar-section">
-							<!-- Right Nav Section -->
-
-							<ul class="right">
-								<li class="divider"></li>
-
-								<li class="has-dropdown not-click"><a href="#">Main
-										Item 1</a>
-
-									<ul class="dropdown">
-										<li class="title back js-generated"><h5>
-												<a href="javascript:void(0)">Back</a>
-											</h5></li>
-										<li><label>Section Name</label></li>
-
-										<li class="has-dropdown not-click"><a class="" href="#">Has
-												Dropdown, Level 1</a>
-
-											<ul class="dropdown">
-												<li class="title back js-generated"><h5>
-														<a href="javascript:void(0)">Back</a>
-													</h5></li>
-												<li><a href="#">Dropdown Options</a></li>
-
-												<li><a href="#">Dropdown Options</a></li>
-
-												<li><a href="#">Level 2</a></li>
-
-												<li><a href="#">Subdropdown Option</a></li>
-
-												<li><a href="#">Subdropdown Option</a></li>
-
-												<li><a href="#">Subdropdown Option</a></li>
-											</ul></li>
-
-										<li><a href="#">Dropdown Option</a></li>
-
-										<li><a href="#">Dropdown Option</a></li>
-
-										<li class="divider"></li>
-
-										<li><label>Section Name</label></li>
-
-										<li><a href="#">Dropdown Option</a></li>
-
-										<li><a href="#">Dropdown Option</a></li>
-
-										<li><a href="#">Dropdown Option</a></li>
-
-										<li class="divider"></li>
-
-										<li><a href="#">See all →</a></li>
-									</ul></li>
-
-								<li class="divider"></li>
-
-								<li><a href="#">Main Item 2</a></li>
-
-								<li class="divider"></li>
-
-								<li class="has-dropdown not-click"><a href="#">Main
-										Item 3</a>
-
-									<ul class="dropdown">
-										<li class="title back js-generated"><h5>
-												<a href="javascript:void(0)">Back</a>
-											</h5></li>
-										<li><a href="#">Dropdown Option</a></li>
-
-										<li><a href="#">Dropdown Option</a></li>
-
-										<li><a href="#">Dropdown Option</a></li>
-
-										<li class="divider"></li>
-
-										<li><a href="#">See all →</a></li>
-									</ul></li>
-							</ul>
-						</section>
-					</nav>
-					<!-- End Top Bar -->
-				</div>
-			</div>
-			<!-- End Navigation -->
 
 			<div class="row">
 				<!-- Side Bar -->
@@ -172,7 +75,7 @@
 					</div>
 					<a href="#">
 						<div class="panel callout radius">
-							<h6>99&nbsp; items in your cart</h6>
+							
 						</div>
 					</a>
 				</div>		
@@ -223,9 +126,7 @@
 					<hr>
 
 					<div class="row">
-						<div class="large-6 columns">
-							<p>© Copyright no one at all. Go to town.</p>
-						</div>
+						
 
 						<div class="large-6 columns">
 							<ul class="inline-list right">
@@ -307,6 +208,10 @@
 			</footer>
 			<!-- End Footer -->
 		</div>
+	</div>
+	</div>
+	<div id="foot">
+	<p>� Copyright no one at all. Go to town.</p>
 	</div>
 	<script src="./static/jquery.js"></script>
 	<script src="./static/foundation.js"></script>
