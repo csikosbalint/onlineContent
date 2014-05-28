@@ -1,13 +1,21 @@
 package hu.fnf.devel.onlinecontent.model;
 
+import hu.fnf.devel.onlinecontent.controller.Receiver;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.customsearch.Customsearch;
+import com.google.api.services.customsearch.Customsearch.Cse.List;
+import com.google.api.services.customsearch.model.Search;
 
 @PersistenceCapable
 public class Content implements Serializable, Comparable<Content> {
@@ -34,13 +42,41 @@ public class Content implements Serializable, Comparable<Content> {
 	@Persistent
 	private String thumbLocaleUrl;
 	@Persistent
-	private List<String> categories;
+	private java.util.List<String> categories;
 	@Persistent
 	private String description;
 	@Persistent
 	private String[] thumbSearchKeyWords;
 	@Persistent
 	private Date contentCreation;
+	
+	private String searchThumbnail() {
+		Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
+				.setApplicationName("ThumbSearch").build();
+		try {
+			List l = thumbSearch.cse().list(this.getSearchKeyWords() + " online game");
+			l.setNum(1L);
+			l.setCx("004811520739431370780:ggegf7qshxe");
+			l.setSafe("high");
+			l.setFilter("1");
+			l.setSearchType("image");
+			l.setImgSize("large");
+			l.setKey("AIzaSyDiZfaoVfU5FeORRwSuvBC3tk1UJQ5N-XI");
+
+			Search imgResult = l.execute();
+			// System.out.println("result: " + imgResult.toPrettyString());
+			if (imgResult.getItems() != null) {
+				System.out.println(imgResult.getSearchInformation().toPrettyString());
+				// thumbsrc
+				System.out.println("found image: " + imgResult.getItems().size());
+				return imgResult.getItems().get(0).getLink();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "/static/noimage.gif";
+	}
+
 
 	public Content(String nameKey, String contentSourceUrl, String[] thumbSearchKeyWords, Date contentCreation) {
 		super();
@@ -99,6 +135,11 @@ public class Content implements Serializable, Comparable<Content> {
 	}
 
 	public String getThumbBlobUrl() {
+		
+		if (thumbLocaleUrl == null || thumbLocaleUrl.contains("noimage")) {
+			String thumbnail = searchThumbnail();
+			this.setThumbBlobUrl(Receiver.srcUri(thumbnail, this));
+		}
 		return thumbLocaleUrl;
 	}
 
@@ -106,11 +147,11 @@ public class Content implements Serializable, Comparable<Content> {
 		this.thumbLocaleUrl = thumbBlobUrl;
 	}
 
-	public List<String> getCategories() {
+	public java.util.List<String> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List<String> categories) {
+	public void setCategories(java.util.List<String> categories) {
 		this.categories = categories;
 	}
 

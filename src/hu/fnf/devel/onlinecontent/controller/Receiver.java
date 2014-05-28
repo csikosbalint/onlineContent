@@ -61,7 +61,7 @@ public class Receiver extends HttpServlet {
 
 	public static String srcUri(String thumbUrl, Content content) {
 		if ( thumbUrl == null || !thumbUrl.contains("http") ) {
-			return thumbUrl;
+			return "/static/noimage.gif";
 		}
 		URL surl;
 		FileService fileService = null;
