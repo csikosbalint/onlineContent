@@ -42,7 +42,7 @@ public class EditorConsumer {
 
 		Thread upload = null;
 //		String url = "http://localhost:8888/receiver";
-		String url = "http://xahcieyei4.appspot.com/receiver";
+		String url = "http://onlinejatek.fnf.hu/receiver";
 		try {
 			upload = new Thread(new UploaderConsumer(uploadQueue, new URL(url)));
 		} catch (MalformedURLException e) {

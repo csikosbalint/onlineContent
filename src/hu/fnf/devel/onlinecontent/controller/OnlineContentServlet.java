@@ -24,7 +24,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static final String LIST = "entityList";
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
-	private static final int pageSize = 9;
+	private static final int pageSize = 2;
 	
 	
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();

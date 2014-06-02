@@ -74,7 +74,7 @@ public class SwfCrawler extends WebCrawler {
 			Content content = new Content(nameKey.toLowerCase());
 			content.setDisplayName(name);
 
-			String[] lines = html.split(System.getProperty("line.separator"));
+			String[] lines = html.split("\n");//System.getProperty("line.separator"));
 
 			for (String line : lines) {
 				if (line.contains("swf") && line.contains("http")) {

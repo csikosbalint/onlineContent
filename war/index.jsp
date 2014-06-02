@@ -56,88 +56,40 @@
 	<div id="menu_bar">		
 	</div>
 	<div id="content_frame">
-
-	<div class="row">
-		<div class="large-12 columns">
-
-			<div class="row">
-				<!-- Side Bar -->
-
-				<div class="large-4 small-12 columns">
-					<img src="./static/Logo.jpg">
-
-					<div class="hide-for-small panel">
-						<h3>Header</h3>
-
-						<h5 class="subheader">Risus ligula, aliquam nec fermentum
-							vitae, sollicitudin eget urna. Donec dignissim nibh fermentum
-							odio ornare sagittis.</h5>
-					</div>
-					<a href="#">
-						<div class="panel callout radius">
-							
-						</div>
-					</a>
-				</div>		
-				<!-- End Side Bar -->
-				<!-- Thumbnails -->
-
-				<div class="large-8 columns">
-					<div class="row">
-						<c:forEach items="${requestScope.entityList}" var="content">
-							<div class="large-4 small-6 columns">
-								<a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>">
-								<img src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" /></a>
-								<div class="panel">
-									<!-- <h5><%= ((Content) pageContext.getAttribute("content")).getDisplayName() %></h5> -->
-									<h5><view:ContentThumbnailImg content="${content}"/></h5>
-								</div>
-							</div>
-						</c:forEach>
-					</div>
-					<!-- End Thumbnails -->
-					<!-- Managed By -->
-
-					<div class="row">
-						<div class="large-12 columns">
-							<div class="panel">
-								<div class="row">
-									<div class="large-2 small-6 columns">
-										<img src="./static/SiteOwner.jpg">
+	<div id="left_side" class="left column_size_25">
+	 <img src="/static/banner_v.gif"/>
+	</div>
+	<div id="middle_content" class="mid">
+		<div class="row">
+				<div class="row">
+					<!-- Thumbnails -->
+						<div class="three_x_three">
+							<div class="row">
+								<c:forEach items="${requestScope.entityList}" var="content">
+									<div class="large-21 small-6 columns">
+										<a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>">
+										<img src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" /></a>							
+											<!-- <h5><%= ((Content) pageContext.getAttribute("content")).getDisplayName() %></h5> -->
+										<h6><view:ContentThumbnailImg content="${content}"/></h6>
 									</div>
-
-									<div class="large-10 small-6 columns">
-										<strong>This Site Is Managed By</strong>
-										<hr>
-										Risus ligula, aliquam nec fermentum vitae, sollicitudin eget
-										urna. Donec dignissim nibh fermentum odio ornare sagittis
-									</div>
-								</div>
+								</c:forEach>
 							</div>
+						<!-- End Thumbnails -->
 						</div>
-						<!-- End Managed By -->
-					</div>
 				</div>
-			</div>
-			<!-- Footer -->
+				<!-- Footer -->
 
-			<footer class="row">
+				<footer class="row">
 				<div class="large-12 columns">
 					<hr>
-
 					<div class="row">
-						
-
 						<div class="large-6 columns">
 							<ul class="inline-list right">
-							
-							
 							<c:choose>
 								<c:when test="${requestScope.pageActual > 4 &&  requestScope.pageActual <= requestScope.listSize-4}">
 									<li><a href="/?page=${requestScope.pageActual - 1}"><-</a></li>
 									<li><a href="/?page=1">1</a></li>
 									<li>...</li>
-									
 									<c:forEach var="i" begin="${requestScope.pageActual-2}" end="${requestScope.pageActual+2}">
    										<c:choose>
     							  			<c:when test="${i == requestScope.pageActual}">
@@ -148,11 +100,9 @@
         									</c:otherwise>
     									</c:choose>
 									</c:forEach>
-									
 									<li>...</li>
 									<li><a href="/?page=${requestScope.listSize}">${requestScope.listSize}</a></li>
 									<li><a href="/?page=${requestScope.pageActual + 1}">-></a></li>
-									
 								</c:when>
 								<c:otherwise>
 									<c:choose>
@@ -172,7 +122,6 @@
         											</c:otherwise>
     											</c:choose>
 											</c:forEach>
-									
 											<li>...</li>
 											<li><a href="/?page=${requestScope.listSize}">${requestScope.listSize}</a></li>
 											<li><a href="/?page=${requestScope.pageActual + 1}">-></a></li>
@@ -181,7 +130,6 @@
 											<li><a href="/?page=${requestScope.pageActual - 1}"><-</a></li>
 											<li><a href="/?page=1">1</a></li>
 											<li>...</li>
-											
 											<c:forEach var="i" begin="${requestScope.pageActual-2}" end="${requestScope.listSize}">
 	   											<c:choose>
     							  					<c:when test="${i == requestScope.pageActual}">
@@ -210,8 +158,9 @@
 		</div>
 	</div>
 	</div>
+	</div>
 	<div id="foot">
-	<p>© Copyright no one at all. Go to town.</p>
+	<p>© Copyright Onlinejatek.fnf.hu @ 2014</p>
 	</div>
 	<script src="./static/jquery.js"></script>
 	<script src="./static/foundation.js"></script>

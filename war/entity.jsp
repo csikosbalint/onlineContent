@@ -8,19 +8,13 @@
 <%@page import="java.util.*"%>
 <%@page import="com.google.appengine.api.datastore.*"%>
 <!DOCTYPE html>
-<!-- saved from url=(0046)http://foundation.zurb.com/templates/boxy.html -->
+
 <html class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" lang="en" data-useragent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foundation Template | So Boxy</title>
 
-    
-    <meta name="description" content="Documentation and reference library for ZURB Foundation. JavaScript, CSS, components, grid and more.">
-    
-    <meta name="author" content="ZURB, inc. ZURB network also includes zurb.com">
-    <meta name="copyright" content="ZURB, inc. Copyright (c) 2013">
-
-    <link rel="stylesheet" href="http://foundation.zurb.com/assets/css/templates/foundation.css">
+    <link rel="stylesheet" href="./static/foundation.css">
     <script src="./static/modernizr.js"></script>
     <script src="./static/google.js"></script>
   <meta class="foundation-data-attribute-namespace"><meta class="foundation-mq-xxlarge"><meta class="foundation-mq-xlarge"><meta class="foundation-mq-large"><meta class="foundation-mq-medium"><meta class="foundation-mq-small"><style></style><meta class="foundation-mq-topbar"><style type="text/css"></style></head>
@@ -28,145 +22,24 @@
 
  <body>
     
-
- <div class="row">
-    <div class="large-12 columns">
-  	<!-- NAV -->
-  	<div class="nav_top">
-  	
-  	
-  	
-  	</div>
-    <!-- NAV -->
+<div id="top_part">
+	<div class="top_logo">
+		<img src="./static/logo.png" />
+	</div>
+</div>
+	<div id="menu_bar">		
+	</div>
+	<div id="content_frame">
+	<div id="left_side" class="left column_size_25">
+	 <img src="/static/banner_v.gif"/>
+	</div>
+	<div id="middle_content" class="mid">
+	
 <div class="row">
-      <div class="large-12 columns">
-        <nav class="top-bar" data-topbar="">
-          <ul class="title-area">
-            <!-- Title Area -->
-
-            <li class="name">
-              <h1><a href="#">Top Bar Title</a></h1>
-            </li>
-
-            <li class="toggle-topbar menu-icon">
-              <a href="#"><span>menu</span></a>
-            </li>
-          </ul>
-
-          
-        <section class="top-bar-section">
-            <!-- Right Nav Section -->
-
-            <ul class="right">
-              <li class="divider"></li>
-
-              <li class="has-dropdown not-click">
-                <a href="#">Main Item 1</a>
-
-                <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
-                  <li><label>Section Name</label></li>
-
-                  <li class="has-dropdown not-click">
-                    <a class="" href="#">Has Dropdown, Level 1</a>
-
-                    <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
-                      <li>
-                        <a href="#">Dropdown Options</a>
-                      </li>
-
-                      <li>
-                        <a href="#">Dropdown Options</a>
-                      </li>
-
-                      <li>
-                        <a href="#">Level 2</a>
-                      </li>
-
-                      <li>
-                        <a href="#">Subdropdown Option</a>
-                      </li>
-
-                      <li>
-                        <a href="#">Subdropdown Option</a>
-                      </li>
-
-                      <li>
-                        <a href="#">Subdropdown Option</a>
-                      </li>
-                    </ul>
-                  </li>
-
-                  <li>
-                    <a href="#">Dropdown Option</a>
-                  </li>
-
-                  <li>
-                    <a href="#">Dropdown Option</a>
-                  </li>
-
-                  <li class="divider"></li>
-
-                  <li><label>Section Name</label></li>
-
-                  <li>
-                    <a href="#">Dropdown Option</a>
-                  </li>
-
-                  <li>
-                    <a href="#">Dropdown Option</a>
-                  </li>
-
-                  <li>
-                    <a href="#">Dropdown Option</a>
-                  </li>
-
-                  <li class="divider"></li>
-
-                  <li>
-                    <a href="#">See all →</a>
-                  </li>
-                </ul>
-              </li>
-
-              <li class="divider"></li>
-
-              <li>
-                <a href="#">Main Item 2</a>
-              </li>
-
-              <li class="divider"></li>
-
-              <li class="has-dropdown not-click">
-                <a href="#">Main Item 3</a>
-
-                <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
-                  <li>
-                    <a href="#">Dropdown Option</a>
-                  </li>
-
-                  <li>
-                    <a href="#">Dropdown Option</a>
-                  </li>
-
-                  <li>
-                    <a href="#">Dropdown Option</a>
-                  </li>
-
-                  <li class="divider"></li>
-
-                  <li>
-                    <a href="#">See all →</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </section></nav><!-- End Top Bar -->
-      </div>
-    </div>
+    
         <div class="row">
  
-          <div class="large-6 columns">
- 
+          <div class="large-4 columns">
 <!--            <img src="http://placehold.it/500x500&text=<%= ((Content) request.getAttribute("content")).getNameKey() %>"><br> -->
 			<embed src="<%= ((Content) request.getAttribute("content")).getContentSourceUrl()%>" quality=high pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="720" height="540"></embed>
  
@@ -239,74 +112,44 @@
  
  
       <!-- Thumbnails -->
- 
+ </div>
         <div class="row">
+		<div class="mid">
+          <div class="large-3 small-6 columns">
+            <img src="./static/Thumbnail500.jpg">
+            
+              <p>Description</p>
+            
+          </div>
  
-          <div class="large-12 show-for-small columns">
-          <h3>Header</h3><hr>
+          <div class="large-3 small-6 columns">
+            <img src="./static/Thumbnail500.jpg">
+            
+              <p>Description</p>
+            
+          </div>
+ 
+          <div class="large-3 small-6 columns">
+            <img src="./static/Thumbnail500.jpg">
+           
+              <p>Description</p>
+            
+          </div>
+ 
+          <div class="large-3 small-6 columns">
+            <img src="./static/Thumbnail500.jpg">
+            
+              <p>Description</p>
+           
+          </div>
+		</div>
         </div>
- 
-          <div class="large-3 small-6 columns">
-            <img src="./static/Thumbnail500.jpg">
-            <div class="panel">
-              <p>Description</p>
-            </div>
-          </div>
- 
-          <div class="large-3 small-6 columns">
-            <img src="./static/Thumbnail500.jpg">
-            <div class="panel">
-              <p>Description</p>
-            </div>
-          </div>
- 
-          <div class="large-3 small-6 columns">
-            <img src="./static/Thumbnail500.jpg">
-            <div class="panel">
-              <p>Description</p>
-            </div>
-          </div>
- 
-          <div class="large-3 small-6 columns">
-            <img src="./static/Thumbnail500.jpg">
-            <div class="panel">
-              <p>Description</p>
-            </div>
-          </div>
- 
-        </div>
- 
       <!-- End Thumbnails -->
- 
- 
-      <!-- Footer -->
- 
-        <footer class="row">
-        <div class="large-12 columns"><hr>
-            <div class="row">
- 
-              <div class="large-6 columns">
-                  <p>© Copyright no one at all. Go to town.</p>
-              </div>
- 
-              <div class="large-6 columns">
-                  <ul class="inline-list right">
-                    <li><a href="#">Link 1</a></li>
-                    <li><a href="#">Link 2</a></li>
-                    <li><a href="#">Link 3</a></li>
-                    <li><a href="#">Link 4</a></li>
-                  </ul>
-              </div>
- 
-            </div>
-        </div>
-      </footer>
- 
-      <!-- End Footer -->
- 
- 
     </div>
   </div>
+  <div id="foot">
+	<p>� Copyright Onlinejatek.fnf.hu @ 2014</p>
+	</div>
     <script src="./static/jquery.js"></script>
     <script src="./static/foundation.js"></script>
     <script>
