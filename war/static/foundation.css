@@ -45,10 +45,11 @@ width:100%;
 display:inline;
 
 }
-#left_side{
+#left_side img{
 }
 #middle_content {
-width:50%;
+width:900px;
+float:left;
 }
 #right_side{
 }

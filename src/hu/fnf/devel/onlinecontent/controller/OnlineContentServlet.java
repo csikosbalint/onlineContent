@@ -24,7 +24,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static final String LIST = "entityList";
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
-	private static final int pageSize = 2;
+	private static final int pageSize = 12;
 	
 	
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
@@ -50,8 +50,9 @@ public class OnlineContentServlet extends HttpServlet {
 		classCount++;
 		if (req.getParameter("debug") != null ) {
 			out.println("<pre>There are currently " + instances.size() + " instances.</pre>");
-			out.println("<pre>Instance has been accessed " + count + " times.</pre>");
+			out.println("<pre>Instance has been accessed " + count + " times.?</pre>");
 			out.println("<pre>Class has been accessed " + classCount + " times.</pre>");
+			out.println("<pre>PageSize = " + pageSize + " </pre>");
 		}
 		if (req.getParameter("force-reload") != null ) {
 			list = new TreeSet<Content>((List<Content>)pm.newQuery(Content.class).execute());
@@ -64,7 +65,8 @@ public class OnlineContentServlet extends HttpServlet {
 		} else {
 			// got to the current element
 			Iterator<Content> it = list.iterator();
-			for ( int i = 0 ,e =pageSize*(pageActual-1); i<e ; i++ ) {
+			
+			for ( int i = 0; i<(pageSize*(pageActual-1)) ; i++ ) {
 				it.next();
 			}
 			// create subList from pageSize*pageActual to  pageSize*(pageActual+1)
