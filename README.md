@@ -9,8 +9,9 @@ BASIC FEATURES: (milestone-0)
   * content modification option for human admins
   * continous background search, edit and store
 
-ADVENCED FEATURES: (milestione-1)
+ADVANCED FEATURES: (milestione-1)
+  * stb
 
 Collaborators:
-Laszlo Hallai
+Laszlo Hallai \\
 Balint Csikos
