@@ -13,5 +13,5 @@ ADVANCED FEATURES: (milestione-1)
   * stb
 
 Collaborators:
-Laszlo Hallai \\
+Laszlo Hallai </br>
 Balint Csikos
