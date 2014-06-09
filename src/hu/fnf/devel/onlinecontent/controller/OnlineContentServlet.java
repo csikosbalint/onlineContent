@@ -20,76 +20,97 @@ import javax.servlet.http.HttpSession;
 
 @SuppressWarnings("serial")
 public class OnlineContentServlet extends HttpServlet {
+	public OnlineContentServlet() {
+		System.out.println("init version: 1");
+	}
 
 	private static final String LIST = "entityList";
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int pageSize = 12;
-	
+	public static boolean search = true;
 	
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 	@SuppressWarnings("unchecked")
-	private static TreeSet<Content> list = new TreeSet<>((List<Content>)pm.newQuery(Content.class).execute());
+	private static TreeSet<Content> list = new TreeSet<>((List<Content>) pm.newQuery(Content.class).execute());
 
-	private static int classCount = 0; // shared by all instances
-	private static Hashtable<HttpServlet, HttpServlet> instances = new Hashtable<HttpServlet, HttpServlet>(); // also shared
-	
-	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		if (req.getParameter("user").equals("admin") && req.getParameter("pass").equals("Macska8")) {
+			HttpSession session = req.getSession(true);
+			if (session.getAttribute("admin") == null) {
+				session.setAttribute("admin", "admin: " + req.getRemoteAddr());
+			}
+		}
+		resp.sendRedirect("/");
+	}
+
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		int count = 0; // separate for each servlet
-		int pageActual = req.getParameter("page") == null ? 1 : Integer.valueOf(req.getParameter("page"));
-		HttpSession session = req.getSession(true);
-		if (session.getAttribute("cica") == null) {
-			session.setAttribute("cica", "kutya");
-		}
 		resp.setContentType("text/plain; charset=utf-8");
-		PrintWriter out = resp.getWriter();
+		int pageActual = req.getParameter("page") == null ? 1 : Integer.valueOf(req.getParameter("page"));
+		/*
+		 * Session
+		 */
+		HttpSession session = req.getSession(true);
+		if (session.getAttribute("admin") != null) {
+			System.out.println("admin from " + session.getAttribute("admin") );
+			System.out.println("action: " + req.getParameterMap().toString());
+			
+			/*
+			 * Admin functions
+			 */
+			if (req.getParameter("resetContent") != null) {
+				resetContent(req.getParameter("resetContent"));
+			}
 
-		count++;
-		instances.put(this, this);
-		classCount++;
-		if (req.getParameter("debug") != null ) {
-			out.println("<pre>There are currently " + instances.size() + " instances.</pre>");
-			out.println("<pre>Instance has been accessed " + count + " times.?</pre>");
-			out.println("<pre>Class has been accessed " + classCount + " times.</pre>");
-			out.println("<pre>PageSize = " + pageSize + " </pre>");
+			if (req.getParameter("forceReload") != null) {
+				forceReload();
+			}
 		}
-		if (req.getParameter("force-reload") != null ) {
-			list = new TreeSet<Content>((List<Content>)pm.newQuery(Content.class).execute());
-		}
+		req.setAttribute("session", session);
+
 		RequestDispatcher view;
-		if ( req.getParameter("contentname") != null ) {
+		if (req.getParameter("contentname") != null) {
 			view = req.getRequestDispatcher("entity.jsp");
 			Content content = pm.getObjectById(Content.class, req.getParameter("contentname"));
 			req.setAttribute("content", content);
+		} else if ( req.getParameter("login") != null ) {
+			view = req.getRequestDispatcher("login.jsp");
 		} else {
 			// got to the current element
 			Iterator<Content> it = list.iterator();
-			
-			for ( int i = 0; i<(pageSize*(pageActual-1)) ; i++ ) {
+
+			for (int i = 0; i < (pageSize * (pageActual - 1)); i++) {
 				it.next();
 			}
-			// create subList from pageSize*pageActual to  pageSize*(pageActual+1)
-			TreeSet<Content> contents  = new TreeSet<>();
-			for ( int i = 0; i < pageSize; i++) {
-				if ( it.hasNext() ) {
+			// create subList from pageSize*pageActual to
+			// pageSize*(pageActual+1)
+			TreeSet<Content> contents = new TreeSet<>();
+			for (int i = 0; i < pageSize; i++) {
+				if (it.hasNext()) {
 					Content content = it.next();
-					if ( content.getThumbBlobUrl() == null ) {
-						content.setThumbBlobUrl("static/noimage.gif");
-					}
 					contents.add(content);
 				}
 			}
 			view = req.getRequestDispatcher("index.jsp");
 			req.setAttribute(OnlineContentServlet.LIST, contents);
-			req.setAttribute(OnlineContentServlet.LISTSIZE, (list.size()/pageSize)+1);
+			req.setAttribute(OnlineContentServlet.LISTSIZE, (list.size() / pageSize) + 1);
 			req.setAttribute(OnlineContentServlet.PAGEACTUAL, pageActual);
 		}
-		
+
 		try {
 			view.forward(req, resp);
 		} catch (ServletException e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	private void forceReload() {
+		list = new TreeSet<Content>((List<Content>) pm.newQuery(Content.class).execute());
+	}
+
+	private void resetContent(String parameter) {
+		// TODO Auto-generated method stub
+
 	}
 }

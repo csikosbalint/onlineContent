@@ -34,7 +34,9 @@
 	 <img src="/static/banner_v.gif"/>
 	</div>
 	<div id="middle_content" class="mid">
-	
+	<div id="right_side" class="left column_size_25">
+
+	</div>
 <div class="row">
     
         <div class="row">
@@ -148,7 +150,7 @@
     </div>
   </div>
   <div id="foot">
-	<p>© Copyright Onlinejatek.fnf.hu @ 2014</p>
+	<p>ï¿½ Copyright Onlinejatek.fnf.hu @ 2014</p>
 	</div>
     <script src="./static/jquery.js"></script>
     <script src="./static/foundation.js"></script>

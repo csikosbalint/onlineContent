@@ -157,10 +157,17 @@
 			<!-- End Footer -->
 		</div>
 	</div>
+	<div id="right_side" class="right column_size_25">
+		<% if (pageContext.getAttribute("session") != null && ((HttpSession)pageContext.getAttribute("session")).getAttribute("admin") != null ) { %>
+		<button type="button">Reload</button>
+		<% } else { %> 
+		<img src="/static/banner_v.gif">
+		<% } %>
+	</div>
 	</div>
 	</div>
 	<div id="foot">
-	<p>© Copyright Onlinejatek.fnf.hu @ 2014</p>
+	<p>ï¿½ Copyright Onlinejatek.fnf.hu @ 2014</p>
 	</div>
 	<script src="./static/jquery.js"></script>
 	<script src="./static/foundation.js"></script>

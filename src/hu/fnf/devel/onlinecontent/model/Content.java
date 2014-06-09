@@ -1,9 +1,11 @@
 package hu.fnf.devel.onlinecontent.model;
 
+import hu.fnf.devel.onlinecontent.controller.OnlineContentServlet;
 import hu.fnf.devel.onlinecontent.controller.Receiver;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -15,6 +17,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.Customsearch.Cse.List;
+import com.google.api.services.customsearch.model.Result;
 import com.google.api.services.customsearch.model.Search;
 
 @PersistenceCapable
@@ -30,6 +33,16 @@ public class Content implements Serializable, Comparable<Content> {
 	public static final String DESCRIPTION = "description";
 	public static final String CONTENT_SOURCE_URL = "contentSourceUrl";
 	public static final String CONTENT_CREATION = "contentCreation";
+	/*
+	 * com.google.appengine.api.datastore.QueryResultsSourceImpl
+	 * logChunkSizeWarning: This query does not have a chunk size set in
+	 * FetchOptions and has returned over 1000 results. If result sets of this
+	 * size are common for this query, consider setting a chunk size to improve
+	 * performance. To disable this warning set the following system property in
+	 * appengine-web.xml (the value of the property doesn't matter):
+	 * 'appengine.datastore.disableChunkSizeWarning'
+	 */
+
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private String nameKey;
@@ -46,39 +59,65 @@ public class Content implements Serializable, Comparable<Content> {
 	@Persistent
 	private String description;
 	@Persistent
-	private String[] thumbSearchKeyWords;
+	private java.util.List<String> thumbSearchKeyWords;
 	@Persistent
 	private Date contentCreation;
-	
-	private String searchThumbnail() {
-		Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
-				.setApplicationName("ThumbSearch").build();
-		try {
-			List l = thumbSearch.cse().list(this.getSearchKeyWords() + " online game");
-			l.setNum(1L);
-			l.setCx("004811520739431370780:ggegf7qshxe");
-			l.setSafe("high");
-			l.setFilter("1");
-			l.setSearchType("image");
-			l.setImgSize("large");
-			l.setKey("AIzaSyDiZfaoVfU5FeORRwSuvBC3tk1UJQ5N-XI");
 
-			Search imgResult = l.execute();
-			// System.out.println("result: " + imgResult.toPrettyString());
-			if (imgResult.getItems() != null) {
-				System.out.println(imgResult.getSearchInformation().toPrettyString());
-				// thumbsrc
-				System.out.println("found image: " + imgResult.getItems().size());
-				return imgResult.getItems().get(0).getLink();
+	private String searchThumbnail() {
+		if (OnlineContentServlet.search) {
+			System.out.println("searching...(only once)");
+			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
+					.setApplicationName("ThumbSearch").build();
+			try {
+				StringBuffer searchKeyWords = new StringBuffer();
+				searchKeyWords.append("\"");
+				if (this.getSearchKeyWords().size() == 0) {
+					searchKeyWords.append(this.getDisplayName());
+				} else {
+					for (String str : this.getSearchKeyWords()) {
+						searchKeyWords.append(str);
+					}
+				}
+				searchKeyWords.append("\" online game");
+				System.out.println("search keywords: " + (searchKeyWords));
+				List l = thumbSearch.cse().list(searchKeyWords.toString());
+				// l.setNum(1L);
+				l.setCx("004811520739431370780:ggegf7qshxe");
+				l.setSafe("high");
+				// l.setFilter("1");
+				l.setSearchType("image");
+				// l.setImgSize("large");
+				l.setKey("AIzaSyDiZfaoVfU5FeORRwSuvBC3tk1UJQ5N-XI");
+
+				Search imgResult = l.execute();
+				System.out.println("result: " + imgResult.toPrettyString());
+				if (imgResult.getItems() != null) {
+					System.out.println(imgResult.getSearchInformation().toPrettyString());
+					// thumbsrc
+					int found = 0;
+					while ( !isImageOk(imgResult.getItems().get(found)) ) {
+						found++;
+					}
+					System.out.println("found image: " + imgResult.getItems().size());
+					return imgResult.getItems().get(0).getLink();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return "/static/noimage.gif";
 	}
 
+	private boolean isImageOk(Result result) {
+		String[] bannedUris = {"youtube"};
+		if ( Arrays.asList(bannedUris).contains(result.getDisplayLink()) ) {
+			return false;
+		}
+		return true;
+	}
 
-	public Content(String nameKey, String contentSourceUrl, String[] thumbSearchKeyWords, Date contentCreation) {
+	public Content(String nameKey, String contentSourceUrl, java.util.List<String> thumbSearchKeyWords,
+			Date contentCreation) {
 		super();
 		this.nameKey = nameKey;
 		this.contentSourceUrl = contentSourceUrl;
@@ -94,11 +133,11 @@ public class Content implements Serializable, Comparable<Content> {
 		this.contentCreation = contentCreation;
 	}
 
-	public String[] getSearchKeyWords() {
+	public java.util.List<String> getSearchKeyWords() {
 		return thumbSearchKeyWords;
 	}
 
-	public void setSearchKeyWords(String[] searchKeyWords) {
+	public void setSearchKeyWords(java.util.List<String> searchKeyWords) {
 		this.thumbSearchKeyWords = searchKeyWords;
 	}
 
@@ -113,6 +152,7 @@ public class Content implements Serializable, Comparable<Content> {
 	private Content() {
 		// TODO Auto-generated constructor stub
 	}
+
 	public Content(String name) {
 		this();
 		this.nameKey = name;
@@ -135,10 +175,11 @@ public class Content implements Serializable, Comparable<Content> {
 	}
 
 	public String getThumbBlobUrl() {
-		
+
 		if (thumbLocaleUrl == null || thumbLocaleUrl.contains("noimage")) {
 			String thumbnail = searchThumbnail();
-			this.setThumbBlobUrl(Receiver.srcUri(thumbnail, this));
+			System.out.println("Found thumbnail: " + thumbnail);
+			thumbLocaleUrl = Receiver.srcUri(thumbnail, this);
 		}
 		return thumbLocaleUrl;
 	}
