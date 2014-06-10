@@ -15,9 +15,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.logging.Logger;
+
 
 @SuppressWarnings("serial")
 public class OnlineContentServlet extends HttpServlet {
+	private static final Logger log = Logger.getLogger(Content.class.getName());
+
 	public OnlineContentServlet() {
 		System.out.println("init version: 1");
 	}
@@ -103,6 +107,7 @@ public class OnlineContentServlet extends HttpServlet {
 
 	private void forceReload() {
 		list = new TreeSet<Content>((List<Content>) pm.newQuery(Content.class).execute());
+		log.info(list.size() + " elements have been loaded!");
 	}
 
 	private void resetContent(String parameter) {

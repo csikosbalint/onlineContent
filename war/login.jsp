@@ -3,8 +3,8 @@
 
 
 
-<form action="/?forceReload">
-<button type="submit">Reload list from database (new query)</button>
+<form action="/">
+<button type="submit" id="forceReload">Reload list from database (new query)</button>
 </form>
 
 
