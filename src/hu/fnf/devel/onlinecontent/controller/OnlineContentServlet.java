@@ -53,14 +53,12 @@ public class OnlineContentServlet extends HttpServlet {
 		if (session.getAttribute("admin") != null) {
 			System.out.println("admin from " + session.getAttribute("admin") );
 			System.out.println("action: " + req.getParameterMap().toString());
-			
 			/*
 			 * Admin functions
 			 */
 			if (req.getParameter("resetContent") != null) {
 				resetContent(req.getParameter("resetContent"));
 			}
-
 			if (req.getParameter("forceReload") != null) {
 				forceReload();
 			}

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -63,8 +64,11 @@ public class Content implements Serializable, Comparable<Content> {
 	@Persistent
 	private Date contentCreation;
 
+	private static final Logger log = Logger.getLogger(Content.class.getName());
+
 	private String searchThumbnail() {
 		if (OnlineContentServlet.search) {
+			log.info("searching...(only once)");
 			System.out.println("searching...(only once)");
 			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
 					.setApplicationName("ThumbSearch").build();
@@ -78,9 +82,11 @@ public class Content implements Serializable, Comparable<Content> {
 						searchKeyWords.append(str);
 					}
 				}
+				
 				searchKeyWords.append("\" online game");
 				System.out.println("search keywords: " + (searchKeyWords));
 				List l = thumbSearch.cse().list(searchKeyWords.toString());
+				//l.set
 				// l.setNum(1L);
 				l.setCx("004811520739431370780:ggegf7qshxe");
 				l.setSafe("high");

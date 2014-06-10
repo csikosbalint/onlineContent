@@ -1,4 +1,15 @@
 <html>
+<% if (request.getAttribute("session") != null && ((HttpSession)request.getAttribute("session")).getAttribute("admin") != null ) { %>
+
+
+
+<form action="/?forceReload">
+<button type="submit">Reload list from database (new query)</button>
+</form>
+
+
+
+<% } else { %>
 <script>
 function validate(){
 var username=document.form.user.value;
@@ -21,17 +32,5 @@ return true;
 <tr><td></td><td><input type="submit" value="Submit"></td></tr>
 </table>
 </form>
-<%= ((HttpSession)request.getAttribute("session")).toString() %>
-		<% if (request.getAttribute("session") != null && ((HttpSession)request.getAttribute("session")).getAttribute("admin") != null ) { %>
-		<button type="button">Reload</button>
-		<% } else { %> 
-		<img src="/static/banner_v.gif">
-		<% } %>
+<% } %>
 </html>
-<%String msg=request.getParameter("msg");
-if(msg!=null){
-    %>
-<label><font color="red"><%=msg%></font></label> 
-<%
-}
-%>
