@@ -4,8 +4,6 @@ import hu.fnf.devel.onlinecontent.model.Content;
 import hu.fnf.devel.onlinecontent.model.PMF;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -28,7 +26,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int pageSize = 12;
-	public static boolean search = true;
+	public static boolean search = false;
 	
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 	@SuppressWarnings("unchecked")
