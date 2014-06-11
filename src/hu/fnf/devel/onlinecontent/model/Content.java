@@ -1,11 +1,9 @@
 package hu.fnf.devel.onlinecontent.model;
 
-import hu.fnf.devel.onlinecontent.controller.OnlineContentServlet;
 import hu.fnf.devel.onlinecontent.controller.Receiver;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -18,7 +16,6 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.Customsearch.Cse.List;
-import com.google.api.services.customsearch.model.Result;
 import com.google.api.services.customsearch.model.Search;
 
 @PersistenceCapable
@@ -63,18 +60,20 @@ public class Content implements Serializable, Comparable<Content> {
 	private java.util.List<String> thumbSearchKeyWords;
 	@Persistent
 	private Date contentCreation;
+	
+	private static boolean once = true;
 
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 
 	private String searchThumbnail() {
-		if (OnlineContentServlet.search) {
+		log.info("search");
+		if (/*OnlineContentServlet.search && */once) {
+			once = false;
 			log.info("searching...(only once)");
-			System.out.println("searching...(only once)");
 			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
 					.setApplicationName("ThumbSearch").build();
 			try {
 				StringBuffer searchKeyWords = new StringBuffer();
-				searchKeyWords.append("\"");
 				if (this.getSearchKeyWords().size() == 0) {
 					searchKeyWords.append(this.getDisplayName());
 				} else {
@@ -83,43 +82,31 @@ public class Content implements Serializable, Comparable<Content> {
 					}
 				}
 				
-				searchKeyWords.append("\" online game");
+				searchKeyWords.append(" online game");
 				System.out.println("search keywords: " + (searchKeyWords));
 				List l = thumbSearch.cse().list(searchKeyWords.toString());
-				//l.set
-				// l.setNum(1L);
 				l.setCx("004811520739431370780:ggegf7qshxe");
 				l.setSafe("high");
-				// l.setFilter("1");
+				l.setFilter("1");
 				l.setSearchType("image");
 				// l.setImgSize("large");
 				l.setKey("AIzaSyDiZfaoVfU5FeORRwSuvBC3tk1UJQ5N-XI");
 
 				Search imgResult = l.execute();
 				System.out.println("result: " + imgResult.toPrettyString());
-				if (imgResult.getItems() != null) {
-					System.out.println(imgResult.getSearchInformation().toPrettyString());
+				if (imgResult.getItems() != null && imgResult.getItems().size() != 0) {
+					log.warning(imgResult.getSearchInformation().toPrettyString());
 					// thumbsrc
-					int found = 0;
-					while ( !isImageOk(imgResult.getItems().get(found)) ) {
-						found++;
-					}
-					System.out.println("found image: " + imgResult.getItems().size());
 					return imgResult.getItems().get(0).getLink();
+				} else {
+					log.warning("search was not successful: " + this.getNameKey());
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		log.warning("Useing default thumbnail for: " + this.getNameKey());
 		return "/static/noimage.gif";
-	}
-
-	private boolean isImageOk(Result result) {
-		String[] bannedUris = {"youtube"};
-		if ( Arrays.asList(bannedUris).contains(result.getDisplayLink()) ) {
-			return false;
-		}
-		return true;
 	}
 
 	public Content(String nameKey, String contentSourceUrl, java.util.List<String> thumbSearchKeyWords,
@@ -184,7 +171,6 @@ public class Content implements Serializable, Comparable<Content> {
 
 		if (thumbLocaleUrl == null || thumbLocaleUrl.contains("noimage")) {
 			String thumbnail = searchThumbnail();
-			System.out.println("Found thumbnail: " + thumbnail);
 			thumbLocaleUrl = Receiver.srcUri(thumbnail, this);
 		}
 		return thumbLocaleUrl;

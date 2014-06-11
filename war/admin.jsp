@@ -4,7 +4,7 @@
 
 
 <form action="/">
-<button type="submit" id="forceReload">Reload list from database (new query)</button>
+<button type="submit" name="forceReload">Reload list from database (new query)</button>
 </form>
 
 
@@ -25,7 +25,7 @@ if(password==""){
 return true;
 }
 </script>
-<form name="form" method="post" action="/admin" onsubmit="javascript:return validate();">
+<form name="form" method="post" action="/" onsubmit="javascript:return validate();">
 <table>
 <tr><td>Username:</td><td><input type="text" name="user"></td></tr>
 <tr><td>Password:</td><td><input type="password" name="pass"></td></tr>

@@ -3,7 +3,6 @@ package hu.fnf.devel.onlinecontent.model.background;
 import hu.fnf.devel.onlinecontent.model.Content;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.concurrent.BlockingQueue;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;

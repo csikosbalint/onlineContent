@@ -15,22 +15,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.util.logging.Logger;
 
 
 @SuppressWarnings("serial")
 public class OnlineContentServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(Content.class.getName());
-
-	public OnlineContentServlet() {
-		System.out.println("init version: 1");
-	}
-
 	private static final String LIST = "entityList";
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int pageSize = 12;
-	public static boolean search = false;
+	public static boolean search = true;
 	
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 	@SuppressWarnings("unchecked")
@@ -42,9 +38,10 @@ public class OnlineContentServlet extends HttpServlet {
 			HttpSession session = req.getSession(true);
 			if (session.getAttribute("admin") == null) {
 				session.setAttribute("admin", "admin: " + req.getRemoteAddr());
+				log.warning("login: " + session.getAttribute("admin") );
 			}
 		}
-		resp.sendRedirect("/");
+		resp.sendRedirect("/?admin");
 	}
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -53,9 +50,9 @@ public class OnlineContentServlet extends HttpServlet {
 		/*
 		 * Session
 		 */
+		RequestDispatcher view;
 		HttpSession session = req.getSession(true);
 		if (session.getAttribute("admin") != null) {
-			System.out.println("admin from " + session.getAttribute("admin") );
 			System.out.println("action: " + req.getParameterMap().toString());
 			/*
 			 * Admin functions
@@ -69,13 +66,12 @@ public class OnlineContentServlet extends HttpServlet {
 		}
 		req.setAttribute("session", session);
 
-		RequestDispatcher view;
 		if (req.getParameter("contentname") != null) {
 			view = req.getRequestDispatcher("entity.jsp");
 			Content content = pm.getObjectById(Content.class, req.getParameter("contentname"));
 			req.setAttribute("content", content);
-		} else if ( req.getParameter("login") != null ) {
-			view = req.getRequestDispatcher("login.jsp");
+		} else if ( req.getParameter("admin") != null ) {
+			view = req.getRequestDispatcher("admin.jsp");
 		} else {
 			// got to the current element
 			Iterator<Content> it = list.iterator();
@@ -105,9 +101,10 @@ public class OnlineContentServlet extends HttpServlet {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void forceReload() {
 		list = new TreeSet<Content>((List<Content>) pm.newQuery(Content.class).execute());
-		log.info(list.size() + " elements have been loaded!");
+		log.info(list.size() + " elements have been reloaded!");
 	}
 
 	private void resetContent(String parameter) {

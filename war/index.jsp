@@ -57,7 +57,13 @@
 	</div>
 	<div id="content_frame">
 	<div id="left_side" class="left column_size_25">
-	 <img src="/static/banner_v.gif"/>
+		<% if (request.getAttribute("session") != null && ((HttpSession)request.getAttribute("session")).getAttribute("admin") != null ) { %>
+		<form action="/">
+		<button type="submit" name="forceReload">Reload</button>
+		</form>
+		<% } else { %> 
+		<img src="/static/banner_v.gif">
+		<% } %>
 	</div>
 	<div id="middle_content" class="mid">
 		<div class="row">
@@ -158,11 +164,6 @@
 		</div>
 	</div>
 	<div id="right_side" class="right column_size_25">
-		<% if (pageContext.getAttribute("session") != null && ((HttpSession)pageContext.getAttribute("session")).getAttribute("admin") != null ) { %>
-		<button type="button">Reload</button>
-		<% } else { %> 
-		<img src="/static/banner_v.gif">
-		<% } %>
 	</div>
 	</div>
 	</div>
