@@ -1,5 +1,6 @@
 package hu.fnf.devel.onlinecontent.model;
 
+import hu.fnf.devel.onlinecontent.controller.OnlineContentServlet;
 import hu.fnf.devel.onlinecontent.controller.Receiver;
 
 import java.io.IOException;
@@ -66,8 +67,7 @@ public class Content implements Serializable, Comparable<Content> {
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 
 	private String searchThumbnail() {
-		log.info("search");
-		if (/*OnlineContentServlet.search && */once) {
+		if (OnlineContentServlet.search && once) {
 			once = false;
 			log.info("searching...(only once)");
 			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)

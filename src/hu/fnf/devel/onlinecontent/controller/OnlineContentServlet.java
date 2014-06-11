@@ -4,6 +4,8 @@ import hu.fnf.devel.onlinecontent.model.Content;
 import hu.fnf.devel.onlinecontent.model.PMF;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
@@ -26,7 +28,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int pageSize = 12;
-	public static boolean search = true;
+	public static boolean search = false;
 	
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 	@SuppressWarnings("unchecked")
@@ -53,7 +55,6 @@ public class OnlineContentServlet extends HttpServlet {
 		RequestDispatcher view;
 		HttpSession session = req.getSession(true);
 		if (session.getAttribute("admin") != null) {
-			System.out.println("action: " + req.getParameterMap().toString());
 			/*
 			 * Admin functions
 			 */
@@ -62,6 +63,9 @@ public class OnlineContentServlet extends HttpServlet {
 			}
 			if (req.getParameter("forceReload") != null) {
 				forceReload();
+			}
+			if ( req.getParameter("changeAndSearch") != null ) {
+				changeAndSearch(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
 			}
 		}
 		req.setAttribute("session", session);
@@ -99,6 +103,11 @@ public class OnlineContentServlet extends HttpServlet {
 		} catch (ServletException e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	private void changeAndSearch(String searchKeyWords, String nameKey) {
+		Content content = pm.getObjectById(Content.class, nameKey);
+		content.setSearchKeyWords(new ArrayList<String>(Arrays.asList(searchKeyWords.split(" "))));
 	}
 
 	@SuppressWarnings("unchecked")

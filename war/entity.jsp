@@ -31,7 +31,18 @@
 	</div>
 	<div id="content_frame">
 	<div id="left_side" class="left column_size_25">
-	 <img src="/static/banner_v.gif"/>
+	
+	<% if (request.getAttribute("session") != null && ((HttpSession)request.getAttribute("session")).getAttribute("admin") != null ) { %>
+		<img src="<%= ((Content) request.getAttribute("content")).getThumbBlobUrl() %>" />
+		<form action="/">
+		<%= ((Content) request.getAttribute("content")).getDisplayName() %>
+		<input type="hidden" name="contentname" value="<%= ((Content) request.getAttribute("content")).getNameKey()%>"/>
+		<input type="text" name="searchKeyWords" value="<%= ((Content) request.getAttribute("content")).getSearchKeyWords().toString() %>"/></br>
+		<button type="submit" name="changeAndSearch">Change and Search</button>
+		</form>
+	<% } else { %> 
+		<img src="/static/banner_v.gif">
+	<% } %>
 	</div>
 	<div id="middle_content" class="mid">
 	<div id="right_side" class="left column_size_25">
@@ -46,8 +57,7 @@
 			<embed src="<%= ((Content) request.getAttribute("content")).getContentSourceUrl()%>" quality=high pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="720" height="540"></embed>
  
           </div>
- 
- 
+
 <!--           <div class="large-6 columns"> -->
  
 <!--             <h3 class="show-for-small">Header<hr></h3> -->
