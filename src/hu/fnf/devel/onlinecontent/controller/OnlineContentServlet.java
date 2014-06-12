@@ -28,7 +28,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int pageSize = 12;
-	public static boolean search = false;
+	public static boolean search = true;
 	
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 	@SuppressWarnings("unchecked")
@@ -108,6 +108,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private void changeAndSearch(String searchKeyWords, String nameKey) {
 		Content content = pm.getObjectById(Content.class, nameKey);
 		content.setSearchKeyWords(new ArrayList<String>(Arrays.asList(searchKeyWords.split(" "))));
+		content.setThumbBlobUrl("/static/noimage.gif");
 	}
 
 	@SuppressWarnings("unchecked")

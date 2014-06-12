@@ -12,6 +12,7 @@
   <!-- Configure java.util.logging -->
   <system-properties>
     <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+    <property name="appengine.datastore.disableChunkSizeWarning" value="true"/>
   </system-properties>
 
   <!--

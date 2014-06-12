@@ -32,15 +32,6 @@ public class Content implements Serializable, Comparable<Content> {
 	public static final String DESCRIPTION = "description";
 	public static final String CONTENT_SOURCE_URL = "contentSourceUrl";
 	public static final String CONTENT_CREATION = "contentCreation";
-	/*
-	 * com.google.appengine.api.datastore.QueryResultsSourceImpl
-	 * logChunkSizeWarning: This query does not have a chunk size set in
-	 * FetchOptions and has returned over 1000 results. If result sets of this
-	 * size are common for this query, consider setting a chunk size to improve
-	 * performance. To disable this warning set the following system property in
-	 * appengine-web.xml (the value of the property doesn't matter):
-	 * 'appengine.datastore.disableChunkSizeWarning'
-	 */
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -62,12 +53,12 @@ public class Content implements Serializable, Comparable<Content> {
 	@Persistent
 	private Date contentCreation;
 	
-	private static boolean once = true;
+	private  boolean once = true;
 
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 
 	private String searchThumbnail() {
-		if (OnlineContentServlet.search && once) {
+		if (OnlineContentServlet.search ) {
 			once = false;
 			log.info("searching...(only once)");
 			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
