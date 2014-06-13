@@ -93,7 +93,7 @@
 							<ul class="inline-list right">
 							<c:choose>
 								<c:when test="${requestScope.pageActual > 4 &&  requestScope.pageActual <= requestScope.listSize-4}">
-									<li><a href="/?page=${requestScope.pageActual - 1}"><-</a></li>
+									<li><a href="/?page=${requestScope.pageActual - 1}"><-prev</a></li>
 									<li><a href="/?page=1">1</a></li>
 									<li>...</li>
 									<c:forEach var="i" begin="${requestScope.pageActual-2}" end="${requestScope.pageActual+2}">
@@ -108,14 +108,14 @@
 									</c:forEach>
 									<li>...</li>
 									<li><a href="/?page=${requestScope.listSize}">${requestScope.listSize}</a></li>
-									<li><a href="/?page=${requestScope.pageActual + 1}">-></a></li>
+									<li><a href="/?page=${requestScope.pageActual + 1}">next-></a></li>
 								</c:when>
 								<c:otherwise>
 									<c:choose>
 										<c:when test="${requestScope.pageActual <= 4}">
 											<c:choose>
 												<c:when test="${requestScope.pageActual != 1}">
-													<li><a href="/?page=${requestScope.pageActual - 1}"><-</a></li>
+													<li><a href="/?page=${requestScope.pageActual - 1}"><-prev</a></li>
 												</c:when>
 											</c:choose>				
 											<c:forEach var="i" begin="1" end="${requestScope.pageActual+2}">
@@ -130,10 +130,10 @@
 											</c:forEach>
 											<li>...</li>
 											<li><a href="/?page=${requestScope.listSize}">${requestScope.listSize}</a></li>
-											<li><a href="/?page=${requestScope.pageActual + 1}">-></a></li>
+											<li><a href="/?page=${requestScope.pageActual + 1}">next-></a></li>
 										</c:when>
 										<c:otherwise>
-											<li><a href="/?page=${requestScope.pageActual - 1}"><-</a></li>
+											<li><a href="/?page=${requestScope.pageActual - 1}"><-prev</a></li>
 											<li><a href="/?page=1">1</a></li>
 											<li>...</li>
 											<c:forEach var="i" begin="${requestScope.pageActual-2}" end="${requestScope.listSize}">
@@ -148,7 +148,7 @@
 											</c:forEach>
 											<c:choose>
 												<c:when test="${requestScope.pageActual != requestScope.listSize}">
-													<li><a href="/?page=${requestScope.pageActual + 1}">-></a></li>
+													<li><a href="/?page=${requestScope.pageActual + 1}">next-></a></li>
 												</c:when>
 											</c:choose>
 										</c:otherwise>
@@ -167,8 +167,8 @@
 	</div>
 	</div>
 	</div>
-	<div id="foot">
-	<p>� Copyright Onlinejatek.fnf.hu @ 2014</p>
+	<!-- <div id="foot"> -->
+	<p>Copyright Onlinejatek.fnf.hu @ 2014</p>
 	</div>
 	<script src="./static/jquery.js"></script>
 	<script src="./static/foundation.js"></script>

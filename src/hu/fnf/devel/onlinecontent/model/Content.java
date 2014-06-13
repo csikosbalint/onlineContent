@@ -53,13 +53,10 @@ public class Content implements Serializable, Comparable<Content> {
 	@Persistent
 	private Date contentCreation;
 	
-	private  boolean once = true;
-
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 
 	private String searchThumbnail() {
 		if (OnlineContentServlet.search ) {
-			once = false;
 			log.info("searching...(only once)");
 			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
 					.setApplicationName("ThumbSearch").build();
@@ -69,11 +66,11 @@ public class Content implements Serializable, Comparable<Content> {
 					searchKeyWords.append(this.getDisplayName());
 				} else {
 					for (String str : this.getSearchKeyWords()) {
-						searchKeyWords.append(str);
+						searchKeyWords.append(str + " ");
 					}
 				}
 				
-				searchKeyWords.append(" online game");
+				searchKeyWords.append("online game");
 				System.out.println("search keywords: " + (searchKeyWords));
 				List l = thumbSearch.cse().list(searchKeyWords.toString());
 				l.setCx("004811520739431370780:ggegf7qshxe");
@@ -86,11 +83,11 @@ public class Content implements Serializable, Comparable<Content> {
 				Search imgResult = l.execute();
 				System.out.println("result: " + imgResult.toPrettyString());
 				if (imgResult.getItems() != null && imgResult.getItems().size() != 0) {
-					log.warning(imgResult.getSearchInformation().toPrettyString());
 					// thumbsrc
 					return imgResult.getItems().get(0).getLink();
 				} else {
 					log.warning("search was not successful: " + this.getNameKey());
+					log.warning(imgResult.getSearchInformation().toPrettyString());
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -1,7 +1,7 @@
 #top_part {
 height:170px;
 width:100%;
-background: url(/static/top_bg_1.png) repeat-x;
+/* background: url(/static/top_bg_1.png) repeat-x; */
 text-align:center;
 position:relative;
 margin:0 auto 0 auto;
@@ -10,7 +10,7 @@ margin:0 auto 0 auto;
 #foot {
 height:80px;
 width:100%;
-background: url(/static/btn_bg.png) repeat-x;
+/* background: url(/static/btn_bg.png) repeat-x; */
 text-align:center;
 position:relative;
 margin:0 auto 0 auto;
