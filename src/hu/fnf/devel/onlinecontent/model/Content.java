@@ -3,21 +3,15 @@ package hu.fnf.devel.onlinecontent.model;
 import hu.fnf.devel.onlinecontent.controller.OnlineContentServlet;
 import hu.fnf.devel.onlinecontent.controller.Receiver;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.customsearch.Customsearch;
-import com.google.api.services.customsearch.Customsearch.Cse.List;
-import com.google.api.services.customsearch.model.Search;
+import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
 public class Content implements Serializable, Comparable<Content> {
@@ -35,7 +29,7 @@ public class Content implements Serializable, Comparable<Content> {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private String nameKey;
+	private Key nameKey;
 	@Persistent
 	private String displayName;
 	@Persistent
@@ -45,61 +39,28 @@ public class Content implements Serializable, Comparable<Content> {
 	@Persistent
 	private String thumbLocaleUrl;
 	@Persistent
-	private java.util.List<String> categories;
+	private java.util.List<Category> categories;
 	@Persistent
 	private String description;
 	@Persistent
 	private java.util.List<String> thumbSearchKeyWords;
 	@Persistent
 	private Date contentCreation;
+	@Persistent
+	private boolean keptBack;
 	
-	private static final Logger log = Logger.getLogger(Content.class.getName());
-
-	private String searchThumbnail() {
-		if (OnlineContentServlet.search ) {
-			log.info("searching...(only once)");
-			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
-					.setApplicationName("ThumbSearch").build();
-			try {
-				StringBuffer searchKeyWords = new StringBuffer();
-				if (this.getSearchKeyWords().size() == 0) {
-					searchKeyWords.append(this.getDisplayName());
-				} else {
-					for (String str : this.getSearchKeyWords()) {
-						searchKeyWords.append(str + " ");
-					}
-				}
-				
-				searchKeyWords.append("online game");
-				System.out.println("search keywords: " + (searchKeyWords));
-				List l = thumbSearch.cse().list(searchKeyWords.toString());
-				l.setCx("004811520739431370780:ggegf7qshxe");
-				l.setSafe("high");
-				l.setFilter("1");
-				l.setSearchType("image");
-				// l.setImgSize("large");
-				l.setKey("AIzaSyDiZfaoVfU5FeORRwSuvBC3tk1UJQ5N-XI");
-
-				Search imgResult = l.execute();
-				System.out.println("result: " + imgResult.toPrettyString());
-				if (imgResult.getItems() != null && imgResult.getItems().size() != 0) {
-					// thumbsrc
-					return imgResult.getItems().get(0).getLink();
-				} else {
-					log.warning("search was not successful: " + this.getNameKey());
-					log.warning(imgResult.getSearchInformation().toPrettyString());
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		log.warning("Useing default thumbnail for: " + this.getNameKey());
-		return "/static/noimage.gif";
-	}
-
-	public Content(String nameKey, String contentSourceUrl, java.util.List<String> thumbSearchKeyWords,
-			Date contentCreation) {
+	private Content() {
 		super();
+	}
+	
+	public Content(Key nameKey) {
+		this();
+		this.nameKey = nameKey;
+	}
+	
+	public Content(Key nameKey, String contentSourceUrl, java.util.List<String> thumbSearchKeyWords,
+			Date contentCreation) {
+		this();
 		this.nameKey = nameKey;
 		this.contentSourceUrl = contentSourceUrl;
 		this.thumbSearchKeyWords = thumbSearchKeyWords;
@@ -130,23 +91,10 @@ public class Content implements Serializable, Comparable<Content> {
 		this.displayName = displayName;
 	}
 
-	private Content() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public Content(String name) {
-		this();
-		this.nameKey = name;
-	}
-
-	public String getNameKey() {
+	public Key getNameKey() {
 		return nameKey;
 	}
-
-	public void setNameKey(String nameKey) {
-		this.nameKey = nameKey;
-	}
-
+	
 	public String getThumbSourceUrl() {
 		return thumbRemoteUrl;
 	}
@@ -158,7 +106,7 @@ public class Content implements Serializable, Comparable<Content> {
 	public String getThumbBlobUrl() {
 
 		if (thumbLocaleUrl == null || thumbLocaleUrl.contains("noimage")) {
-			String thumbnail = searchThumbnail();
+			String thumbnail = OnlineContentServlet.searchThumbnail(this);
 			thumbLocaleUrl = Receiver.srcUri(thumbnail, this);
 		}
 		return thumbLocaleUrl;
@@ -166,14 +114,6 @@ public class Content implements Serializable, Comparable<Content> {
 
 	public void setThumbBlobUrl(String thumbBlobUrl) {
 		this.thumbLocaleUrl = thumbBlobUrl;
-	}
-
-	public java.util.List<String> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(java.util.List<String> categories) {
-		this.categories = categories;
 	}
 
 	public String getDescription() {
@@ -190,6 +130,14 @@ public class Content implements Serializable, Comparable<Content> {
 
 	public void setContentSourceUrl(String contentSourceUrl) {
 		this.contentSourceUrl = contentSourceUrl;
+	}
+	
+	public void setKeptBack(boolean keptBack) {
+		this.keptBack = keptBack;
+	}
+	
+	public boolean isKeptBack() {
+		return keptBack;
 	}
 
 	@Override

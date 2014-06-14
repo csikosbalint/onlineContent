@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.files.AppEngineFile;
@@ -43,8 +42,7 @@ public class Receiver extends HttpServlet {
 
 			log("received: " + content.getNameKey());
 			Query q = new Query(Content.class.getSimpleName()).setFilter(FilterOperator.EQUAL.of(
-					com.google.appengine.api.datastore.Entity.KEY_RESERVED_PROPERTY,
-					KeyFactory.createKey(Content.class.getSimpleName(), content.getNameKey())));
+					com.google.appengine.api.datastore.Entity.KEY_RESERVED_PROPERTY, content.getNameKey()));
 
 			if (DatastoreServiceFactory.getDatastoreService().prepare(q).asList(FetchOptions.Builder.withDefaults())
 					.size() == 0) {

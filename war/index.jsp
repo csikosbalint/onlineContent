@@ -167,7 +167,7 @@
 	</div>
 	</div>
 	</div>
-	<!-- <div id="foot"> -->
+	<div id="foot">
 	<p>Copyright Onlinejatek.fnf.hu @ 2014</p>
 	</div>
 	<script src="./static/jquery.js"></script>
