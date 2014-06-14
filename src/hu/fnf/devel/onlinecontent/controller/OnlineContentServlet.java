@@ -24,18 +24,16 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.Customsearch.Cse.List;
 import com.google.api.services.customsearch.model.Search;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 
 @SuppressWarnings("serial")
 public class OnlineContentServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(Content.class.getName());
-	private static final String LIST 		= "entityList";
-	private static final String LISTSIZE 	= "listSize";
-	private static final String PAGEACTUAL 	= "pageActual";
-	private static final int 	PAGESIZE 	= 12;
+	private static final String LIST = "entityList";
+	private static final String LISTSIZE = "listSize";
+	private static final String PAGEACTUAL = "pageActual";
+	private static final int PAGESIZE = 12;
 	public static boolean search = true;
-	
+
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
 	@SuppressWarnings("unchecked")
 	private static TreeSet<Content> list = new TreeSet<>((java.util.List<Content>) pm.newQuery(Content.class).execute());
@@ -46,12 +44,12 @@ public class OnlineContentServlet extends HttpServlet {
 			HttpSession session = req.getSession(true);
 			if (session.getAttribute("admin") == null) {
 				session.setAttribute("admin", "admin: " + req.getRemoteAddr());
-				log.warning("login: " + session.getAttribute("admin") );
+				log.warning("login: " + session.getAttribute("admin"));
 			}
 		}
 		resp.sendRedirect("/?admin");
 	}
-	
+
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain; charset=utf-8");
@@ -61,11 +59,16 @@ public class OnlineContentServlet extends HttpServlet {
 		 */
 		RequestDispatcher view;
 		HttpSession session = req.getSession(true);
-		
+
 		if (session.getAttribute("admin") != null) {
-			Category t = (Category) pm.getObjectById(Category.class, "Dance");
-			Content c = pm.getObjectById(Content.class, t.getMembers().get(0));
-			System.out.println(c.getDisplayName());
+			try {
+				Category t = (Category) pm.getObjectById(Category.class, "Dance");
+				Content c = t.getMembers2().get(0);
+				System.out.println(c.getDisplayName());
+			} catch (Exception e) {
+				log.warning("no such element");
+			}
+
 			/*
 			 * Admin functions
 			 */
@@ -75,11 +78,14 @@ public class OnlineContentServlet extends HttpServlet {
 			if (req.getParameter("forceReload") != null) {
 				forceReload();
 			}
-			if ( req.getParameter("changeAndSearch") != null ) {
+			if (req.getParameter("changeAndSearch") != null) {
 				changeAndSearch(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
 			}
-			if ( req.getParameter("createCategory") != null ) {
+			if (req.getParameter("createCategory") != null) {
 				createCategory(req.getParameter("categoryName"), req.getParameter("categoryKeywords"));
+			}
+			if (req.getParameter("reCalculateContentArgs") != null) {
+				reCalculateContentArgs();
 			}
 		}
 		req.setAttribute("session", session);
@@ -88,7 +94,7 @@ public class OnlineContentServlet extends HttpServlet {
 			view = req.getRequestDispatcher("entity.jsp");
 			Content content = pm.getObjectById(Content.class, req.getParameter("contentname"));
 			req.setAttribute("content", content);
-		} else if ( req.getParameter("admin") != null ) {
+		} else if (req.getParameter("admin") != null) {
 			view = req.getRequestDispatcher("admin.jsp");
 		} else {
 			// got to the current element
@@ -135,9 +141,9 @@ public class OnlineContentServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public static String searchThumbnail(Content content) {
-		if (OnlineContentServlet.search ) {
+		if (OnlineContentServlet.search) {
 			log.info("searching...(only once)");
 			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
 					.setApplicationName("ThumbSearch").build();
@@ -150,7 +156,7 @@ public class OnlineContentServlet extends HttpServlet {
 						searchKeyWords.append(str + " ");
 					}
 				}
-				
+
 				searchKeyWords.append("online game");
 				System.out.println("search keywords: " + (searchKeyWords));
 				List l = thumbSearch.cse().list(searchKeyWords.toString());
@@ -177,19 +183,26 @@ public class OnlineContentServlet extends HttpServlet {
 		log.warning("Useing default thumbnail for: " + content.getNameKey());
 		return "/static/noimage.gif";
 	}
-	
+
 	public static void createCategory(String categoryName, String words) {
 		java.util.List<String> keyWords = new ArrayList<String>();
-		for (String word: words.split(",")) {
+		for (String word : words.split(",")) {
 			keyWords.add(word);
 		}
-		Key name = KeyFactory.createKey(Category.class.getSimpleName(), categoryName);
-		Category category = new Category(name, keyWords);
+		Category category = new Category(categoryName, keyWords);
 		pm.makePersistent(category);
-		
+
 		Content c = (Content) pm.getObjectById(Content.class, "tánc_stúdió_boogy_bash");
-		
+
 		category.addMember(c.getNameKey());
+		category.addMember2(c);
+
+		c.addCategory(category);
 
 	}
+	
+	private void reCalculateContentArgs() {
+		
+	}
+	
 }

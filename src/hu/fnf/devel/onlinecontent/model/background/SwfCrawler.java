@@ -9,9 +9,6 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -74,8 +71,7 @@ public class SwfCrawler extends WebCrawler {
 			System.out.println("Title: " + doc.title().split("-")[0]);
 			String name = doc.title().split("-")[0].trim();
 			String nameKey = name.replace(' ', '_');
-			Key key = KeyFactory.createKey(Content.class.getSimpleName(), nameKey.toLowerCase());
-			Content content = new Content(key);
+			Content content = new Content(nameKey.toLowerCase());
 			content.setDisplayName(name);
 
 			String[] lines = html.split("\n");//System.getProperty("line.separator"));

@@ -10,6 +10,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.datanucleus.annotations.Unowned;
 
 @PersistenceCapable
 public class Category implements Serializable {
@@ -26,16 +28,20 @@ public class Category implements Serializable {
 	private java.util.List<String> keyWords;
 	@Persistent
 	private java.util.List<Key> members;
+	@Persistent
+	@Unowned
+	private java.util.List<Content> members2;
 	
 	private Category() {
 		super();
 	}
 	
-	public Category(Key nameKey, List<String> keyWords) {
+	public Category(String nameKey, List<String> keyWords) {
 		this();
-		this.nameKey = nameKey;
+		this.nameKey = KeyFactory.createKey(Category.class.getSimpleName(), nameKey);
 		this.keyWords = keyWords;
 		this.members = new ArrayList<Key>();
+		this.members2 = new ArrayList<Content>();
 	}
 	
 	public void addMember(Key member) {
@@ -44,5 +50,13 @@ public class Category implements Serializable {
 	
 	public java.util.List<Key> getMembers() {
 		return members;
+	}
+	
+	public java.util.List<Content> getMembers2() {
+		return members2;
+	}
+	
+	public void addMember2(Content c) {
+		members2.add(c);
 	}
 }

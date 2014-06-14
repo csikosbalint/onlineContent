@@ -16,9 +16,23 @@
   <input type="submit" name="sa" value="Search" />
 </form>
 <script type="text/javascript" src="https://www.google.com/cse/publicurl?cx=004811520739431370780:ggegf7qshxe"></script>
-
+<form>
+<input type="hidden" name="createCategory" value="true"/>
+<input type="text" name="categoryName"></input>
+<input type="text" name="categoryKeywords">a,b,c</input>
+<button type="submit">Add category</button>
+</form>
+<form>
+<input type="hidden" name="modifyCategory" value="true"/>
+<input type="text" name="categoryName"></input>
+<input type="text" name="addCategoryKeywords">a,b,c</input>
+<button type="submit">Add keyword(s)</button>
+</form>
 
 <% } else { %>
+
+
+
 <script>
 function validate(){
 var username=document.form.user.value;

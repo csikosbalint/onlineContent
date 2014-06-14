@@ -4,6 +4,7 @@ import hu.fnf.devel.onlinecontent.controller.OnlineContentServlet;
 import hu.fnf.devel.onlinecontent.controller.Receiver;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -12,6 +13,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.datanucleus.annotations.Unowned;
 
 @PersistenceCapable
 public class Content implements Serializable, Comparable<Content> {
@@ -39,6 +42,7 @@ public class Content implements Serializable, Comparable<Content> {
 	@Persistent
 	private String thumbLocaleUrl;
 	@Persistent
+	@Unowned
 	private java.util.List<Category> categories;
 	@Persistent
 	private String description;
@@ -48,14 +52,16 @@ public class Content implements Serializable, Comparable<Content> {
 	private Date contentCreation;
 	@Persistent
 	private boolean keptBack;
+	@Persistent
+	private int viewCount;
 	
 	private Content() {
 		super();
 	}
 	
-	public Content(Key nameKey) {
+	public Content(String nameKey) {
 		this();
-		this.nameKey = nameKey;
+		this.nameKey = KeyFactory.createKey(Content.class.getSimpleName(), nameKey);
 	}
 	
 	public Content(Key nameKey, String contentSourceUrl, java.util.List<String> thumbSearchKeyWords,
@@ -65,6 +71,7 @@ public class Content implements Serializable, Comparable<Content> {
 		this.contentSourceUrl = contentSourceUrl;
 		this.thumbSearchKeyWords = thumbSearchKeyWords;
 		this.contentCreation = contentCreation;
+		this.categories = new ArrayList<Category>();
 	}
 
 	public Date getContentCreation() {
@@ -138,6 +145,18 @@ public class Content implements Serializable, Comparable<Content> {
 	
 	public boolean isKeptBack() {
 		return keptBack;
+	}
+	
+	public void addCategory(Category c) {
+		categories.add(c);
+	}
+	
+	public int getViewCount() {
+		return viewCount;
+	}
+	
+	public void incViewCount() {
+		viewCount++;
 	}
 
 	@Override
