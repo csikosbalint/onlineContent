@@ -7,7 +7,9 @@ import hu.fnf.devel.onlinecontent.model.PMF;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -61,14 +63,6 @@ public class OnlineContentServlet extends HttpServlet {
 		HttpSession session = req.getSession(true);
 
 		if (session.getAttribute("admin") != null) {
-			try {
-				Category t = (Category) pm.getObjectById(Category.class, "Dance");
-				Content c = t.getMembers2().get(0);
-				System.out.println(c.getDisplayName());
-			} catch (Exception e) {
-				log.warning("no such element");
-			}
-
 			/*
 			 * Admin functions
 			 */
@@ -93,6 +87,7 @@ public class OnlineContentServlet extends HttpServlet {
 		if (req.getParameter("contentname") != null) {
 			view = req.getRequestDispatcher("entity.jsp");
 			Content content = pm.getObjectById(Content.class, req.getParameter("contentname"));
+			content.incViewCount();
 			req.setAttribute("content", content);
 		} else if (req.getParameter("admin") != null) {
 			view = req.getRequestDispatcher("admin.jsp");
@@ -141,6 +136,10 @@ public class OnlineContentServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 
 	}
+	
+	/*
+	 * STATIC CALLS
+	 */
 
 	public static String searchThumbnail(Content content) {
 		if (OnlineContentServlet.search) {
@@ -191,18 +190,26 @@ public class OnlineContentServlet extends HttpServlet {
 		}
 		Category category = new Category(categoryName, keyWords);
 		pm.makePersistent(category);
-
-		Content c = (Content) pm.getObjectById(Content.class, "tánc_stúdió_boogy_bash");
-
-		category.addMember(c.getNameKey());
-		category.addMember2(c);
-
-		c.addCategory(category);
-
 	}
 	
 	private void reCalculateContentArgs() {
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Set<Category> searchCategories(Content content) {
+		Set<Category> ret = new HashSet<Category>();
+		for (Category category : (Set<Category>) pm.newQuery(Category.class) ) {
+			for (String keyword : category.getKeyWords() ) {
+				if ( content.getDisplayName().toLowerCase().contains(keyword) ) {
+					category.addMember(content);
+					ret.add(category);
+					log.fine(category.getNameKey().getName() + " has been added to " + content.getDisplayName());
+					break;
+				}
+			}
+		}
+		return ret;
 	}
 	
 }

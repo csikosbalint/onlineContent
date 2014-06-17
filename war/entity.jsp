@@ -58,36 +58,38 @@
  
           </div>
 
-<!--           <div class="large-6 columns"> -->
+           <div class="large-6 columns">
  
-<!--             <h3 class="show-for-small">Header<hr></h3> -->
+             <h3 class="show-for-small">
+             <% foreach ( Category cat: ((Content) request.getAttribute("content")).getCategories() ) {  %>
+             <%= cat.getNameKey().getName(); %>
+             <% } %>
+             <hr></h3>
  
-<!--             <div class="panel"> -->
-<!--               <h4 class="hide-for-small">Header<hr></h4> -->
-<!--             <h5 class="subheader">Fusce ullamcorper mauris in eros dignissim molestie posuere felis blandit. Aliquam erat volutpat. Mauris ultricies posuere vehicula. Sed sit amet posuere erat. Quisque in ipsum non augue euismod dapibus non et eros. Pellentesque consectetur tempus mi iaculis bibendum. Ut vel dolor sed eros tincidunt volutpat ac eget leo.</h5> -->
-<!--             </div> -->
+             <div class="panel">
+               <h4 class="hide-for-small">Header<hr></h4>
+             <h5 class="subheader">Fusce ullamcorper mauris in eros dignissim molestie posuere felis blandit. Aliquam erat volutpat. Mauris ultricies posuere vehicula. Sed sit amet posuere erat. Quisque in ipsum non augue euismod dapibus non et eros. Pellentesque consectetur tempus mi iaculis bibendum. Ut vel dolor sed eros tincidunt volutpat ac eget leo.</h5>
+             </div>
 
-<!-- 					<div class="row"> -->
-<!-- 						<div class="large-6 small-6 columns"> -->
-<!-- 							<div class="panel"> -->
-<!-- 								<h5>Header</h5> -->
-<!-- 								<h6 class="subheader">Praesent placerat dui tincidunt elit -->
-<!-- 									suscipit sed.</h6> -->
-<!-- 								<a href="#" class="small button">BUTTON TIME!</a> -->
-<!-- 							</div> -->
-<!-- 						</div> -->
+ 					<div class="row">
+ 						<div class="large-6 small-6 columns">
+ 							<div class="panel">
+ 								<h5>Header</h5>
+ 								<h6 class="subheader">Praesent placerat dui tincidunt elit suscipit sed.</h6>
+ 								<a href="#" class="small button">BUTTON TIME!</a>
+ 							</div>
+ 						</div>
 
-<!-- 						<div class="large-6 small-6 columns"> -->
-<!-- 							<div class="panel"> -->
-<!-- 								<h5>Header</h5> -->
-<!-- 								<h6 class="subheader">Praesent placerat dui tincidunt elit -->
-<!-- 									suscipit sed.</h6> -->
-<!-- 								<a href="#" class="small button">BUTTON TIME!</a> -->
-<!-- 							</div> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
+ 						<div class="large-6 small-6 columns">
+ 							<div class="panel">
+ 								<h5>Header</h5>
+ 								<h6 class="subheader">Praesent placerat dui tincidunt elit suscipit sed.</h6>
+ 								<a href="#" class="small button">BUTTON TIME!</a>
+ 							</div>
+ 						</div>
+ 					</div>
 
-<!-- 				</div> -->
+ 				</div>
  
         </div>
  

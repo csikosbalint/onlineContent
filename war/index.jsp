@@ -73,7 +73,7 @@
 							<div class="row">
 								<c:forEach items="${requestScope.entityList}" var="content">
 									<div class="large-21 small-6 columns">
-										<a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey() %>">
+										<a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey().getName() %>">
 										<img class="thumbimg" src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" /></a>							
 											<!-- <h5><%= ((Content) pageContext.getAttribute("content")).getDisplayName() %></h5> -->
 										<h6><view:ContentThumbnailImg content="${content}"/></h6>

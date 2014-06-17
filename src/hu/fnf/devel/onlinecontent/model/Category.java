@@ -1,8 +1,9 @@
 package hu.fnf.devel.onlinecontent.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -27,36 +28,43 @@ public class Category implements Serializable {
 	@Persistent
 	private java.util.List<String> keyWords;
 	@Persistent
-	private java.util.List<Key> members;
-	@Persistent
 	@Unowned
-	private java.util.List<Content> members2;
+	private Set<Content> members;
 	
 	private Category() {
 		super();
+	}
+	
+	public Key getNameKey() {
+		return nameKey;
 	}
 	
 	public Category(String nameKey, List<String> keyWords) {
 		this();
 		this.nameKey = KeyFactory.createKey(Category.class.getSimpleName(), nameKey);
 		this.keyWords = keyWords;
-		this.members = new ArrayList<Key>();
-		this.members2 = new ArrayList<Content>();
+		this.members = new HashSet<Content>();
 	}
-	
-	public void addMember(Key member) {
-		members.add(member);
-	}
-	
-	public java.util.List<Key> getMembers() {
+	public Set<Content> getMembers() {
 		return members;
 	}
 	
-	public java.util.List<Content> getMembers2() {
-		return members2;
+	public void setMembers(Set<Content> members) {
+		this.members = members;
 	}
 	
-	public void addMember2(Content c) {
-		members2.add(c);
+	public void addMember(Content content) {
+		this.members.add(content);
+	}
+	public java.util.List<String> getKeyWords() {
+		return keyWords;
+	}
+	
+	public void setKeyWords(java.util.List<String> keyWords) {
+		this.keyWords = keyWords;
+	}
+	
+	public void addKeyWord(String keyWord) {
+		this.keyWords.add(keyWord);
 	}
 }

@@ -4,8 +4,9 @@ import hu.fnf.devel.onlinecontent.controller.OnlineContentServlet;
 import hu.fnf.devel.onlinecontent.controller.Receiver;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -43,7 +44,7 @@ public class Content implements Serializable, Comparable<Content> {
 	private String thumbLocaleUrl;
 	@Persistent
 	@Unowned
-	private java.util.List<Category> categories;
+	private Set<Category> categories;
 	@Persistent
 	private String description;
 	@Persistent
@@ -71,7 +72,7 @@ public class Content implements Serializable, Comparable<Content> {
 		this.contentSourceUrl = contentSourceUrl;
 		this.thumbSearchKeyWords = thumbSearchKeyWords;
 		this.contentCreation = contentCreation;
-		this.categories = new ArrayList<Category>();
+		this.categories = new HashSet<Category>();
 	}
 
 	public Date getContentCreation() {
@@ -145,6 +146,17 @@ public class Content implements Serializable, Comparable<Content> {
 	
 	public boolean isKeptBack() {
 		return keptBack;
+	}
+	
+	public Set<Category> getCategories() {
+		if ( categories == null || categories.size() == 0) {
+			categories = OnlineContentServlet.searchCategories(this);
+		}
+		return categories;
+	}
+	
+	public void setCategories(Set<Category> categories) {
+		this.categories = categories;
 	}
 	
 	public void addCategory(Category c) {
