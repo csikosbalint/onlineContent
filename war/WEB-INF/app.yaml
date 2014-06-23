@@ -3,19 +3,16 @@ version: 1
 runtime: java
 threadsafe: true
 
-welcome_files:
- - index.jsp
- 
-#handlers:
-#- url: /*
-#  servlet: hu.fnf.devel.onlinecontent.controller.OnlineContentServlet
-#  name: OnlineContent
+handlers:
 #- url: /receiver/*
 #  name: Receiver
 #  servlet: hu.fnf.devel.onlinecontent.controller.Receiver
 #- url: /static/serve*
 #  name: Serve
 #  servlet: hu.fnf.devel.onlinecontent.controller.Serve
+- url: /
+  servlet: hu.fnf.devel.onlinecontent.controller.OnlineContentServlet
+  name: OnlineContent
 
 #static_files:
 #- include: /static/**
