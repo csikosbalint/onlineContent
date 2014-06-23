@@ -1,6 +1,7 @@
 application: xahcieyei4
 version: 2-0-test
 runtime: java
+api_version: 1
 
 handlers:
 - url: /
