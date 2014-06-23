@@ -3,10 +3,13 @@ version: 1
 runtime: java
 threadsafe: true
 
-handlers:
-- url: /cica/*
-  servlet: hu.fnf.devel.onlinecontent.controller.OnlineContentServlet
-  name: OnlineContent
+welcome_files:
+ - index.jsp
+ 
+#handlers:
+#- url: /*
+#  servlet: hu.fnf.devel.onlinecontent.controller.OnlineContentServlet
+#  name: OnlineContent
 #- url: /receiver/*
 #  name: Receiver
 #  servlet: hu.fnf.devel.onlinecontent.controller.Receiver
