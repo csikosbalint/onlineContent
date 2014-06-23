@@ -6,8 +6,8 @@ threadsafe: true
 
 handlers:
 - url: /
-  name: OnlineContent
   servlet: hu.fnf.devel.onlinecontent.controller.OnlineContentServlet
+#  name: OnlineContent
 #- url: /receiver/*
 #  name: Receiver
 #  servlet: hu.fnf.devel.onlinecontent.controller.Receiver
