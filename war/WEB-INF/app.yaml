@@ -1,0 +1,31 @@
+application: xahcieyei4
+version: 2-0-test
+runtime: java
+
+handlers:
+- url: /
+  name: OnlineContent
+  servlet: hu.fnf.devel.onlinecontent.controller.OnlineContentServlet
+- url: /receiver/*
+  name: Receiver
+  servlet: hu.fnf.devel.onlinecontent.controller.Receiver
+- url: /static/serve*
+  name: Serve
+  servlet: hu.fnf.devel.onlinecontent.controller.Serve
+
+static_files:
+- include: /static/**
+  expiration: 1h
+
+sessions_enabled: true
+
+env_variables:
+  DEFAULT_ENCODING: UTF-8
+
+inbound_services:
+- warmup
+
+admin_console:
+  pages:
+  - name: Online Games FNF Admin
+    url: /?admin
