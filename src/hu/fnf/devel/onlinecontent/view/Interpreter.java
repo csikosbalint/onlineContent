@@ -15,13 +15,14 @@ public class Interpreter extends SimpleTagSupport {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
+
 	@Override
 	public void doTag() throws JspException, IOException {
 		PageContext pageContext = (PageContext) getJspContext();
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		text = text.replace(' ', '_');
-		getJspContext().getOut().print("cica");
-//				OnlineContentServlet.getTranslations().get(text).getTranslation(request.getHeader("Accept-Language").split(",")[0]));
+		getJspContext().getOut().print(
+				OnlineContentServlet.getTranslations().get(text)
+						.getTranslation(request.getHeader("Accept-Language").split(",")[0]));
 	}
 }

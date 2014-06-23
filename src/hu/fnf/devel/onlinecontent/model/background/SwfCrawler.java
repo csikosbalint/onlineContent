@@ -71,8 +71,9 @@ public class SwfCrawler extends WebCrawler {
 			System.out.println("Title: " + doc.title().split("-")[0]);
 			String name = doc.title().split("-")[0].trim();
 			String nameKey = name.replace(' ', '_');
+			
 			Content content = new Content(nameKey.toLowerCase());
-			content.setDisplayName(name);
+			content.setDisplayName(name);			
 
 			String[] lines = html.split("\n");//System.getProperty("line.separator"));
 
@@ -84,8 +85,10 @@ public class SwfCrawler extends WebCrawler {
 					content.setContentSourceUrl(srcSwf);
 				}
 			}
+			System.out.println("queueing...");
 			try {
 				sharedQueue.put(content);
+				System.out.println("queued...");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

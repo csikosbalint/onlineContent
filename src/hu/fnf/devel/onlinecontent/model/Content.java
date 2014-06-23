@@ -63,6 +63,7 @@ public class Content implements Serializable, Comparable<Content> {
 	public Content(String nameKey) {
 		this();
 		this.nameKey = KeyFactory.createKey(Content.class.getSimpleName(), nameKey);
+		System.out.println("c");
 	}
 	
 	public Content(Key nameKey, String contentSourceUrl, java.util.List<String> thumbSearchKeyWords,

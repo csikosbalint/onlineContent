@@ -41,8 +41,8 @@ public class EditorConsumer {
 		System.out.println("crawling...");
 
 		Thread upload = null;
-//		String url = "http://localhost:8888/receiver";
-		String url = "http://onlinejatek.fnf.hu/receiver";
+		String url = "http://localhost:8888/receiver";
+//		String url = "http://onlinejatek.fnf.hu/receiver";
 		try {
 			upload = new Thread(new UploaderConsumer(uploadQueue, new URL(url)));
 		} catch (MalformedURLException e) {
@@ -57,12 +57,14 @@ public class EditorConsumer {
 			Content s = null;
 			try {
 				s = searchQueue.take();
+				System.out.println("taken from searchQueue");
 			} catch (InterruptedException ex) {
 				continue;
 			}
 			s.setContentCreation(new Date());
 			try {
 				uploadQueue.put(s);
+				System.out.println("put to uploadQueue");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
