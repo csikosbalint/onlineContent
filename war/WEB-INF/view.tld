@@ -27,24 +27,24 @@
 		</attribute>
 	</tag>
 	<tag>
-		<name>ContentShortDescrition</name>
-		<tag-class>hu.fnf.devel.onlinecontent.view.ContentShortDescrition
+		<name>ContentSwfEmbed</name>
+		<tag-class>hu.fnf.devel.onlinecontent.view.ContentSwfEmbed
 		</tag-class>
 		<body-content>scriptless</body-content>
 		<attribute>
 			<name>content</name>
 			<required>true</required>
-			<type>hu.fnf.devel.onlinecontent.model.Content</type>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.String</type>
 		</attribute>
 	</tag>
 	<tag>
-		<name>ContentEmbedTag</name>
-		<tag-class>hu.fnf.devel.onlinecontent.view.ContentEmbedTag
+		<name>Interpreter</name>
+		<tag-class>hu.fnf.devel.onlinecontent.view.Interpreter
 		</tag-class>
 		<body-content>scriptless</body-content>
 		<attribute>
-			<name>content</name>
+			<name>text</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.String</type>

@@ -2,13 +2,16 @@ package hu.fnf.devel.onlinecontent.controller;
 
 import hu.fnf.devel.onlinecontent.model.Category;
 import hu.fnf.devel.onlinecontent.model.Content;
+import hu.fnf.devel.onlinecontent.model.Language;
 import hu.fnf.devel.onlinecontent.model.PMF;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -34,11 +37,14 @@ public class OnlineContentServlet extends HttpServlet {
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int PAGESIZE = 12;
-	public static boolean search = true;
 
-	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-	@SuppressWarnings("unchecked")
-	private static TreeSet<Content> list = new TreeSet<>((java.util.List<Content>) pm.newQuery(Content.class).execute());
+	private static PersistenceManager pm;
+	private static TreeSet<Content> list;
+	private static Map<String, Language> translations;
+
+	public OnlineContentServlet() {
+		initMemory();
+	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -66,11 +72,12 @@ public class OnlineContentServlet extends HttpServlet {
 			/*
 			 * Admin functions
 			 */
+			log.fine("admin: " + req.toString());
 			if (req.getParameter("resetContent") != null) {
 				resetContent(req.getParameter("resetContent"));
 			}
 			if (req.getParameter("forceReload") != null) {
-				forceReload();
+				initMemory();
 			}
 			if (req.getParameter("changeAndSearch") != null) {
 				changeAndSearch(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
@@ -81,7 +88,14 @@ public class OnlineContentServlet extends HttpServlet {
 			if (req.getParameter("reCalculateContentArgs") != null) {
 				reCalculateContentArgs();
 			}
+			if (req.getParameter("createLanguageEntry") != null) {
+				createLanguageEntry(req.getParameter("languageName"), req.getParameter("langKey"),
+						req.getParameter("textValue"));
+			}
 		}
+		// reinit
+		initMemory();
+
 		req.setAttribute("session", session);
 
 		if (req.getParameter("contentname") != null) {
@@ -89,7 +103,8 @@ public class OnlineContentServlet extends HttpServlet {
 			Content content = pm.getObjectById(Content.class, req.getParameter("contentname"));
 			content.incViewCount();
 			req.setAttribute("content", content);
-		} else if (req.getParameter("admin") != null) {
+		} else if (req.getParameter("admin") != null || req.getParameter("createLanguageEntry") != null
+				|| req.getParameter("createCategory") != null) {
 			view = req.getRequestDispatcher("admin.jsp");
 		} else {
 			// got to the current element
@@ -127,60 +142,85 @@ public class OnlineContentServlet extends HttpServlet {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void forceReload() {
-		list = new TreeSet<Content>((java.util.List<Content>) pm.newQuery(Content.class).execute());
+	private void initMemory() {
+		pm = PMF.getInstance().getPersistenceManager();
+
+		list = new TreeSet<>((java.util.List<Content>) pm.newQuery(Content.class).execute());
 		log.info(list.size() + " elements have been reloaded!");
+
+		translations = new HashMap<String, Language>();
+		for (Language language : (java.util.List<Language>) pm.newQuery(Language.class).execute()) {
+			translations.put(language.getNameKey().getName(), language);
+		}
+		log.info(translations.size() + " translations have been reloaded!");
 	}
 
 	private void resetContent(String parameter) {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	/*
 	 * STATIC CALLS
 	 */
 
+	public static Map<String, Language> getTranslations() {
+		return translations;
+	}
+
 	public static String searchThumbnail(Content content) {
-		if (OnlineContentServlet.search) {
-			log.info("searching...(only once)");
-			Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
-					.setApplicationName("ThumbSearch").build();
-			try {
-				StringBuffer searchKeyWords = new StringBuffer();
-				if (content.getSearchKeyWords().size() == 0) {
-					searchKeyWords.append(content.getDisplayName());
-				} else {
-					for (String str : content.getSearchKeyWords()) {
-						searchKeyWords.append(str + " ");
-					}
+		log.info("searching...(only once)");
+		Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
+				.setApplicationName("ThumbSearch").build();
+		try {
+			StringBuffer searchKeyWords = new StringBuffer();
+			if (content.getSearchKeyWords().size() == 0) {
+				searchKeyWords.append(content.getDisplayName());
+			} else {
+				for (String str : content.getSearchKeyWords()) {
+					searchKeyWords.append(str + " ");
 				}
-
-				searchKeyWords.append("online game");
-				System.out.println("search keywords: " + (searchKeyWords));
-				List l = thumbSearch.cse().list(searchKeyWords.toString());
-				l.setCx("004811520739431370780:ggegf7qshxe");
-				l.setSafe("high");
-				l.setFilter("1");
-				l.setSearchType("image");
-				// l.setImgSize("large");
-				l.setKey("AIzaSyDiZfaoVfU5FeORRwSuvBC3tk1UJQ5N-XI");
-
-				Search imgResult = l.execute();
-				System.out.println("result: " + imgResult.toPrettyString());
-				if (imgResult.getItems() != null && imgResult.getItems().size() != 0) {
-					// thumbsrc
-					return imgResult.getItems().get(0).getLink();
-				} else {
-					log.warning("search was not successful: " + content.getNameKey());
-					log.warning(imgResult.getSearchInformation().toPrettyString());
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+
+			searchKeyWords.append("online game");
+			log.warning("search keywords: " + (searchKeyWords));
+			List l = thumbSearch.cse().list(searchKeyWords.toString());
+			l.setCx("004811520739431370780:ggegf7qshxe");
+			l.setSafe("high");
+			l.setFilter("1");
+			l.setSearchType("image");
+			// l.setImgSize("large");
+			l.setKey("AIzaSyDiZfaoVfU5FeORRwSuvBC3tk1UJQ5N-XI");
+
+			Search imgResult = l.execute();
+			log.warning("result: " + imgResult.toPrettyString());
+			if (imgResult.getItems() != null && imgResult.getItems().size() != 0) {
+				// thumbsrc
+				return imgResult.getItems().get(0).getLink();
+			} else {
+				log.warning("search was not successful: " + content.getNameKey());
+				log.warning(imgResult.getSearchInformation().toPrettyString());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+
 		log.warning("Useing default thumbnail for: " + content.getNameKey());
 		return "/static/noimage.gif";
+	}
+
+	private void createLanguageEntry(String nameKey, String langKey, String textValue) {
+		Language language = null;
+		nameKey = nameKey.replace(' ', '_');
+		try {
+			language = pm.getObjectById(Language.class, nameKey);
+			log.fine("language(" + nameKey + ") has been found.");
+		} catch (Exception e) {
+			language = new Language(nameKey);
+			log.fine("new language(" + nameKey + ") created.");
+		}
+		language.addTranslation(langKey, textValue);
+		pm.makePersistent(language);
 	}
 
 	public static void createCategory(String categoryName, String words) {
@@ -191,17 +231,17 @@ public class OnlineContentServlet extends HttpServlet {
 		Category category = new Category(categoryName, keyWords);
 		pm.makePersistent(category);
 	}
-	
+
 	private void reCalculateContentArgs() {
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	public static Set<Category> searchCategories(Content content) {
 		Set<Category> ret = new HashSet<Category>();
-		for (Category category : (Set<Category>) pm.newQuery(Category.class) ) {
-			for (String keyword : category.getKeyWords() ) {
-				if ( content.getDisplayName().toLowerCase().contains(keyword) ) {
+		for (Category category : (Set<Category>) pm.newQuery(Category.class)) {
+			for (String keyword : category.getKeyWords()) {
+				if (content.getDisplayName().toLowerCase().contains(keyword)) {
 					category.addMember(content);
 					ret.add(category);
 					log.fine(category.getNameKey().getName() + " has been added to " + content.getDisplayName());
@@ -211,5 +251,5 @@ public class OnlineContentServlet extends HttpServlet {
 		}
 		return ret;
 	}
-	
+
 }

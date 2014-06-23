@@ -8,15 +8,7 @@
 <%@page import="java.lang.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.google.appengine.api.datastore.*"%>
-
-
-
-
-
-
-
 <!DOCTYPE html>
-
 <html
 	class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"
 	lang="en"
@@ -25,9 +17,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Foundation Template | Store | <%
-	out.print(request.getSession(true).getAttribute("cica"));
-%></title>
+<title><view:Interpreter text="Online Games FNF"></view:Interpreter></title>
 <meta name="description"
 	content="Database of online flash games.">
 <meta name="author"

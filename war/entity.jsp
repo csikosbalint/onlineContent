@@ -1,5 +1,5 @@
 <%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page language="java"%>
 <%@page import="hu.fnf.devel.onlinecontent.model.Content"%>
 <%@page import="java.util.Iterator"%>
@@ -37,7 +37,7 @@
 		<form action="/">
 		<%= ((Content) request.getAttribute("content")).getDisplayName() %>
 		<input type="hidden" name="contentname" value="<%= ((Content) request.getAttribute("content")).getNameKey()%>"/>
-		<input type="text" name="searchKeyWords" value="<%= ((Content) request.getAttribute("content")).getSearchKeyWords().toString() %>"/></br>
+		<input type="text" name="searchKeyWords" value="<%= ((Content) request.getAttribute("content")).getSearchKeyWords().toString() %>"/>
 		<button type="submit" name="changeAndSearch">Change and Search</button>
 		</form>
 	<% } else { %> 
@@ -54,20 +54,18 @@
  
           <div class="large-4 columns">
 <!--            <img src="http://placehold.it/500x500&text=<%= ((Content) request.getAttribute("content")).getNameKey() %>"><br> -->
-			<embed src="<%= ((Content) request.getAttribute("content")).getContentSourceUrl()%>" quality=high pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="720" height="540"></embed>
+			<embed src="<%= ((Content) request.getAttribute("content")).getContentSourceUrl()%>" type="application/x-shockwave-flash" width="720" height="540"></embed>
  
           </div>
 
            <div class="large-6 columns">
  
              <h3 class="show-for-small">
-             <% foreach ( Category cat: ((Content) request.getAttribute("content")).getCategories() ) {  %>
-             <%= cat.getNameKey().getName(); %>
-             <% } %>
-             <hr></h3>
+             <!--  categories -->
+             </h3>
  
              <div class="panel">
-               <h4 class="hide-for-small">Header<hr></h4>
+               <h4 class="hide-for-small">Header</h4>
              <h5 class="subheader">Fusce ullamcorper mauris in eros dignissim molestie posuere felis blandit. Aliquam erat volutpat. Mauris ultricies posuere vehicula. Sed sit amet posuere erat. Quisque in ipsum non augue euismod dapibus non et eros. Pellentesque consectetur tempus mi iaculis bibendum. Ut vel dolor sed eros tincidunt volutpat ac eget leo.</h5>
              </div>
 

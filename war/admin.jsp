@@ -1,8 +1,6 @@
 <html>
 <% if (request.getAttribute("session") != null && ((HttpSession)request.getAttribute("session")).getAttribute("admin") != null ) { %>
 
-
-
 <form action="/">
 <button type="submit" name="forceReload">Reload list from database (new query)</button>
 </form>
@@ -19,19 +17,23 @@
 <form>
 <input type="hidden" name="createCategory" value="true"/>
 <input type="text" name="categoryName"></input>
-<input type="text" name="categoryKeywords">a,b,c</input>
+<input type="text" name="categoryKeywords">
 <button type="submit">Add category</button>
 </form>
 <form>
 <input type="hidden" name="modifyCategory" value="true"/>
-<input type="text" name="categoryName"></input>
-<input type="text" name="addCategoryKeywords">a,b,c</input>
+<input type="text" name="categoryName"/>
+<input type="text" name="addCategoryKeywords"/>
 <button type="submit">Add keyword(s)</button>
 </form>
-
+<form>
+<input type="hidden" name="createLanguageEntry" value="true"/>
+<input type="text" name="languageName"/>
+<input type="text" name="langKey"/>
+<input type="text" name="textValue"/>
+<button type="submit">Add translation</button>
+</form>
 <% } else { %>
-
-
 
 <script>
 function validate(){
