@@ -5,7 +5,7 @@ api_version: 1
 threadsafe: true
 
 handlers:
-- url: /*
+- url: /cica/*
   servlet: hu.fnf.devel.onlinecontent.controller.OnlineContentServlet
   name: OnlineContent
 #- url: /receiver/*
