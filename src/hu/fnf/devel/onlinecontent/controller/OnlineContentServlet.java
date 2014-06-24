@@ -33,9 +33,6 @@ import com.google.apphosting.api.ApiProxy.OverQuotaException;
 
 @SuppressWarnings("serial")
 public class OnlineContentServlet extends HttpServlet {
-	/*
-	 * cica
-	 */
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 	private static final String LIST = "entityList";
 	private static final String LISTSIZE = "listSize";
