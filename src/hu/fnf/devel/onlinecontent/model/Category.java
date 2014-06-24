@@ -39,10 +39,9 @@ public class Category implements Serializable {
 		return nameKey;
 	}
 	
-	public Category(String nameKey, List<String> keyWords) {
+	public Category(String nameKey) {
 		this();
 		this.nameKey = KeyFactory.createKey(Category.class.getSimpleName(), nameKey);
-		this.keyWords = keyWords;
 		this.members = new HashSet<Content>();
 	}
 	public Set<Content> getMembers() {

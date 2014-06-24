@@ -50,4 +50,16 @@
 			<type>java.lang.String</type>
 		</attribute>
 	</tag>
+	<tag>
+		<name>ContentCategories</name>
+		<tag-class>hu.fnf.devel.onlinecontent.view.ContentCategories
+		</tag-class>
+		<body-content>scriptless</body-content>
+		<attribute>
+			<name>content</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.String</type>
+		</attribute>
+	</tag>
 </taglib>

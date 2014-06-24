@@ -1,13 +1,14 @@
-<%@page
-	import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page language="java"%>
+<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
 <%@page import="hu.fnf.devel.onlinecontent.model.Content"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
 <%@page import="java.lang.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.google.appengine.api.datastore.*"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@taglib prefix="view" uri="WEB-INF/view.tld"%>
 <!DOCTYPE html>
 
 <html
@@ -88,76 +89,79 @@
 
 					</div>
 
-					<div class="large-6 columns">
+					<div class="large-6 columns"></div>
 
+					<!-- End Header Content -->
+
+
+					<!-- Search Bar -->
+
+					<div class="row">
+						<pre>categories</pre>
+						<div class="large-12 columns">
+							<div class="radius panel">
+
+								<form>
+									<div class="row collapse">
+
+										<div class="large-10 small-8 columns">
+											<input type="text">
+										</div>
+
+										<div class="large-2 small-3 columns">
+											<a href="#" class="postfix button expand">Search</a>
+										</div>
+										<pre>
+										<view:ContentCategories
+												content="<%=(Content) request.getAttribute(\"content\")%>">
+												</view:ContentCategories>
+										</pre>
+									</div>
+								</form>
+
+							</div>
+						</div>
+
+					</div>
+
+					<!-- End Search Bar -->
+
+
+					<!-- Thumbnails -->
 				</div>
-
-				<!-- End Header Content -->
-
-
-				<!-- Search Bar -->
-
 				<div class="row">
-					<pre>categories</pre>
-					<div class="large-12 columns">
-						<div class="radius panel">
+					<div class="mid">
+						<div class="large-3 small-6 columns">
+							<img src="./static/Thumbnail500.jpg">
 
-							<form>
-								<div class="row collapse">
+							<p>Description</p>
 
-									<div class="large-10 small-8 columns">
-										<input type="text">
-									</div>
+						</div>
 
-									<div class="large-2 small-3 columns">
-										<a href="#" class="postfix button expand">Search</a>
-									</div>
+						<div class="large-3 small-6 columns">
+							<img src="./static/Thumbnail500.jpg">
 
-								</div>
-							</form>
+							<p>Description</p>
+
+						</div>
+
+						<div class="large-3 small-6 columns">
+							<img src="./static/Thumbnail500.jpg">
+
+							<p>Description</p>
+
+						</div>
+
+						<div class="large-3 small-6 columns">
+							<img src="./static/Thumbnail500.jpg">
+
+							<p>Description</p>
 
 						</div>
 					</div>
-
 				</div>
-
-				<!-- End Search Bar -->
-
-
-				<!-- Thumbnails -->
+				<!-- End Thumbnails -->
 			</div>
-			<div class="row">
-				<div class="mid">
-					<div class="large-3 small-6 columns">
-						<img src="./static/Thumbnail500.jpg">
-
-						<p>Description</p>
-
-					</div>
-
-					<div class="large-3 small-6 columns">
-						<img src="./static/Thumbnail500.jpg">
-
-						<p>Description</p>
-
-					</div>
-
-					<div class="large-3 small-6 columns">
-						<img src="./static/Thumbnail500.jpg">
-
-						<p>Description</p>
-
-					</div>
-
-					<div class="large-3 small-6 columns">
-						<img src="./static/Thumbnail500.jpg">
-
-						<p>Description</p>
-
-					</div>
-				</div>
-			</div>
-			<!-- End Thumbnails -->
 		</div>
 	</div>
 	<div id="foot">

@@ -29,6 +29,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.Customsearch.Cse.List;
 import com.google.api.services.customsearch.model.Search;
+import com.google.apphosting.api.ApiProxy.OverQuotaException;
 
 @SuppressWarnings("serial")
 public class OnlineContentServlet extends HttpServlet {
@@ -66,41 +67,43 @@ public class OnlineContentServlet extends HttpServlet {
 		 * Session
 		 */
 		RequestDispatcher view;
-		HttpSession session = req.getSession(true);
+		try {
+			HttpSession session = req.getSession(false);
 
-		if (session.getAttribute("admin") != null) {
-			/*
-			 * Admin functions
-			 */
-			log.fine("admin: " + req.toString());
-			if (req.getParameter("resetContent") != null) {
-				resetContent(req.getParameter("resetContent"));
-			}
-			if (req.getParameter("forceReload") != null) {
+			if (session.getAttribute("admin") != null) {
+				/*
+				 * Admin functions
+				 */
+				log.fine("admin: " + req.toString());
+				if (req.getParameter("resetContent") != null) {
+					resetContent(req.getParameter("resetContent"));
+				}
+				if (req.getParameter("forceReload") != null) {
+					initMemory();
+				}
+				if (req.getParameter("changeAndSearch") != null) {
+					searchAndChange(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
+				}
+				if (req.getParameter("createCategory") != null) {
+					createCategory(req.getParameter("categoryName"), req.getParameter("categoryKeywords"));
+				}
+				if (req.getParameter("reCalculateContentArgs") != null) {
+					reCalculateContentArgs();
+				}
+				if (req.getParameter("createLanguageEntry") != null) {
+					createLanguageEntry(req.getParameter("languageName"), req.getParameter("langKey"),
+							req.getParameter("textValue"));
+				}
+				req.setAttribute("session", session);
+				// reinit
 				initMemory();
 			}
-			if (req.getParameter("changeAndSearch") != null) {
-				changeAndSearch(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
-			}
-			if (req.getParameter("createCategory") != null) {
-				createCategory(req.getParameter("categoryName"), req.getParameter("categoryKeywords"));
-			}
-			if (req.getParameter("reCalculateContentArgs") != null) {
-				reCalculateContentArgs();
-			}
-			if (req.getParameter("createLanguageEntry") != null) {
-				createLanguageEntry(req.getParameter("languageName"), req.getParameter("langKey"),
-						req.getParameter("textValue"));
-			}
+		} catch (OverQuotaException e) {
+			req.setAttribute("session", null);
 		}
-		// reinit
-		initMemory();
-
-		req.setAttribute("session", session);
-
 		if (req.getParameter("contentname") != null) {
 			view = req.getRequestDispatcher("entity.jsp");
-			Content content = pm.getObjectById(Content.class, req.getParameter("contentname"));
+			Content content = OnlineContentServlet.searchContent(req.getParameter("contentname"));
 			content.incViewCount();
 			req.setAttribute("content", content);
 		} else if (req.getParameter("admin") != null || req.getParameter("createLanguageEntry") != null
@@ -135,8 +138,17 @@ public class OnlineContentServlet extends HttpServlet {
 		}
 	}
 
-	private void changeAndSearch(String searchKeyWords, String nameKey) {
-		Content content = pm.getObjectById(Content.class, nameKey);
+	private static Content searchContent(String nameKey) {
+		for (Content content : list) {
+			if (content.getNameKey().getName().equals(nameKey)) {
+				return content;
+			}
+		}
+		return null;
+	}
+
+	private void searchAndChange(String searchKeyWords, String nameKey) {
+		Content content = OnlineContentServlet.searchContent(nameKey);
 		content.setSearchKeyWords(new ArrayList<String>(Arrays.asList(searchKeyWords.split(" "))));
 		content.setThumbBlobUrl("/static/noimage.gif");
 	}
@@ -223,12 +235,18 @@ public class OnlineContentServlet extends HttpServlet {
 		pm.makePersistent(language);
 	}
 
-	public static void createCategory(String categoryName, String words) {
+	public static void createCategory(String nameKey, String words) {
+		Category category = null;
 		java.util.List<String> keyWords = new ArrayList<String>();
 		for (String word : words.split(",")) {
 			keyWords.add(word);
 		}
-		Category category = new Category(categoryName, keyWords);
+		try {
+			category = pm.getObjectById(Category.class, nameKey);
+		} catch (Exception e) {
+			category = new Category(nameKey);
+		}
+		category.setKeyWords(keyWords);
 		pm.makePersistent(category);
 	}
 
@@ -239,15 +257,19 @@ public class OnlineContentServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	public static Set<Category> searchCategories(Content content) {
 		Set<Category> ret = new HashSet<Category>();
-		for (Category category : (Set<Category>) pm.newQuery(Category.class)) {
-			for (String keyword : category.getKeyWords()) {
-				if (content.getDisplayName().toLowerCase().contains(keyword)) {
-					category.addMember(content);
-					ret.add(category);
-					log.fine(category.getNameKey().getName() + " has been added to " + content.getDisplayName());
-					break;
+		try {
+			for (Category category : (java.util.List<Category>) pm.newQuery(Category.class).execute()) {
+				for (String keyword : category.getKeyWords()) {
+					if (content.getDisplayName().toLowerCase().contains(keyword)) {
+						category.addMember(content);
+						ret.add(category);
+						log.fine(category.getNameKey().getName() + " has been added to " + content.getDisplayName());
+						break;
+					}
 				}
 			}
+		} catch (OverQuotaException e) {
+			log.warning("datastore read quota exceeded!");
 		}
 		return ret;
 	}
