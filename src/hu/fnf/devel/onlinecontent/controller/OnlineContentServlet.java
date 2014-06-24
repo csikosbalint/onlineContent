@@ -70,7 +70,7 @@ public class OnlineContentServlet extends HttpServlet {
 		try {
 			HttpSession session = req.getSession(false);
 
-			if (session.getAttribute("admin") != null) {
+			if (session != null && session.getAttribute("admin") != null) {
 				/*
 				 * Admin functions
 				 */
