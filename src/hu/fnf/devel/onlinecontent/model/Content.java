@@ -56,14 +56,13 @@ public class Content implements Serializable, Comparable<Content> {
 	@Persistent
 	private int viewCount;
 	
-	private Content() {
+	public Content() {
 		super();
 	}
 	
 	public Content(String nameKey) {
 		this();
 		this.nameKey = KeyFactory.createKey(Content.class.getSimpleName(), nameKey);
-		System.out.println("c");
 	}
 	
 	public Content(Key nameKey, String contentSourceUrl, java.util.List<String> thumbSearchKeyWords,
@@ -74,6 +73,10 @@ public class Content implements Serializable, Comparable<Content> {
 		this.thumbSearchKeyWords = thumbSearchKeyWords;
 		this.contentCreation = contentCreation;
 		this.categories = new HashSet<Category>();
+	}
+	
+	public void setNameKey(Key nameKey) {
+		this.nameKey = nameKey;
 	}
 
 	public Date getContentCreation() {

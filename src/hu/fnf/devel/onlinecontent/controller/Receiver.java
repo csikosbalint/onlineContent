@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.files.AppEngineFile;
@@ -40,13 +41,16 @@ public class Receiver extends HttpServlet {
 		try {
 			Content content = (Content) ois.readObject();
 
-			log("received: " + content.getNameKey());
+			log("received: " + content.getDisplayName());
+			content.setNameKey(KeyFactory.createKey(Content.class.getSimpleName(), content.getDisplayName()
+					.toLowerCase().replace(' ', '_')));
+
 			Query q = new Query(Content.class.getSimpleName()).setFilter(FilterOperator.EQUAL.of(
 					com.google.appengine.api.datastore.Entity.KEY_RESERVED_PROPERTY, content.getNameKey()));
 
 			if (DatastoreServiceFactory.getDatastoreService().prepare(q).asList(FetchOptions.Builder.withDefaults())
 					.size() == 0) {
-				
+
 				content.setThumbBlobUrl(srcUri(content.getThumbSourceUrl(), content));
 
 				pm.makePersistent(content);
@@ -58,7 +62,7 @@ public class Receiver extends HttpServlet {
 	}
 
 	public static String srcUri(String thumbUrl, Content content) {
-		if ( thumbUrl == null || !thumbUrl.contains("http") ) {
+		if (thumbUrl == null || !thumbUrl.contains("http")) {
 			return "/static/noimage.gif";
 		}
 		URL surl;

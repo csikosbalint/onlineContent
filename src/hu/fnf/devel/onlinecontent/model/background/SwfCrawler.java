@@ -72,7 +72,7 @@ public class SwfCrawler extends WebCrawler {
 			String name = doc.title().split("-")[0].trim();
 			String nameKey = name.replace(' ', '_');
 			
-			Content content = new Content(nameKey.toLowerCase());
+			Content content = new Content();
 			content.setDisplayName(name);			
 
 			String[] lines = html.split("\n");//System.getProperty("line.separator"));

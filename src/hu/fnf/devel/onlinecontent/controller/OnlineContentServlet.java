@@ -70,33 +70,35 @@ public class OnlineContentServlet extends HttpServlet {
 		try {
 			HttpSession session = req.getSession(false);
 
-			if (session != null && session.getAttribute("admin") != null) {
-				/*
-				 * Admin functions
-				 */
-				log.fine("admin: " + req.toString());
-				if (req.getParameter("resetContent") != null) {
-					resetContent(req.getParameter("resetContent"));
-				}
-				if (req.getParameter("forceReload") != null) {
+			if (session != null) {
+				if (session.getAttribute("admin") != null) {
+					/*
+					 * Admin functions
+					 */
+					log.fine("admin: " + req.toString());
+					if (req.getParameter("resetContent") != null) {
+						resetContent(req.getParameter("resetContent"));
+					}
+					if (req.getParameter("forceReload") != null) {
+						initMemory();
+					}
+					if (req.getParameter("changeAndSearch") != null) {
+						searchAndChange(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
+					}
+					if (req.getParameter("createCategory") != null) {
+						createCategory(req.getParameter("categoryName"), req.getParameter("categoryKeywords"));
+					}
+					if (req.getParameter("reCalculateContentArgs") != null) {
+						reCalculateContentArgs();
+					}
+					if (req.getParameter("createLanguageEntry") != null) {
+						createLanguageEntry(req.getParameter("languageName"), req.getParameter("langKey"),
+								req.getParameter("textValue"));
+					}
+					req.setAttribute("session", session);
+					// reinit
 					initMemory();
 				}
-				if (req.getParameter("changeAndSearch") != null) {
-					searchAndChange(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
-				}
-				if (req.getParameter("createCategory") != null) {
-					createCategory(req.getParameter("categoryName"), req.getParameter("categoryKeywords"));
-				}
-				if (req.getParameter("reCalculateContentArgs") != null) {
-					reCalculateContentArgs();
-				}
-				if (req.getParameter("createLanguageEntry") != null) {
-					createLanguageEntry(req.getParameter("languageName"), req.getParameter("langKey"),
-							req.getParameter("textValue"));
-				}
-				req.setAttribute("session", session);
-				// reinit
-				initMemory();
 			}
 		} catch (OverQuotaException e) {
 			req.setAttribute("session", null);
@@ -276,4 +278,4 @@ public class OnlineContentServlet extends HttpServlet {
 }
 /*
  * kutya
-*/
+ */

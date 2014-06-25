@@ -1,14 +1,16 @@
 <%@page language="java"%>
-<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
+<%@page
+	import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
 <%@page import="hu.fnf.devel.onlinecontent.model.Content"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
 <%@page import="java.lang.*"%>
 <%@page import="java.util.*"%>
 <%@page import="com.google.appengine.api.datastore.*"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@taglib prefix="view" uri="WEB-INF/view.tld"%>
+
 <!DOCTYPE html>
 
 <html
@@ -114,7 +116,7 @@
 										<pre>
 										<view:ContentCategories
 												content="<%=(Content) request.getAttribute(\"content\")%>">
-												</view:ContentCategories>
+ 												</view:ContentCategories>
 										</pre>
 									</div>
 								</form>

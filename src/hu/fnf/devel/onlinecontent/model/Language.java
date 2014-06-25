@@ -15,9 +15,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 @PersistenceCapable
 public class Language implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 345569423630154017L;
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
