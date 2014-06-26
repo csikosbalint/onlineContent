@@ -1,12 +1,22 @@
 #top_part {
+}
+.top_logo{
 height:170px;
 width:100%;
-/* background: url(/static/top_bg_1.png) repeat-x; */
 text-align:center;
 position:relative;
 margin:0 auto 0 auto;
 }
-
+.soc_links ul,li {
+	display:inline;
+}
+.rcorner {
+	clear:both;
+	position:relative;
+	margin-top:0px;
+	margin-right:0px;
+	float:right;
+}
 #foot {
 height:80px;
 width:100%;
@@ -29,9 +39,7 @@ color:orange;
 	background:#e6e4f3 !important; /*CECECE*/
 	height:32px;
 }
-.top_logo{
 
-}
 .top_nav ul {
 display:inline;
 }
@@ -43,8 +51,8 @@ width:100%;
 }
 #content_frame div {
 display:inline;
-
 }
+
 #left_side img{
 }
 #middle_content {
@@ -71,6 +79,20 @@ margin:0 auto 0 auto;
 
 }
 
+#recentworks
+{
+	padding: 30px 0;
+}
+.span-6
+{
+	background-color: #fafafa;
+	box-shadow: inset 0 0 1px  #eaeaea;
+	text-align: center;
+	padding: 20px 0;
+	position: relative;	
+}
+.clearfix:after, .container:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
+.clearfix, .container {display:block;}
 
 meta.foundation-version {
   font-family: "/5.2.1/"; }

@@ -34,14 +34,23 @@
 <meta class="foundation-mq-large">
 <meta class="foundation-mq-medium">
 <meta class="foundation-mq-small">
-<style></style>
 <meta class="foundation-mq-topbar">
 </head>
 <body>
+
 <div id="top_part">
+	<div class="soc_links rcorner"><ul><li>
+		<a href="http://www.facebook.com"><img src="./static/fbs.png"></a></li>
+		<li>
+		<a href="http://www.google.com"><img src="./static/gs.png"></a></li>
+		<li>
+		<a href="http://www.twitter.com"><img src="./static/ts.png"></a></li>
+		</ul>
+	</div>
 	<div class="top_logo">
 		<img src="./static/logo.png" />
 	</div>
+	
 </div>
 	<div id="menu_bar">		
 	</div>
@@ -61,14 +70,15 @@
 					<!-- Thumbnails -->
 						<div class="three_x_three">
 							<div class="row">
+								<section id="recentworks" class="container clearfix">
 								<c:forEach items="${requestScope.entityList}" var="content">
-									<div class="large-21 small-6 columns">
-										<a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey().getName() %>">
-										<img class="thumbimg" src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" /></a>							
-											<!-- <h5><%= ((Content) pageContext.getAttribute("content")).getDisplayName() %></h5> -->
-										<h6><view:ContentThumbnailImg content="${content}"/></h6>
-									</div>
+									
+										<div class="span-6">
+										<div class="image_wrapper"> <a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey().getName() %>"> <img src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" alt=""></a></div>
+										<h6><view:ContentThumbnailImg content="${content}"/></h6></div>
+								
 								</c:forEach>
+								</section>
 							</div>
 						<!-- End Thumbnails -->
 						</div>
