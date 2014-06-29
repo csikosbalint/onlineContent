@@ -1,182 +1,101 @@
-<%@page language="java"%>
-<%@page
-	import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
-<%@page import="hu.fnf.devel.onlinecontent.model.Content"%>
+<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="view" uri="WEB-INF/view.tld" %>
+<%@page language="java" %>
+<%@page import="hu.fnf.devel.onlinecontent.model.Content" %>
 <%@page import="java.util.Iterator"%>
-<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
-<%@page import="java.lang.*"%>
-<%@page import="java.util.*"%>
-<%@page import="com.google.appengine.api.datastore.*"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
-<%@taglib prefix="view" uri="WEB-INF/view.tld"%>
-
-<!DOCTYPE html>
-
-<html
-	class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"
-	lang="en"
-	data-useragent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36">
+<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach" %>
+<%@page import="java.lang.*" %>
+<%@page import="java.util.*" %>
+<%@page import="com.google.appengine.api.datastore.*" %>
+<!DOCTYPE HTML>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Online Jatek FNF</title>
+<meta name="copyright" content="Copyright (c) 2014" >
+<meta name="description" content="Database of online flash games." >
+<meta name="viewport" content="width=device-width, initial-scale=1.0" >
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Foundation Template | So Boxy</title>
-
-<link rel="stylesheet" href="./static/foundation.css">
-<script src="./static/modernizr.js"></script>
-<script src="./static/google.js"></script>
-<meta class="foundation-data-attribute-namespace">
-<meta class="foundation-mq-xxlarge">
-<meta class="foundation-mq-xlarge">
-<meta class="foundation-mq-large">
-<meta class="foundation-mq-medium">
-<meta class="foundation-mq-small">
-<style></style>
-<meta class="foundation-mq-topbar">
-<style type="text/css"></style>
+<link rel="stylesheet" href="static/screen.css" type="text/css" media="screen">
+<link rel="stylesheet" href="static/style.css" type="text/css" media="screen">
 </head>
-
-
 <body>
+<header class="clearfix">
+  <div class="container">
+    <div id="logo" class="span-2"><img src="static/logo.png" alt=""></div>
+    <h1 class="span-6"></h1>
+    <nav class="span-16 last" style="float:right">
+      <ul class="right">
+        <li><a href="http://onlinejatek.fnf.hu">Home</a></li>
+        <li><a href="#">Categories</a></li>
+        <li><a href="#">Favorites</a></li>
+        <li><a href="#">Propose</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div class="separator"></div>
+<section id="recentgames" class="container clearfix" style="margin:0 auto 0 auto;text-align:center;">
+			<embed src="<%=((Content) request.getAttribute("content")).getContentSourceUrl()%>"type="application/x-shockwave-flash" width="950" height="540"></embed>
+	    <div class="span-6" style="margin: 5px 20px 5px 20px;text-align:center;">
+		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="#"> 
+		<img class="rounded-corners" src="static/noimage.jpg" alt="" style="width:230px;height:119px"></a></div>
+		<h6>No Content Name</h6></div>
+		<div class="span-6" style="margin: 5px 40px 5px 40px;text-align:center;">
+		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="#"> 
+		<img class="rounded-corners" src="static/noimage.jpg" alt="" style="width:230px;height:119px"></a></div>
+		<h6>No Content Name</h6></div>
+		<div class="span-6" style="margin: 5px 20px 5px 20px;text-align:center;">
+		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="#"> 
+		<img class="rounded-corners" src="static/noimage.jpg" alt="" style="width:230px;height:119px"></a></div>
+		<h6>No Content Name</h6></div>
 
-	<div id="top_part">
-		<div class="top_logo">
-			<img src="./static/logo.png" />
-		</div>
-	</div>
-	<div id="menu_bar"></div>
-	<div id="content_frame">
-		<div id="left_side" class="left column_size_25">
+</section>
+ 
+		
 
-			<%
-				if (request.getAttribute("session") != null
-						&& ((HttpSession) request.getAttribute("session"))
-								.getAttribute("admin") != null) {
-			%>
-			<img
-				src="<%=((Content) request.getAttribute("content"))
-						.getThumbBlobUrl()%>" />
-			<form action="/">
-				<%=((Content) request.getAttribute("content"))
-						.getDisplayName()%>
-				<input type="hidden" name="contentname"
-					value="<%=((Content) request.getAttribute("content"))
-						.getNameKey()%>" />
-				<input type="text" name="searchKeyWords"
-					value="<%=((Content) request.getAttribute("content"))
-						.getSearchKeyWords().toString()%>" />
-				<button type="submit" name="changeAndSearch">Change and
-					Search</button>
-			</form>
-			<%
-				} else {
-			%>
-			<img src="/static/banner_v.gif">
-			<%
-				}
-			%>
-		</div>
-		<div id="middle_content" class="mid">
-			<div id="right_side" class="left column_size_25"></div>
-			<div class="row">
-
-				<div class="row">
-
-					<div class="large-4 columns">
-						<embed
-							src="<%=((Content) request.getAttribute("content"))
-					.getContentSourceUrl()%>"
-							type="application/x-shockwave-flash" width="720" height="540"></embed>
-
-					</div>
-
-					<div class="large-6 columns"></div>
-
-					<!-- End Header Content -->
-
-
-					<!-- Search Bar -->
-
-					<div class="row">
-						<pre>categories</pre>
-						<div class="large-12 columns">
-							<div class="radius panel">
-
-								<form>
-									<div class="row collapse">
-
-										<div class="large-10 small-8 columns">
-											<input type="text">
-										</div>
-
-										<div class="large-2 small-3 columns">
-											<a href="#" class="postfix button expand">Search</a>
-										</div>
-										<pre>
-										<view:ContentCategories
-												content="<%=(Content) request.getAttribute(\"content\")%>">
- 												</view:ContentCategories>
-										</pre>
-									</div>
-								</form>
-
-							</div>
-						</div>
-
-					</div>
-
-					<!-- End Search Bar -->
-
-
-					<!-- Thumbnails -->
-				</div>
-				<div class="row">
-					<div class="mid">
-						<div class="large-3 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
-
-							<p>Description</p>
-
-						</div>
-
-						<div class="large-3 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
-
-							<p>Description</p>
-
-						</div>
-
-						<div class="large-3 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
-
-							<p>Description</p>
-
-						</div>
-
-						<div class="large-3 small-6 columns">
-							<img src="./static/Thumbnail500.jpg">
-
-							<p>Description</p>
-
-						</div>
-					</div>
-				</div>
-				<!-- End Thumbnails -->
-			</div>
-		</div>
-	</div>
-	<div id="foot">
-		<p>Copyright Onlinejatek.fnf.hu @ 2014</p>
-	</div>
-	<script src="./static/jquery.js"></script>
-	<script src="./static/foundation.js"></script>
-	<script>
-		$(document).foundation();
-
-		var doc = document.documentElement;
-		doc.setAttribute('data-useragent', navigator.userAgent);
-	</script>
-
+<footer class="clearfix">
+  <div class="container">
+    <div class="about span-6 append-1">
+      <h3>About the site's history</h3>
+      <p>The basic idea was that to develope a website which is able to build its content without human resources. The project actually works for crawl flash games over the internet and collect them all, but it's do it just because the searching criteria defined for this.</p>
+      <p class="social_icons" style="float:right">Follow us :<br/><a href="https://github.com/csikosbalint/onlineContent"><img src="static/git.png" alt=""></a><br/></p>
+    </div>
+    <div id="tweets" class="span-6 append-1">
+      <h3>Latest updates</h3>
+      <div class="one_tweet">
+        <p>Upgraded design</p>
+        <div class="date">27 June 2014</div>
+      </div>
+	  <div class="one_tweet">
+        <p>Crawler starting to mine</p>
+        <div class="date">25 April 2014</div>
+      </div>
+	  <div class="one_tweet">
+        <p>Project borns</p>
+        <div class="date">12 April 2014</div>
+      </div>
+    </div>
+    <div id="footer_form" class="span-10 last clearfix">
+      <h3>Registration</h3>
+      <form action="#">
+        <div class="row">
+          <label>Nick</label>
+          <input type="text" name="name" class="span-7 right last">
+        </div>
+        <div class="row" style="margin-top:20px">
+          <label>Your e-Mail</label>
+          <input type="text" name="email" class="span-7 right last">
+        </div>
+        <div class="span-7 right last">
+          <input type="submit" class="right">
+        </div>
+      </form>
+    </div>
+    <hr>
+    Copyright @ 2014 <span class="right last"><a href="#"><img src="static/fbs.png" alt=""></a><a href="#"><img src="static/ts.png" alt=""></a><a href="#"><img src="static/gs.png" alt=""></a></div>
+</footer>
+<script src="scripts/jquery-1.7.1.min.js"></script>
 </body>
 </html>

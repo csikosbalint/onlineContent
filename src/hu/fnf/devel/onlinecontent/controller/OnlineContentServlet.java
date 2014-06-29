@@ -42,6 +42,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static PersistenceManager pm;
 	private static TreeSet<Content> list;
 	private static Map<String, Language> translations;
+	
 
 	public OnlineContentServlet() {
 		initMemory();
