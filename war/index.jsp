@@ -1,96 +1,53 @@
-<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet"%>
+<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="view" uri="WEB-INF/view.tld"%>
-<%@page language="java"%>
-<%@page import="hu.fnf.devel.onlinecontent.model.Content"%>
+<%@taglib prefix="view" uri="WEB-INF/view.tld" %>
+<%@page language="java" %>
+<%@page import="hu.fnf.devel.onlinecontent.model.Content" %>
 <%@page import="java.util.Iterator"%>
-<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
-<%@page import="java.lang.*"%>
-<%@page import="java.util.*"%>
-<%@page import="com.google.appengine.api.datastore.*"%>
-<!DOCTYPE html>
-<html
-	class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"
-	lang="en"
-	data-useragent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36">
+<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach" %>
+<%@page import="java.lang.*" %>
+<%@page import="java.util.*" %>
+<%@page import="com.google.appengine.api.datastore.*" %>
+<!DOCTYPE HTML>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Online Jatek FNF</title>
+<meta name="copyright" content="Copyright (c) 2014" >
+<meta name="description" content="Database of online flash games." >
+<meta name="viewport" content="width=device-width, initial-scale=1.0" >
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><view:Interpreter text="Online Games FNF"></view:Interpreter></title>
-<meta name="description"
-	content="Database of online flash games.">
-<meta name="author"
-	content="">
-<meta name="copyright" content="Copyright (c) 2014">
-
-<link rel="stylesheet" href="./static/foundation.css">
-<script src="./static/google.js" ></script>
-<script src="./static/modernizr.js"></script>
-<style type="text/css"></style>
-<meta class="foundation-data-attribute-namespace">
-<meta class="foundation-mq-xxlarge">
-<meta class="foundation-mq-xlarge">
-<meta class="foundation-mq-large">
-<meta class="foundation-mq-medium">
-<meta class="foundation-mq-small">
-<meta class="foundation-mq-topbar">
+<link rel="stylesheet" href="static/screen.css" type="text/css" media="screen">
+<link rel="stylesheet" href="static/style.css" type="text/css" media="screen">
 </head>
 <body>
+<header class="clearfix">
+  <div class="container">
+    <div id="logo" class="span-2"><img src="static/logo.png" alt=""></div>
+    <h1 class="span-6"></h1>
+    <nav class="span-16 last" style="float:right">
+      <ul class="right">
+        <li class="active"><a href="http://onlinejatek.fnf.hu">Home</a></li>
+        <li><a href="#">Categories</a></li>
+        <li><a href="#">Favorites</a></li>
+        <li><a href="#">Propose</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div class="separator"></div>
+<section id="recentgames" class="container clearfix" style="margin:0 auto 0 auto;text-align:center;">
+   <c:forEach items="${requestScope.entityList}" var="content">
+		<div class="span-6" style="margin: 5px 10px 5px 10px;text-align:center;">
+		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey().getName() %>"> 
+		<img class="rounded-corners" src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" alt="" style="width:240px;height:119px"></a></div>
+		<h6><view:ContentThumbnailImg content="${content}"/></h6></div>
+	</c:forEach>
+</section>
 
-<div id="top_part">
-	<div class="soc_links rcorner"><ul><li>
-		<a href="http://www.facebook.com"><img src="./static/fbs.png"></a></li>
-		<li>
-		<a href="http://www.google.com"><img src="./static/gs.png"></a></li>
-		<li>
-		<a href="http://www.twitter.com"><img src="./static/ts.png"></a></li>
-		</ul>
-	</div>
-	<div class="top_logo">
-		<img src="./static/logo.png" />
-	</div>
-	
-</div>
-	<div id="menu_bar">		
-	</div>
-	<div id="content_frame">
-	<div id="left_side" class="left column_size_25">
-		<% if (request.getAttribute("session") != null && ((HttpSession)request.getAttribute("session")).getAttribute("admin") != null ) { %>
-		<form action="/">
-		<button type="submit" name="forceReload">Reload</button>
-		</form>
-		<% } else { %> 
-		<img src="/static/banner_v.gif">
-		<% } %>
-	</div>
-	<div id="middle_content" class="mid">
-		<div class="row">
-				<div class="row">
-					<!-- Thumbnails -->
-						<div class="three_x_three">
-							<div class="row">
-								<section id="recentworks" class="container clearfix">
-								<c:forEach items="${requestScope.entityList}" var="content">
-									
-										<div class="span-6">
-										<div class="image_wrapper"> <a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey().getName() %>"> <img src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" alt=""></a></div>
-										<h6><view:ContentThumbnailImg content="${content}"/></h6></div>
-								
-								</c:forEach>
-								</section>
-							</div>
-						<!-- End Thumbnails -->
-						</div>
-				</div>
-				<!-- Footer -->
-
-				<footer class="row">
-				<div class="large-12 columns">
+<div class="page_nav">
 					<hr>
-					<div class="row">
-						<div class="large-6 columns">
-							<ul class="inline-list right">
+							<ul class="inline-list" >
 							<c:choose>
 								<c:when test="${requestScope.pageActual > 4 &&  requestScope.pageActual <= requestScope.listSize-4}">
 									<li><a href="/?page=${requestScope.pageActual - 1}"><view:Interpreter
@@ -157,27 +114,48 @@
 								</c:otherwise>
 							</c:choose>			
 							</ul>
-						</div>
-					</div>
-				</div>
-			</footer>
-			<!-- End Footer -->
-		</div>
-	</div>
-	<div id="right_side" class="right column_size_25">
-	</div>
-	</div>
-	<div id="foot">
-	<p>Copyright Onlinejatek.fnf.hu @ 2014</p>
-	</div>
-	<script src="./static/jquery.js"></script>
-	<script src="./static/foundation.js"></script>
-	<script>
-		$(document).foundation();
-
-		var doc = document.documentElement;
-		doc.setAttribute('data-useragent', navigator.userAgent);
-	</script>
-
+</div>
+<footer class="clearfix">
+  <div class="container">
+    <div class="about span-6 append-1">
+      <h3>About the site's history</h3>
+      <p>The basic idea was that to develope a website which is able to build its content without human resources. The project actually works for crawl flash games over the internet and collect them all, but it's do it just because the searching criteria defined for this.</p>
+      <p class="social_icons" style="float:right">Follow us :<br/><a href="https://github.com/csikosbalint/onlineContent"><img src="static/git.png" alt=""></a><br/></p>
+    </div>
+    <div id="tweets" class="span-6 append-1">
+      <h3>Latest updates</h3>
+      <div class="one_tweet">
+        <p>Upgraded design</p>
+        <div class="date">27 June 2014</div>
+      </div>
+	  <div class="one_tweet">
+        <p>Crawler starting to mine</p>
+        <div class="date">25 April 2014</div>
+      </div>
+	  <div class="one_tweet">
+        <p>Project borns</p>
+        <div class="date">12 April 2014</div>
+      </div>
+    </div>
+    <div id="footer_form" class="span-10 last clearfix">
+      <h3>Registration</h3>
+      <form action="#">
+        <div class="row">
+          <label>Nick</label>
+          <input type="text" name="name" class="span-7 right last">
+        </div>
+        <div class="row" style="margin-top:20px">
+          <label>Your e-Mail</label>
+          <input type="text" name="email" class="span-7 right last">
+        </div>
+        <div class="span-7 right last">
+          <input type="submit" class="right">
+        </div>
+      </form>
+    </div>
+    <hr>
+    Copyright @ 2014 <span class="right last"><a href="#"><img src="static/fbs.png" alt=""></a><a href="#"><img src="static/ts.png" alt=""></a><a href="#"><img src="static/gs.png" alt=""></a></div>
+</footer>
+<script src="scripts/jquery-1.7.1.min.js"></script>
 </body>
 </html>
