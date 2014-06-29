@@ -43,7 +43,12 @@ header
 	box-shadow: 0 1px #4d4d4d, inset 0 -1px rgba(28,28,28,.75);
 	margin-bottom: 1px;
 }
-
+.rounded-corners {
+     -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -khtml-border-radius: 20px;
+    border-radius: 20px;
+}
 .inline-list {
   margin: 0 auto 1.0625rem auto;
   margin-left: -1.375rem;
@@ -51,14 +56,24 @@ header
   padding: 0;
   list-style: none;
   overflow: hidden; }
-  .inline-list > li {
+ .inline-list > li {
     list-style: none;
-    float: left;
+    padding-left:3.375rem;
     margin-left: 1.375rem;
-    display: block; }
-    .inline-list > li > * {
-      display: block; }
+    display: inline; 
+}
+ .inline-list > li > * {
+ 
+      display: inline; 
+}
 
+.page_nav{
+width:100%;
+text-align:center;
+margin:0 auto 0 auto;
+background-color:#F2F0F0;
+padding-bottom:1px;
+}
 /*##########################################################*/
 
 /*##########################################################*/
@@ -179,7 +194,7 @@ nav ul li.active a
 	cursor: pointer;
 }
 
-#four_columns,#recentworks
+#four_columns,#recentgames
 {
 	padding: 30px 0;
 }
