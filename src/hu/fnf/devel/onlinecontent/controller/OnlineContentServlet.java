@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
+import java.util.Random;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.RequestDispatcher;
@@ -42,7 +43,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static PersistenceManager pm;
 	private static TreeSet<Content> list;
 	private static Map<String, Language> translations;
-	
+	 
 
 	public OnlineContentServlet() {
 		initMemory();
@@ -105,10 +106,29 @@ public class OnlineContentServlet extends HttpServlet {
 			req.setAttribute("session", null);
 		}
 		if (req.getParameter("contentname") != null) {
+			
+			Iterator<Content> itc = list.iterator();
+			Random rand = new Random();
+			int n = list.size();
+			int veletlen_szam = rand.nextInt(n-3);
+			veletlen_szam++;
+			for(int i = 0; i < veletlen_szam; i++)
+			{
+				itc.next();
+			}
+			TreeSet<Content> contents = new TreeSet<>();
+			for (int i = 0; i < 3; i++) {
+				if (itc.hasNext()) {
+					Content contentr = itc.next();
+					contents.add(contentr);
+				}
+			}
 			view = req.getRequestDispatcher("entity.jsp");
 			Content content = OnlineContentServlet.searchContent(req.getParameter("contentname"));
 			content.incViewCount();
 			req.setAttribute("content", content);
+			req.setAttribute(OnlineContentServlet.LIST, contents);
+			
 		} else if (req.getParameter("admin") != null || req.getParameter("createLanguageEntry") != null
 				|| req.getParameter("createCategory") != null) {
 			view = req.getRequestDispatcher("admin.jsp");

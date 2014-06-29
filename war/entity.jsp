@@ -38,22 +38,17 @@
 <div class="separator"></div>
 <section id="recentgames" class="container clearfix" style="margin:0 auto 0 auto;text-align:center;">
 			<embed src="<%=((Content) request.getAttribute("content")).getContentSourceUrl()%>"type="application/x-shockwave-flash" width="950" height="540"></embed>
-	    <div class="span-6" style="margin: 5px 20px 5px 20px;text-align:center;">
-		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="#"> 
-		<img class="rounded-corners" src="static/noimage.jpg" alt="" style="width:230px;height:119px"></a></div>
-		<h6>No Content Name</h6></div>
-		<div class="span-6" style="margin: 5px 40px 5px 40px;text-align:center;">
-		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="#"> 
-		<img class="rounded-corners" src="static/noimage.jpg" alt="" style="width:230px;height:119px"></a></div>
-		<h6>No Content Name</h6></div>
-		<div class="span-6" style="margin: 5px 20px 5px 20px;text-align:center;">
-		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="#"> 
-		<img class="rounded-corners" src="static/noimage.jpg" alt="" style="width:230px;height:119px"></a></div>
-		<h6>No Content Name</h6></div>
-
+<div style="position:relative;width:100%;margin:20px auto 0 auto; text-align:center; padding-left:90px;">
+ <c:forEach items="${requestScope.entityList}" var="contents">
+		<div class="span-6" style="margin: 5px 10px 5px 10px;text-align:center;">
+		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="?contentname=<%= ((Content) pageContext.getAttribute("contents")).getNameKey().getName() %>"> 
+		<img class="rounded-corners" src="<%= ((Content) pageContext.getAttribute("contents")).getThumbBlobUrl() %>" alt="" style="width:240px;height:119px"></a></div>
+		<h6><view:ContentThumbnailImg content="${contents}"/></h6></div>
+	</c:forEach>
+</div>
+	
 </section>
- 
-		
+
 
 <footer class="clearfix">
   <div class="container">
