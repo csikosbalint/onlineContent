@@ -173,7 +173,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private void searchAndChange(String searchKeyWords, String nameKey) {
 		Content content = OnlineContentServlet.searchContent(nameKey);
 		content.setSearchKeyWords(new ArrayList<String>(Arrays.asList(searchKeyWords.split(" "))));
-		content.setThumbBlobUrl("/static/noimage.gif");
+		content.setThumbBlobUrl("/static/noimage.jpg");
 	}
 
 	@SuppressWarnings("unchecked")
