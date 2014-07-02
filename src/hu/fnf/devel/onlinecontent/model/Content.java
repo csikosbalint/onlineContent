@@ -4,6 +4,7 @@ import hu.fnf.devel.onlinecontent.controller.OnlineContentServlet;
 import hu.fnf.devel.onlinecontent.controller.Receiver;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -58,6 +59,11 @@ public class Content implements Serializable, Comparable<Content> {
 	
 	public Content() {
 		super();
+		this.nameKey = null;
+		this.contentSourceUrl = null;
+		this.thumbSearchKeyWords = new ArrayList<String>();
+		this.contentCreation = new Date();
+		this.categories = new HashSet<Category>();
 	}
 	
 	public Content(String nameKey) {
@@ -72,7 +78,6 @@ public class Content implements Serializable, Comparable<Content> {
 		this.contentSourceUrl = contentSourceUrl;
 		this.thumbSearchKeyWords = thumbSearchKeyWords;
 		this.contentCreation = contentCreation;
-		this.categories = new HashSet<Category>();
 	}
 	
 	public void setNameKey(Key nameKey) {

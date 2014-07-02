@@ -30,6 +30,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.Customsearch.Cse.List;
 import com.google.api.services.customsearch.model.Search;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.apphosting.api.ApiProxy.OverQuotaException;
 
 @SuppressWarnings("serial")
@@ -43,7 +44,6 @@ public class OnlineContentServlet extends HttpServlet {
 	private static PersistenceManager pm;
 	private static TreeSet<Content> list;
 	private static Map<String, Language> translations;
-	 
 
 	public OnlineContentServlet() {
 		initMemory();
@@ -97,6 +97,9 @@ public class OnlineContentServlet extends HttpServlet {
 						createLanguageEntry(req.getParameter("languageName"), req.getParameter("langKey"),
 								req.getParameter("textValue"));
 					}
+					if (req.getParameter("deleteQuery") != null) {
+						deleteQuery(req.getParameter("query"));
+					}
 					req.setAttribute("session", session);
 					// reinit
 					initMemory();
@@ -106,14 +109,16 @@ public class OnlineContentServlet extends HttpServlet {
 			req.setAttribute("session", null);
 		}
 		if (req.getParameter("contentname") != null) {
-			
+
 			Iterator<Content> itc = list.iterator();
 			Random rand = new Random();
+
+			ArrayList<Content> l = new ArrayList<Content>(list);
+			l.get(rand.nextInt(l.size()));
 			int n = list.size();
-			int veletlen_szam = rand.nextInt(n-3);
+			int veletlen_szam = rand.nextInt(n - 3);
 			veletlen_szam++;
-			for(int i = 0; i < veletlen_szam; i++)
-			{
+			for (int i = 0; i < veletlen_szam; i++) {
 				itc.next();
 			}
 			TreeSet<Content> contents = new TreeSet<>();
@@ -128,7 +133,7 @@ public class OnlineContentServlet extends HttpServlet {
 			content.incViewCount();
 			req.setAttribute("content", content);
 			req.setAttribute(OnlineContentServlet.LIST, contents);
-			
+
 		} else if (req.getParameter("admin") != null || req.getParameter("createLanguageEntry") != null
 				|| req.getParameter("createCategory") != null) {
 			view = req.getRequestDispatcher("admin.jsp");
@@ -159,6 +164,18 @@ public class OnlineContentServlet extends HttpServlet {
 		} catch (ServletException e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void deleteQuery(String query) {
+		log.info("delteQuery: " + query);
+        
+		java.util.List<Content> todel = (java.util.List<Content>) pm.newQuery(Content.class).execute();;
+		for ( int i = 0; i < Integer.valueOf(query); i++ ) {
+			pm.deletePersistent(todel.get(i));
+		}
+		
+		log.info(todel.size() + " content has been deleted.");
 	}
 
 	private static Content searchContent(String nameKey) {
@@ -241,7 +258,7 @@ public class OnlineContentServlet extends HttpServlet {
 		}
 
 		log.warning("Useing default thumbnail for: " + content.getNameKey());
-		return "/static/noimage.gif";
+		return "/static/noimage.jpg";
 	}
 
 	private void createLanguageEntry(String nameKey, String langKey, String textValue) {

@@ -33,6 +33,11 @@
 <input type="text" name="textValue"/>
 <button type="submit">Add translation</button>
 </form>
+<form>
+<input type="hidden" name="deleteQuery" value="true"/>
+<input type="text" name="query"/>
+<button type="submit">No. Content to Delete</button>
+</form>
 <% } else { %>
 
 <script>
