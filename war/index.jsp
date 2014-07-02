@@ -156,6 +156,6 @@
     <hr>
     Copyright @ 2014 <span class="right last"><a href="#"><img src="static/fbs.png" alt=""></a><a href="#"><img src="static/ts.png" alt=""></a><a href="#"><img src="static/gs.png" alt=""></a></div>
 </footer>
-<script src="scripts/jquery-1.7.1.min.js"></script>
+<script src="static/scripts/jquery.min.js"></script>
 </body>
 </html>
