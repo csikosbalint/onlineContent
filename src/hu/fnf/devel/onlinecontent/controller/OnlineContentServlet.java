@@ -74,6 +74,8 @@ public class OnlineContentServlet extends HttpServlet {
 			HttpSession session = req.getSession(false);
 
 			if (session != null) {
+				// TODO: rewrite admin
+				// https://developers.google.com/appengine/docs/java/config/webxml#Security_and_Authentication
 				if (session.getAttribute("admin") != null) {
 					/*
 					 * Admin functions
@@ -84,6 +86,8 @@ public class OnlineContentServlet extends HttpServlet {
 					}
 					if (req.getParameter("forceReload") != null) {
 						initMemory();
+						resp.sendRedirect("/");
+						return;
 					}
 					if (req.getParameter("changeAndSearch") != null) {
 						searchAndChange(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
@@ -170,12 +174,13 @@ public class OnlineContentServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	private void deleteQuery(String query) {
 		log.info("delteQuery: " + query);
-        
-		java.util.List<Content> todel = (java.util.List<Content>) pm.newQuery(Content.class).execute();;
-		for ( int i = 0; i < Integer.valueOf(query); i++ ) {
+
+		java.util.List<Content> todel = (java.util.List<Content>) pm.newQuery(Content.class).execute();
+		;
+		for (int i = 0; i < Integer.valueOf(query); i++) {
 			pm.deletePersistent(todel.get(i));
 		}
-		
+
 		log.info(todel.size() + " content has been deleted.");
 	}
 
@@ -198,10 +203,10 @@ public class OnlineContentServlet extends HttpServlet {
 	private void initMemory() {
 		pm = PMF.getInstance().getPersistenceManager();
 		Query q = pm.newQuery(Content.class);
-		if ( list == null ) {
+		if (list == null) {
 			list = new TreeSet<>();
 		}
-		q.setRange(list.size(), list.size()+OnlineContentServlet.HOURLY_LOAD_CONTENT );
+		q.setRange(list.size(), list.size() + OnlineContentServlet.HOURLY_LOAD_CONTENT);
 		for (Content content : (java.util.List<Content>) q.execute()) {
 			list.add(content);
 		}
