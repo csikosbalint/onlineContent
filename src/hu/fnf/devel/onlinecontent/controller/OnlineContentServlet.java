@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import java.util.Random;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,7 +31,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.Customsearch.Cse.List;
 import com.google.api.services.customsearch.model.Search;
-import com.google.appengine.api.datastore.FetchOptions;
 import com.google.apphosting.api.ApiProxy.OverQuotaException;
 
 @SuppressWarnings("serial")
@@ -44,6 +44,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static PersistenceManager pm;
 	private static TreeSet<Content> list;
 	private static Map<String, Language> translations;
+	private static int HOURLY_LOAD_CONTENT = 25;
 
 	public OnlineContentServlet() {
 		initMemory();
@@ -196,8 +197,14 @@ public class OnlineContentServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	private void initMemory() {
 		pm = PMF.getInstance().getPersistenceManager();
-
-		list = new TreeSet<>((java.util.List<Content>) pm.newQuery(Content.class).execute());
+		Query q = pm.newQuery(Content.class);
+		if ( list == null ) {
+			list = new TreeSet<>();
+		}
+		q.setRange(list.size(), list.size()+OnlineContentServlet.HOURLY_LOAD_CONTENT );
+		for (Content content : (java.util.List<Content>) q.execute()) {
+			list.add(content);
+		}
 		log.info(list.size() + " elements have been reloaded!");
 
 		translations = new HashMap<String, Language>();
