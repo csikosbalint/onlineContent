@@ -65,8 +65,5 @@ public class Category implements Serializable {
 	public void addKeyWord(String keyWord) {
 		this.keyWords.add(keyWord);
 	}
-	
-	public String getName() {
-		return nameKey.getName();
-	}
+
 }

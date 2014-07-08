@@ -146,6 +146,7 @@ public class Content implements Serializable, Comparable<Content> {
 	}
 
 	public void setContentSourceUrl(String contentSourceUrl) {
+		viewCount++;
 		this.contentSourceUrl = contentSourceUrl;
 	}
 	
@@ -174,10 +175,6 @@ public class Content implements Serializable, Comparable<Content> {
 	
 	public int getViewCount() {
 		return viewCount;
-	}
-	
-	public void incViewCount() {
-		viewCount++;
 	}
 
 	@Override

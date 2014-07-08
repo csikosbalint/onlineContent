@@ -1,6 +1,7 @@
 package hu.fnf.devel.onlinecontent.controller;
 
 import java.io.IOException;
+import java.util.Random;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,13 @@ public class Serve extends HttpServlet {
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		res.setHeader("Cache-Control", "public, max-age=3600");
+//		res.setHeader("Cache-Control", "public, max-age=3600");
+		if ( req.getParameter("noimage") != null ) {
+			// TODO: create random noimage thumbs
+			Random rand = new Random();
+			int i = rand.nextInt(OnlineContentServlet.getNoimages().size()-1);
+			blobstoreService.serve(new BlobKey("AMIfv94GA4_sky2UoY4rjhD1fJzJAs4afdrLuWHUe0_xvbf7xms_eSMl-5JBCtFdB3klCroEOhwysJ3X0Isqpa_KNczDqd-gGrCtLGQMoUfFH0ChI0vicJlFlxqxgjGknHgW-ycBeydmu9w_tllqfvxMnSqgdCxAmg"), res);
+		}
 		BlobKey blobKey = new BlobKey(req.getParameter("blob-key"));
 		blobstoreService.serve(blobKey, res);
 	}

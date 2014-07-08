@@ -21,8 +21,12 @@ public class Interpreter extends SimpleTagSupport {
 		PageContext pageContext = (PageContext) getJspContext();
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		text = text.replace(' ', '_');
-		getJspContext().getOut().print(
+		try {
+			getJspContext().getOut().print(
 				OnlineContentServlet.getTranslations().get(text)
 						.getTranslation(request.getHeader("Accept-Language").split(",")[0]));
+		} catch ( Exception e) {
+			getJspContext().getOut().print(text);
+		}
 	}
 }

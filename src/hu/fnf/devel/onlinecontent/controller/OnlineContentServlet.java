@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -28,23 +29,30 @@ import javax.servlet.http.HttpSession;
 
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Maps;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.Customsearch.Cse.List;
 import com.google.api.services.customsearch.model.Search;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.apphosting.api.ApiProxy.OverQuotaException;
 
 @SuppressWarnings("serial")
 public class OnlineContentServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 	private static final String LIST = "entityList";
+	private static final String CONTENT = "content";
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int PAGESIZE = 12;
+	private static final int HOURLY_LOAD_CONTENT = 25;
 
 	private static PersistenceManager pm;
-	private static TreeSet<Content> list;
+	private static java.util.Set<Content> sortedContents;
+	private static Map<String, Content> contents;
 	private static Map<String, Language> translations;
-	private static int HOURLY_LOAD_CONTENT = 25;
+	private static Map<String, Category> categories;
+	private static Map<String, BlobKey> noimages;
 
 	public OnlineContentServlet() {
 		initMemory();
@@ -52,115 +60,39 @@ public class OnlineContentServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (req.getParameter("user").equals("admin") && req.getParameter("pass").equals("Macska8")) {
-			HttpSession session = req.getSession(true);
-			if (session.getAttribute("admin") == null) {
-				session.setAttribute("admin", "admin: " + req.getRemoteAddr());
-				log.warning("login: " + session.getAttribute("admin"));
-			}
-		}
-		resp.sendRedirect("/?admin");
+		// TODO: make upload url secure
+		resp.sendRedirect("/");
 	}
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		resp.setContentType("text/plain; charset=utf-8");
 		int pageActual = req.getParameter("page") == null ? 1 : Integer.valueOf(req.getParameter("page"));
-		/*
-		 * Session
-		 */
+
 		RequestDispatcher view;
-		try {
-			HttpSession session = req.getSession(false);
 
-			if (session != null) {
-				// TODO: rewrite admin
-				// https://developers.google.com/appengine/docs/java/config/webxml#Security_and_Authentication
-				if (session.getAttribute("admin") != null) {
-					/*
-					 * Admin functions
-					 */
-					log.fine("admin: " + req.toString());
-					if (req.getParameter("resetContent") != null) {
-						resetContent(req.getParameter("resetContent"));
-					}
-					if (req.getParameter("forceReload") != null) {
-						initMemory();
-						resp.sendRedirect("/");
-						return;
-					}
-					if (req.getParameter("changeAndSearch") != null) {
-						searchAndChange(req.getParameter("searchKeyWords"), req.getParameter("contentname"));
-					}
-					if (req.getParameter("createCategory") != null) {
-						createCategory(req.getParameter("categoryName"), req.getParameter("categoryKeywords"));
-					}
-					if (req.getParameter("reCalculateContentArgs") != null) {
-						reCalculateContentArgs();
-					}
-					if (req.getParameter("createLanguageEntry") != null) {
-						createLanguageEntry(req.getParameter("languageName"), req.getParameter("langKey"),
-								req.getParameter("textValue"));
-					}
-					if (req.getParameter("deleteQuery") != null) {
-						deleteQuery(req.getParameter("query"));
-					}
-					req.setAttribute("session", session);
-					// reinit
-					initMemory();
-				}
-			}
-		} catch (OverQuotaException e) {
-			req.setAttribute("session", null);
-		}
 		if (req.getParameter("contentname") != null) {
-
-			Iterator<Content> itc = list.iterator();
-			Random rand = new Random();
-
-			ArrayList<Content> l = new ArrayList<Content>(list);
-			l.get(rand.nextInt(l.size()));
-			int n = list.size();
-			int veletlen_szam = rand.nextInt(n - 3);
-			veletlen_szam++;
-			for (int i = 0; i < veletlen_szam; i++) {
-				itc.next();
-			}
-			TreeSet<Content> contents = new TreeSet<>();
-			for (int i = 0; i < 3; i++) {
-				if (itc.hasNext()) {
-					Content contentr = itc.next();
-					contents.add(contentr);
-				}
-			}
+			Content content = contents.get(req.getParameter("contentname"));
+			java.util.Set<Content> recommendations = OnlineContentServlet.getRecommendation(3, content); 
+			
 			view = req.getRequestDispatcher("entity.jsp");
-			Content content = OnlineContentServlet.searchContent(req.getParameter("contentname"));
-			content.incViewCount();
-			req.setAttribute("content", content);
-			req.setAttribute(OnlineContentServlet.LIST, contents);
+			req.setAttribute(OnlineContentServlet.CONTENT, content);
+			req.setAttribute(OnlineContentServlet.LIST, recommendations);
 
-		} else if (req.getParameter("admin") != null || req.getParameter("createLanguageEntry") != null
-				|| req.getParameter("createCategory") != null) {
-			view = req.getRequestDispatcher("admin.jsp");
 		} else {
-			// got to the current element
-			Iterator<Content> it = list.iterator();
-
-			for (int i = 0; i < (PAGESIZE * (pageActual - 1)); i++) {
+			Iterator<Content> it = sortedContents.iterator();
+			for (int i = 0; i < (OnlineContentServlet.PAGESIZE * (pageActual - 1)); i++) {
 				it.next();
 			}
 			// create subList from pageSize*pageActual to
 			// pageSize*(pageActual+1)
-			TreeSet<Content> contents = new TreeSet<>();
-			for (int i = 0; i < PAGESIZE; i++) {
-				if (it.hasNext()) {
-					Content content = it.next();
-					contents.add(content);
-				}
+			TreeSet<Content> pageContents = new TreeSet<>();
+			while (it.hasNext() && pageContents.size() <= OnlineContentServlet.PAGESIZE) {
+				pageContents.add(it.next());
 			}
 			view = req.getRequestDispatcher("index.jsp");
-			req.setAttribute(OnlineContentServlet.LIST, contents);
-			req.setAttribute(OnlineContentServlet.LISTSIZE, (list.size() / PAGESIZE) + 1);
+			req.setAttribute(OnlineContentServlet.LIST, pageContents);
+			req.setAttribute(OnlineContentServlet.LISTSIZE, (contents.size() / PAGESIZE) + 1);
 			req.setAttribute(OnlineContentServlet.PAGEACTUAL, pageActual);
 		}
 
@@ -172,70 +104,84 @@ public class OnlineContentServlet extends HttpServlet {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void deleteQuery(String query) {
-		log.info("delteQuery: " + query);
-
-		java.util.List<Content> todel = (java.util.List<Content>) pm.newQuery(Content.class).execute();
-		;
-		for (int i = 0; i < Integer.valueOf(query); i++) {
-			pm.deletePersistent(todel.get(i));
+	private static java.util.Set<Content> getRecommendation(int limit, Content content) {
+		// TODO: recommend according to current content
+		Random rand = new Random();
+		// TODO: do some optimalization, this reorder is called on every entry page view
+		Map.Entry<String, Content>[] entries = (Entry<String, Content>[]) contents.entrySet().toArray();
+		java.util.Set<Content> recommendations = new HashSet<>();
+		while ( recommendations.size() <= limit) {
+			recommendations.add(entries[rand.nextInt(entries.length-1)].getValue());
 		}
-
-		log.info(todel.size() + " content has been deleted.");
+		return recommendations;
 	}
-
-	private static Content searchContent(String nameKey) {
-		for (Content content : list) {
-			if (content.getNameKey().getName().equals(nameKey)) {
-				return content;
-			}
-		}
-		return null;
-	}
-
-	private void searchAndChange(String searchKeyWords, String nameKey) {
-		Content content = OnlineContentServlet.searchContent(nameKey);
-		content.setSearchKeyWords(new ArrayList<String>(Arrays.asList(searchKeyWords.split(" "))));
-		content.setThumbBlobUrl("/static/noimage.jpg");
-	}
-
+	
 	@SuppressWarnings("unchecked")
-	private void initMemory() {
+	public static void initMemory() {
 		pm = PMF.getInstance().getPersistenceManager();
-		Query q = pm.newQuery(Content.class);
-		if (list == null) {
-			list = new TreeSet<>();
+		/*
+		 * CONTENT
+		 */
+		Query contentq = pm.newQuery(Content.class);
+		if (sortedContents == null) {
+			sortedContents = new TreeSet<>();
+		} else {
+			sortedContents.clear();
+			log.info("contents has been cleared!");
 		}
-		q.setRange(list.size(), list.size() + OnlineContentServlet.HOURLY_LOAD_CONTENT);
-		for (Content content : (java.util.List<Content>) q.execute()) {
-			list.add(content);
+		contentq.setRange(sortedContents.size(), sortedContents.size() + OnlineContentServlet.HOURLY_LOAD_CONTENT);
+		for (Content content : (java.util.List<Content>) contentq.execute()) {
+			sortedContents.add(content);
 		}
-		log.info(list.size() + " elements have been reloaded!");
-
+		for (Content content: sortedContents) {
+			contents.put(content.getNameKey().getName(), content);
+		}
+		log.info(contents.size() + " content(s) have been loaded!");
+		/*
+		 * TRANSLATION
+		 */
 		translations = new HashMap<String, Language>();
 		for (Language language : (java.util.List<Language>) pm.newQuery(Language.class).execute()) {
 			translations.put(language.getNameKey().getName(), language);
 		}
-		log.info(translations.size() + " translations have been reloaded!");
+		log.info(translations.size() + " translation(s) have been loaded!");
+		/*
+		 * CATEGORY
+		 */
+		categories = new HashMap<String, Category>();
+		for ( Category category : (java.util.List<Category>) pm.newQuery(Category.class).execute()) {
+			categories.put(category.getNameKey().getName(), category);
+		}
+		log.info(categories.size() + " categories have been loaded!");
 	}
-
-	private void resetContent(String parameter) {
-		// TODO Auto-generated method stub
-
-	}
-
 	/*
 	 * STATIC CALLS
 	 */
+	public static PersistenceManager getPm() {
+		return pm;
+	}
 
 	public static Map<String, Language> getTranslations() {
 		return translations;
+	}
+	
+	public static Map<String, Category> getCategories() {
+		return categories;
+	}
+	
+	public static Map<String, Content> getContents() {
+		return contents;
+	}
+	
+	public static Map<String, BlobKey> getNoimages() {
+		return noimages;
 	}
 
 	public static String searchThumbnail(Content content) {
 		log.info("searching...(only once)");
 		Customsearch thumbSearch = new Customsearch.Builder(new NetHttpTransport(), new JacksonFactory(), null)
 				.setApplicationName("ThumbSearch").build();
+
 		try {
 			StringBuffer searchKeyWords = new StringBuffer();
 			if (content.getSearchKeyWords().size() == 0) {
@@ -270,40 +216,7 @@ public class OnlineContentServlet extends HttpServlet {
 		}
 
 		log.warning("Useing default thumbnail for: " + content.getNameKey());
-		return "/static/noimage.jpg";
-	}
-
-	private void createLanguageEntry(String nameKey, String langKey, String textValue) {
-		Language language = null;
-		nameKey = nameKey.replace(' ', '_');
-		try {
-			language = pm.getObjectById(Language.class, nameKey);
-			log.fine("language(" + nameKey + ") has been found.");
-		} catch (Exception e) {
-			language = new Language(nameKey);
-			log.fine("new language(" + nameKey + ") created.");
-		}
-		language.addTranslation(langKey, textValue);
-		pm.makePersistent(language);
-	}
-
-	public static void createCategory(String nameKey, String words) {
-		Category category = null;
-		java.util.List<String> keyWords = new ArrayList<String>();
-		for (String word : words.split(",")) {
-			keyWords.add(word);
-		}
-		try {
-			category = pm.getObjectById(Category.class, nameKey);
-		} catch (Exception e) {
-			category = new Category(nameKey);
-		}
-		category.setKeyWords(keyWords);
-		pm.makePersistent(category);
-	}
-
-	private void reCalculateContentArgs() {
-
+		return "/static/serve?noimage=" + content.getNameKey().getName();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -326,6 +239,3 @@ public class OnlineContentServlet extends HttpServlet {
 		return ret;
 	}
 }
-/*
- * kutya
- */

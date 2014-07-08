@@ -16,6 +16,14 @@
 		<servlet-name>Serve</servlet-name>
 		<servlet-class>hu.fnf.devel.onlinecontent.controller.Serve</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>OnlineContentAdmin</servlet-name>
+		<servlet-class>hu.fnf.devel.onlinecontent.controller.OnlineContentAdminServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>admin</servlet-name>
+		<jsp-file>/admin.jsp</jsp-file>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>Receiver</servlet-name>
@@ -25,8 +33,18 @@
 		<servlet-name>Serve</servlet-name>
 		<url-pattern>/static/serve</url-pattern>
 	</servlet-mapping>
-
-
+	<servlet-mapping>
+		<servlet-name>OnlineContentAdmin</servlet-name>
+		<url-pattern>/admin/servlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>OnlineContentAdmin</servlet-name>
+		<url-pattern>/admin/cron/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>admin</servlet-name>
+		<url-pattern>/admin/*</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>OnlineContent</servlet-name>
 		<url-pattern>/</url-pattern>
@@ -35,7 +53,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>admin</web-resource-name>
-			<url-pattern>/cron/*</url-pattern>
+			<url-pattern>/admin*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>admin</role-name>

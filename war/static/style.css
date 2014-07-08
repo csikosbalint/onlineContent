@@ -1,6 +1,6 @@
 @font-face {
 	font-family: 'andlso';
-	src: url('font/COM4F_RG.TTF') format('truetype');
+	src: url('/static/fonts/COM4F_RG.TTF') format('truetype');
 
 }
 
@@ -293,7 +293,7 @@ nav ul li.active a
 /*##########################################################*/
 
 footer{
-	background: #000 url("static/footer_texture.jpg") repeat top left;
+	background: #000 url("/static/images/footer_texture.jpg") repeat top left;
 	padding: 30px 0;
 	font-size: 14px;
 	color: #c0c0c0;
