@@ -44,7 +44,7 @@ public class OnlineContentServlet extends HttpServlet {
 	private static final String CONTENT = "content";
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
-	private static final int PAGESIZE = 12;
+	private static final int PAGESIZE = 11;
 	private static final int HOURLY_LOAD_CONTENT = 25;
 
 	private static PersistenceManager pm;
@@ -73,8 +73,8 @@ public class OnlineContentServlet extends HttpServlet {
 
 		if (req.getParameter("contentname") != null) {
 			Content content = contents.get(req.getParameter("contentname"));
-			java.util.Set<Content> recommendations = OnlineContentServlet.getRecommendation(3, content); 
-			
+			java.util.Set<Content> recommendations = OnlineContentServlet.getRecommendation(3, content);
+
 			view = req.getRequestDispatcher("entity.jsp");
 			req.setAttribute(OnlineContentServlet.CONTENT, content);
 			req.setAttribute(OnlineContentServlet.LIST, recommendations);
@@ -107,15 +107,16 @@ public class OnlineContentServlet extends HttpServlet {
 	private static java.util.Set<Content> getRecommendation(int limit, Content content) {
 		// TODO: recommend according to current content
 		Random rand = new Random();
-		// TODO: do some optimalization, this reorder is called on every entry page view
+		// TODO: do some optimalization, this reorder is called on every entry
+		// page view
 		Map.Entry<String, Content>[] entries = (Entry<String, Content>[]) contents.entrySet().toArray();
 		java.util.Set<Content> recommendations = new HashSet<>();
-		while ( recommendations.size() <= limit) {
-			recommendations.add(entries[rand.nextInt(entries.length-1)].getValue());
+		while (recommendations.size() <= limit) {
+			recommendations.add(entries[rand.nextInt(entries.length - 1)].getValue());
 		}
 		return recommendations;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static void initMemory() {
 		pm = PMF.getInstance().getPersistenceManager();
@@ -123,17 +124,13 @@ public class OnlineContentServlet extends HttpServlet {
 		 * CONTENT
 		 */
 		Query contentq = pm.newQuery(Content.class);
-		if (sortedContents == null) {
-			sortedContents = new TreeSet<>();
-		} else {
-			sortedContents.clear();
-			log.info("contents has been cleared!");
-		}
+		sortedContents = new TreeSet<>();
+		contents = new HashMap<String, Content>();
 		contentq.setRange(sortedContents.size(), sortedContents.size() + OnlineContentServlet.HOURLY_LOAD_CONTENT);
 		for (Content content : (java.util.List<Content>) contentq.execute()) {
 			sortedContents.add(content);
 		}
-		for (Content content: sortedContents) {
+		for (Content content : sortedContents) {
 			contents.put(content.getNameKey().getName(), content);
 		}
 		log.info(contents.size() + " content(s) have been loaded!");
@@ -149,11 +146,12 @@ public class OnlineContentServlet extends HttpServlet {
 		 * CATEGORY
 		 */
 		categories = new HashMap<String, Category>();
-		for ( Category category : (java.util.List<Category>) pm.newQuery(Category.class).execute()) {
+		for (Category category : (java.util.List<Category>) pm.newQuery(Category.class).execute()) {
 			categories.put(category.getNameKey().getName(), category);
 		}
 		log.info(categories.size() + " categories have been loaded!");
 	}
+
 	/*
 	 * STATIC CALLS
 	 */
@@ -164,15 +162,15 @@ public class OnlineContentServlet extends HttpServlet {
 	public static Map<String, Language> getTranslations() {
 		return translations;
 	}
-	
+
 	public static Map<String, Category> getCategories() {
 		return categories;
 	}
-	
+
 	public static Map<String, Content> getContents() {
 		return contents;
 	}
-	
+
 	public static Map<String, BlobKey> getNoimages() {
 		return noimages;
 	}
