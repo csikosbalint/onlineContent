@@ -7,6 +7,7 @@
 	<servlet>
 		<servlet-name>OnlineContent</servlet-name>
 		<servlet-class>hu.fnf.devel.onlinecontent.controller.OnlineContentServlet</servlet-class>
+		<load-on-startup>3</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>Receiver</servlet-name>
@@ -15,10 +16,12 @@
 	<servlet>
 		<servlet-name>Serve</servlet-name>
 		<servlet-class>hu.fnf.devel.onlinecontent.controller.Serve</servlet-class>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>OnlineContentAdmin</servlet-name>
 		<servlet-class>hu.fnf.devel.onlinecontent.controller.OnlineContentAdminServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>admin</servlet-name>

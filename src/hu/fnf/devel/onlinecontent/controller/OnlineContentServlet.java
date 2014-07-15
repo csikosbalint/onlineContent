@@ -6,17 +6,17 @@ import hu.fnf.devel.onlinecontent.model.Language;
 import hu.fnf.devel.onlinecontent.model.PMF;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
-import java.util.Random;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
@@ -25,37 +25,40 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.Maps;
 import com.google.api.services.customsearch.Customsearch;
 import com.google.api.services.customsearch.Customsearch.Cse.List;
 import com.google.api.services.customsearch.model.Search;
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.apphosting.api.ApiProxy.OverQuotaException;
 
 @SuppressWarnings("serial")
-public class OnlineContentServlet extends HttpServlet {
+public class OnlineContentServlet extends HttpServlet implements Observer {
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 	private static final String LIST = "entityList";
 	private static final String CONTENT = "content";
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int PAGESIZE = 11;
-	private static final int HOURLY_LOAD_CONTENT = 25;
-
-	private static PersistenceManager pm;
+	
+//	private static PersistenceManager pm;
 	private static java.util.Set<Content> sortedContents;
 	private static Map<String, Content> contents;
-	private static Map<String, Language> translations;
+	private static Map<String, Language> languages;
 	private static Map<String, Category> categories;
 	private static Map<String, BlobKey> noimages;
-
+	
 	public OnlineContentServlet() {
-		initMemory();
+		log.info("Servlet init.");
+		sortedContents = new TreeSet<>();
+		contents = new HashMap<>();
+		languages = new HashMap<>();
+		categories = new HashMap<>();
+		noimages = new HashMap<>();
+		
+		OnlineContentAdminServlet.addObserver(this);
 	}
 
 	@Override
@@ -116,51 +119,11 @@ public class OnlineContentServlet extends HttpServlet {
 		}
 		return recommendations;
 	}
-
-	@SuppressWarnings("unchecked")
-	public static void initMemory() {
-		pm = PMF.getInstance().getPersistenceManager();
-		/*
-		 * CONTENT
-		 */
-		Query contentq = pm.newQuery(Content.class);
-		sortedContents = new TreeSet<>();
-		contents = new HashMap<String, Content>();
-		contentq.setRange(sortedContents.size(), sortedContents.size() + OnlineContentServlet.HOURLY_LOAD_CONTENT);
-		for (Content content : (java.util.List<Content>) contentq.execute()) {
-			sortedContents.add(content);
-		}
-		for (Content content : sortedContents) {
-			contents.put(content.getNameKey().getName(), content);
-		}
-		log.info(contents.size() + " content(s) have been loaded!");
-		/*
-		 * TRANSLATION
-		 */
-		translations = new HashMap<String, Language>();
-		for (Language language : (java.util.List<Language>) pm.newQuery(Language.class).execute()) {
-			translations.put(language.getNameKey().getName(), language);
-		}
-		log.info(translations.size() + " translation(s) have been loaded!");
-		/*
-		 * CATEGORY
-		 */
-		categories = new HashMap<String, Category>();
-		for (Category category : (java.util.List<Category>) pm.newQuery(Category.class).execute()) {
-			categories.put(category.getNameKey().getName(), category);
-		}
-		log.info(categories.size() + " categories have been loaded!");
-	}
-
 	/*
 	 * STATIC CALLS
 	 */
-	public static PersistenceManager getPm() {
-		return pm;
-	}
-
 	public static Map<String, Language> getTranslations() {
-		return translations;
+		return languages;
 	}
 
 	public static Map<String, Category> getCategories() {
@@ -217,11 +180,10 @@ public class OnlineContentServlet extends HttpServlet {
 		return "/static/serve?noimage=" + content.getNameKey().getName();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static Set<Category> searchCategories(Content content) {
 		Set<Category> ret = new HashSet<Category>();
 		try {
-			for (Category category : (java.util.List<Category>) pm.newQuery(Category.class).execute()) {
+			for (Category category : categories.values() ) {
 				for (String keyword : category.getKeyWords()) {
 					if (content.getDisplayName().toLowerCase().contains(keyword)) {
 						category.addMember(content);
@@ -235,5 +197,33 @@ public class OnlineContentServlet extends HttpServlet {
 			log.warning("datastore read quota exceeded!");
 		}
 		return ret;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void update(Observable o, Object data) {
+		if ( data instanceof Map<?, ?> ) {
+			if ( ((Map<?, ?>) data).isEmpty() ) {
+				return;
+			}
+			Object k = ((Map<?, ?>) data).values().iterator().next();
+			if ( k instanceof Content ) {
+				contents.clear();
+				contents.putAll((Map<String,Content>) data);
+				sortedContents.clear();
+				sortedContents.addAll(contents.values());
+			} else if ( k instanceof Language ) {
+				languages.clear();
+				languages.putAll((Map<String,Language>) data);
+			} else if ( k instanceof Category ) {
+				categories.clear();
+				categories.putAll((Map<String,Category>) data);
+			} else if ( k instanceof BlobKey ) {
+				noimages.clear();
+				noimages.putAll((Map<String,BlobKey>) data);
+			} else {
+				log.warning("Unknown object to update: " + k.getClass().getSimpleName());
+			}
+		}
 	}
 }
