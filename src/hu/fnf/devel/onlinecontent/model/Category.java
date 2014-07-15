@@ -14,7 +14,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unowned;
 
 @PersistenceCapable
-public class Category implements Serializable {
+public class Category implements Serializable, DatastoreInterface {
 
 	/**
 	 * 

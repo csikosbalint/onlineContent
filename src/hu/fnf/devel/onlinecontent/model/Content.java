@@ -19,7 +19,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unowned;
 
 @PersistenceCapable
-public class Content implements Serializable, Comparable<Content> {
+public class Content implements Serializable, Comparable<Content>, DatastoreInterface {
 	/**
 	 * Uploader uploads serialized content
 	 */

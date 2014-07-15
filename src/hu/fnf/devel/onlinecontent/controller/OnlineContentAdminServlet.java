@@ -2,6 +2,7 @@ package hu.fnf.devel.onlinecontent.controller;
 
 import hu.fnf.devel.onlinecontent.model.Category;
 import hu.fnf.devel.onlinecontent.model.Content;
+import hu.fnf.devel.onlinecontent.model.DatastoreInterface;
 import hu.fnf.devel.onlinecontent.model.Language;
 import hu.fnf.devel.onlinecontent.model.PMF;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observer;
 import java.util.logging.Logger;
@@ -27,58 +29,84 @@ public class OnlineContentAdminServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final int HOURLY_LOAD_CONTENT = 25;
 	private static final Logger log = Logger.getLogger(Content.class.getName());
-	
+
 	private static PersistenceManager pm;
 	private static java.util.List<Observer> observers;
-	
+
 	private static Map<String, Content> contents;
-	private static Map<String, Language> translations;
+	private static boolean contentsChanged = false;
+	private static Map<String, Language> languages;
+	private static boolean languagesChanged = false;
 	private static Map<String, Category> categories;
+	private static boolean categoriesChanged = false;
 	private static Map<String, BlobKey> noimages;
-	
+	private static boolean noimagesChanged = false;
+
 	public OnlineContentAdminServlet() {
-		log.info("Admin instanciated.");
+		log.info("Admin init.");
 		pm = PMF.getInstance().getPersistenceManager();
 		observers = Collections.synchronizedList(new ArrayList<Observer>());
-		
+
 		contents = new HashMap<>();
-		translations = new HashMap<>();
+		languages = new HashMap<>();
 		categories = new HashMap<>();
 		noimages = new HashMap<>();
-		
+
 		initMemory();
 	}
-    
+
 	public static void addObserver(Observer observer) {
-		// this .add is synchronized
-    	observers.add(observer);
-    	notifyObservers(observer);
-    }
-	
-	private static void notifyObservers(Observer observer) {
-		observer.update(null, contents);
-		observer.update(null, categories);
-		observer.update(null, translations);
-		observer.update(null, noimages);
+		// this .add() is synchronized
+		observers.add(observer);
+		contentsChanged = true;
+		categoriesChanged = true;
+		languagesChanged = true;
+		noimagesChanged = true;
+		notifyObservers();
 	}
-	
+
 	private static void notifyObservers() {
-		for (Observer observer : observers) {
-			notifyObservers(observer);
+		notifyObservers(observers);
+	}
+
+	private static void notifyObservers(List<Observer> myObservers) {
+		if (contentsChanged) {
+			notifyObservers(contents, myObservers);
+			contentsChanged = false;
+		}
+		if (categoriesChanged) {
+			notifyObservers(categories, myObservers);
+			categoriesChanged = false;
+		}
+		if (languagesChanged) {
+			notifyObservers(languages, myObservers);
+			languagesChanged = false;
+		}
+		if (noimagesChanged) {
+			notifyObservers(noimages, myObservers);
+			noimagesChanged = false;
 		}
 	}
-    
+
+	private static void notifyObservers(Map<String, ?> container, List<Observer> myObservers) {
+		for (Observer observer : myObservers) {
+			observer.update(null, container);
+		}
+	}
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		/*
 		 * CRON section
 		 */
-		if ( req.getHeader("X-AppEngine-Cron") != null ) {
+		if (req.getHeader("X-AppEngine-Cron") != null) {
 			log.info("performing cron actions requested by AppEngine");
+			loadContent();
+			notifyObservers();
 			return;
 		}
 		/*
-		 * ADMIN section 
+		 * ADMIN section
 		 */
 		if (req.getParameter("resetContent") != null) {
 			resetContent(req.getParameter("resetContent"));
@@ -138,27 +166,19 @@ public class OnlineContentAdminServlet extends HttpServlet {
 	private void resetContent(String parameter) {
 		// TODO Auto-generated method stub
 
-	}	
-	
-	@SuppressWarnings("unchecked")
+	}
+
 	private void initMemory() {
-		/*
-		 * CONTENT
-		 */
-		Query contentq = pm.newQuery(Content.class);
-		contentq.setRange(contents.size(), contents.size() + HOURLY_LOAD_CONTENT);
-		for (Content content : (java.util.List<Content>) contentq.execute()) {
-			contents.put(content.getNameKey().getName(), content);
-		}
-		log.info(contents.size() + " content(s) have been loaded!");
-		/*
-		 * TRANSLATION
-		 */
-		translations.clear();
-		for (Language language : (java.util.List<Language>) pm.newQuery(Language.class).execute()) {
-			translations.put(language.getNameKey().getName(), language);
-		}
-		log.info(translations.size() + " translation(s) have been loaded!");
+		loadContent();
+		loadLanguage();
+		loadCategory();
+
+		notifyObservers();
+	}
+
+	// TODO: make Generic java method for loading
+	@SuppressWarnings("unchecked")
+	private void loadCategory() {
 		/*
 		 * CATEGORY
 		 */
@@ -167,7 +187,55 @@ public class OnlineContentAdminServlet extends HttpServlet {
 			categories.put(category.getNameKey().getName(), category);
 		}
 		log.info(categories.size() + " categories have been loaded!");
-		notifyObservers();
+		categoriesChanged = true;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void loadLanguage() {
+		/*
+		 * TRANSLATION
+		 */
+		languages.clear();
+		for (Language language : (java.util.List<Language>) pm.newQuery(Language.class).execute()) {
+			languages.put(language.getNameKey().getName(), language);
+		}
+		log.info(languages.size() + " translation(s) have been loaded!");
+		languagesChanged = true;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void loadContent() {
+		/*
+		 * CONTENT
+		 */
+		Query contentq = pm.newQuery(Content.class);
+		contentq.setRange(contents.size(), contents.size() + HOURLY_LOAD_CONTENT);
+		java.util.List<Content> list = (java.util.List<Content>) contentq.execute();
+		if (list.size() == 0) {
+			log.severe("Full content has been loaded: " + contents.size());
+		} else {
+			for (Content content : list) {
+				contents.put(content.getNameKey().getName(), content);
+			}
+		}
+		log.info(contents.size() + " content(s) have been loaded!");
+		contentsChanged = true;
+	}
+
+	public static synchronized Map<String, Content> getContents() {
+		return contents;
+	}
+
+	public static synchronized Map<String, Language> getTranslations() {
+		return languages;
+	}
+
+	public static synchronized Map<String, Category> getCategories() {
+		return categories;
+	}
+
+	public static synchronized Map<String, BlobKey> getNoimages() {
+		return noimages;
 	}
 
 }

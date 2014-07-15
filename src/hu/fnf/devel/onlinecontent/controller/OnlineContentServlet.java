@@ -42,14 +42,14 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 	private static final String LISTSIZE = "listSize";
 	private static final String PAGEACTUAL = "pageActual";
 	private static final int PAGESIZE = 11;
-	
-//	private static PersistenceManager pm;
+
+	// private static PersistenceManager pm;
 	private static java.util.Set<Content> sortedContents;
 	private static Map<String, Content> contents;
 	private static Map<String, Language> languages;
 	private static Map<String, Category> categories;
 	private static Map<String, BlobKey> noimages;
-	
+
 	public OnlineContentServlet() {
 		log.info("Servlet init.");
 		sortedContents = new TreeSet<>();
@@ -57,7 +57,7 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 		languages = new HashMap<>();
 		categories = new HashMap<>();
 		noimages = new HashMap<>();
-		
+
 		OnlineContentAdminServlet.addObserver(this);
 	}
 
@@ -119,6 +119,7 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 		}
 		return recommendations;
 	}
+
 	/*
 	 * STATIC CALLS
 	 */
@@ -153,8 +154,8 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 				}
 			}
 
-			searchKeyWords.append("online game");
-			log.warning("search keywords: " + (searchKeyWords));
+			searchKeyWords.append(" online game");
+			log.warning("search keywords: " + (content.getSearchKeyWords().toString()));
 			List l = thumbSearch.cse().list(searchKeyWords.toString());
 			l.setCx("004811520739431370780:ggegf7qshxe");
 			l.setSafe("high");
@@ -183,7 +184,7 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 	public static Set<Category> searchCategories(Content content) {
 		Set<Category> ret = new HashSet<Category>();
 		try {
-			for (Category category : categories.values() ) {
+			for (Category category : categories.values()) {
 				for (String keyword : category.getKeyWords()) {
 					if (content.getDisplayName().toLowerCase().contains(keyword)) {
 						category.addMember(content);
@@ -202,25 +203,26 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void update(Observable o, Object data) {
-		if ( data instanceof Map<?, ?> ) {
-			if ( ((Map<?, ?>) data).isEmpty() ) {
+		if (data instanceof Map<?, ?>) {
+			if (((Map<?, ?>) data).isEmpty()) {
 				return;
 			}
 			Object k = ((Map<?, ?>) data).values().iterator().next();
-			if ( k instanceof Content ) {
+			log.warning("update called with " + k.getClass().getSimpleName());
+			if (k instanceof Content) {
 				contents.clear();
-				contents.putAll((Map<String,Content>) data);
+				contents.putAll((Map<String, Content>) data);
 				sortedContents.clear();
 				sortedContents.addAll(contents.values());
-			} else if ( k instanceof Language ) {
+			} else if (k instanceof Language) {
 				languages.clear();
-				languages.putAll((Map<String,Language>) data);
-			} else if ( k instanceof Category ) {
+				languages.putAll((Map<String, Language>) data);
+			} else if (k instanceof Category) {
 				categories.clear();
-				categories.putAll((Map<String,Category>) data);
-			} else if ( k instanceof BlobKey ) {
+				categories.putAll((Map<String, Category>) data);
+			} else if (k instanceof BlobKey) {
 				noimages.clear();
-				noimages.putAll((Map<String,BlobKey>) data);
+				noimages.putAll((Map<String, BlobKey>) data);
 			} else {
 				log.warning("Unknown object to update: " + k.getClass().getSimpleName());
 			}
