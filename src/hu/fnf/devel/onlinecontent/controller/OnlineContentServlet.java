@@ -3,7 +3,6 @@ package hu.fnf.devel.onlinecontent.controller;
 import hu.fnf.devel.onlinecontent.model.Category;
 import hu.fnf.devel.onlinecontent.model.Content;
 import hu.fnf.devel.onlinecontent.model.Language;
-import hu.fnf.devel.onlinecontent.model.PMF;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,8 +17,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -95,7 +92,7 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 			}
 			view = req.getRequestDispatcher("index.jsp");
 			req.setAttribute(OnlineContentServlet.LIST, pageContents);
-			req.setAttribute(OnlineContentServlet.LISTSIZE, (contents.size() / PAGESIZE) + 1);
+			req.setAttribute(OnlineContentServlet.LISTSIZE, (contents.size() / PAGESIZE)+1);
 			req.setAttribute(OnlineContentServlet.PAGEACTUAL, pageActual);
 		}
 
@@ -165,7 +162,7 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 			l.setKey("AIzaSyDiZfaoVfU5FeORRwSuvBC3tk1UJQ5N-XI");
 
 			Search imgResult = l.execute();
-			log.warning("result: " + imgResult.toPrettyString());
+			log.finest("result: " + imgResult.toPrettyString());
 			if (imgResult.getItems() != null && imgResult.getItems().size() != 0) {
 				// thumbsrc
 				return imgResult.getItems().get(0).getLink();
@@ -208,7 +205,7 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 				return;
 			}
 			Object k = ((Map<?, ?>) data).values().iterator().next();
-			log.warning("update called with " + k.getClass().getSimpleName());
+			log.info("update called with " + k.getClass().getSimpleName());
 			if (k instanceof Content) {
 				contents.clear();
 				contents.putAll((Map<String, Content>) data);

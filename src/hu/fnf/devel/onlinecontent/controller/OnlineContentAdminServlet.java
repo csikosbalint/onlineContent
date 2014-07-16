@@ -2,7 +2,6 @@ package hu.fnf.devel.onlinecontent.controller;
 
 import hu.fnf.devel.onlinecontent.model.Category;
 import hu.fnf.devel.onlinecontent.model.Content;
-import hu.fnf.devel.onlinecontent.model.DatastoreInterface;
 import hu.fnf.devel.onlinecontent.model.Language;
 import hu.fnf.devel.onlinecontent.model.PMF;
 
@@ -17,6 +16,7 @@ import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +27,10 @@ import com.google.appengine.api.blobstore.BlobKey;
 public class OnlineContentAdminServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private static final int HOURLY_LOAD_CONTENT = 25;
 	private static final Logger log = Logger.getLogger(Content.class.getName());
+
+	private static int HOURLY_LOAD_CONTENT = 15;
+	private static final String CRON_STATE = "cronState";
 
 	private static PersistenceManager pm;
 	private static java.util.List<Observer> observers;
@@ -42,6 +44,8 @@ public class OnlineContentAdminServlet extends HttpServlet {
 	private static Map<String, BlobKey> noimages;
 	private static boolean noimagesChanged = false;
 
+	private boolean cronState;
+
 	public OnlineContentAdminServlet() {
 		log.info("Admin init.");
 		pm = PMF.getInstance().getPersistenceManager();
@@ -52,6 +56,7 @@ public class OnlineContentAdminServlet extends HttpServlet {
 		categories = new HashMap<>();
 		noimages = new HashMap<>();
 
+		cronState = true;
 		initMemory();
 	}
 
@@ -100,14 +105,26 @@ public class OnlineContentAdminServlet extends HttpServlet {
 		 * CRON section
 		 */
 		if (req.getHeader("X-AppEngine-Cron") != null) {
-			log.info("performing cron actions requested by AppEngine");
-			loadContent();
-			notifyObservers();
+			if (cronState) {
+				if (req.getParameter("loadContent") != null) {
+					log.info("performing cron actions requested by AppEngine");
+					loadContent();
+				} else if ( req.getParameter("notifyObservers") != null ) {
+					log.info("notifiying observers");
+					notifyObservers();
+				}
+			}
 			return;
 		}
 		/*
 		 * ADMIN section
 		 */
+		if (req.getParameter("setHourlyLoadContent") != null) {
+			setHourlyLoadContent(req.getParameter("setHourlyLoadContent"));
+		}
+		if (req.getParameter("changeCronState") != null) {
+			changeCronState();
+		}
 		if (req.getParameter("resetContent") != null) {
 			resetContent(req.getParameter("resetContent"));
 		}
@@ -125,8 +142,24 @@ public class OnlineContentAdminServlet extends HttpServlet {
 			createLanguageEntry(req.getParameter("languageName"), req.getParameter("langKey"),
 					req.getParameter("textValue"));
 		}
+		RequestDispatcher view = req.getRequestDispatcher("/admin");
+		req.setAttribute(OnlineContentAdminServlet.CRON_STATE, cronState);
+		req.setAttribute("HOURLY_LOAD_CONTENT", HOURLY_LOAD_CONTENT);
+		view.forward(req, resp);
 
-		resp.sendRedirect("/admin");
+		// resp.sendRedirect("/admin");
+	}
+
+	private void setHourlyLoadContent(String loadNumber) {
+		HOURLY_LOAD_CONTENT = Integer.valueOf(loadNumber);
+	}
+
+	private void changeCronState() {
+		if (cronState) {
+			cronState = false;
+		} else {
+			cronState = true;
+		}
 	}
 
 	private void createLanguageEntry(String nameKey, String langKey, String textValue) {
@@ -209,17 +242,20 @@ public class OnlineContentAdminServlet extends HttpServlet {
 		 * CONTENT
 		 */
 		Query contentq = pm.newQuery(Content.class);
+		log.info("setting range: " + contents.size() + " - " + (contents.size() + HOURLY_LOAD_CONTENT));
 		contentq.setRange(contents.size(), contents.size() + HOURLY_LOAD_CONTENT);
 		java.util.List<Content> list = (java.util.List<Content>) contentq.execute();
-		if (list.size() == 0) {
-			log.severe("Full content has been loaded: " + contents.size());
-		} else {
-			for (Content content : list) {
-				contents.put(content.getNameKey().getName(), content);
+		if (list != null) {
+			if (list.size() == 0) {
+				log.severe("Full content has been loaded: " + contents.size());
+			} else {
+				for (Content content : list) {
+					contents.put(content.getNameKey().getName(), content);
+				}
 			}
+			log.info(contents.size() + " content(s) have been loaded!");
+			contentsChanged = true;
 		}
-		log.info(contents.size() + " content(s) have been loaded!");
-		contentsChanged = true;
 	}
 
 	public static synchronized Map<String, Content> getContents() {
