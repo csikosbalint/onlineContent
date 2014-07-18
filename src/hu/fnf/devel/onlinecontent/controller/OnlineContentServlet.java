@@ -81,20 +81,20 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 
 		} else {
 			Iterator<Content> it = sortedContents.iterator();
-			for (int i = 0; i < (OnlineContentServlet.PAGESIZE * (pageActual - 1)); i++) {
-				it.next();
-			}
+//			for (int i = 0; i < (OnlineContentServlet.PAGESIZE * (pageActual - 1)); i++) {
+//				it.next();
+//			}
 			// create subList from pageSize*pageActual to
 			// pageSize*(pageActual+1)
 			TreeSet<Content> pageContents = new TreeSet<>();
-			while (it.hasNext() && pageContents.size() <= OnlineContentServlet.PAGESIZE) {
+			while (it.hasNext() ) { //&& pageContents.size() <= OnlineContentServlet.PAGESIZE) {
 				pageContents.add(it.next());
 			}
 			view = req.getRequestDispatcher("index.jsp");
 			req.setAttribute(OnlineContentServlet.LIST, pageContents);
 			req.setAttribute(OnlineContentServlet.LISTSIZE, (contents.size() / PAGESIZE)+1);
 			req.setAttribute(OnlineContentServlet.PAGEACTUAL, pageActual);
-		}
+		}	
 
 		try {
 			view.forward(req, resp);
@@ -109,10 +109,12 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 		Random rand = new Random();
 		// TODO: do some optimalization, this reorder is called on every entry
 		// page view
-		Map.Entry<String, Content>[] entries = (Entry<String, Content>[]) contents.entrySet().toArray();
+//		Map.Entry<String, Content>[] entries = (Entry<String, Content>[]) contents.entrySet()).toArray();
 		java.util.Set<Content> recommendations = new HashSet<>();
-		while (recommendations.size() <= limit) {
-			recommendations.add(entries[rand.nextInt(entries.length - 1)].getValue());
+		while (recommendations.size() < limit) {
+			Map.Entry<String, Content> rec = (Entry<String, Content>) contents.entrySet().toArray()[rand
+					.nextInt(contents.size() - 1)];
+			recommendations.add(rec.getValue());
 		}
 		return recommendations;
 	}
@@ -201,6 +203,7 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 	@Override
 	public void update(Observable o, Object data) {
 		if (data instanceof Map<?, ?>) {
+			log.info("updating " + ((Map<?,?>) data).size() + " data object.");
 			if (((Map<?, ?>) data).isEmpty()) {
 				return;
 			}
@@ -210,7 +213,17 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 				contents.clear();
 				contents.putAll((Map<String, Content>) data);
 				sortedContents.clear();
-				sortedContents.addAll(contents.values());
+				int count = 0;
+				for (Content content : contents.values() ) {
+					count++;
+					if ( sortedContents.contains(content) ) {
+						log.warning("contains! " + content.getDisplayName());
+					}
+					log.info( count + " adding: " + content.getDisplayName() + "(" + content.toString() + ")");
+					sortedContents.add(content);
+				}
+				//sortedContents.addAll( ((Map<String, Content>) data).values());
+				log.info("sorted "  + sortedContents.size() + " Content(s) count");
 			} else if (k instanceof Language) {
 				languages.clear();
 				languages.putAll((Map<String, Language>) data);

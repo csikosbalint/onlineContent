@@ -3,11 +3,11 @@
 	<cron>
 		<url>/admin/cron/contentLoad?loadContent=true</url>
 		<description>Loading limited number of contents.</description>
-		<schedule>every 30 minutes</schedule>
+		<schedule>every 1 hours</schedule>
 	</cron>
 	<cron>
         <url>/admin/cron/contentLoad?notifyObservers=true</url>
         <description>Loading limited number of contents.</description>
-        <schedule>every 15 minutes</schedule>
+        <schedule>every 30 minutes</schedule>
     </cron>
 </cronentries>

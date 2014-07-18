@@ -41,7 +41,7 @@
 		<div class="span-6" style="margin: 5px 10px 5px 10px;text-align:center;">
 		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey().getName() %>"> 
 		<img class="rounded-corners" src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" alt="" style="width:240px;height:119px"></a></div>
-		<h6><view:ContentThumbnailImg content="${content}"/></h6></div>
+		<h6><view:ContentDisplayName content="${content}"/></h6></div>
 	</c:forEach>
 </section>
 

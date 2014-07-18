@@ -15,9 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -38,43 +35,41 @@ public class Receiver extends HttpServlet {
 	 */
 	private static final long serialVersionUID = -4652372274004877168L;
 	private static PersistenceManager pm = PMF.getInstance().getPersistenceManager();
-	private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (req.getParameter("manualUpload") != null) {
-			java.util.Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(req);
-			log.info("key: " + blobs.get("file"));
-		} else {
-			ObjectInputStream ois = new ObjectInputStream(req.getInputStream());
-			try {
-				Content content = (Content) ois.readObject();
+		ObjectInputStream ois = new ObjectInputStream(req.getInputStream());
+		try {
+			Content content = (Content) ois.readObject();
 
-				log("received: " + content.getDisplayName());
-				content.setNameKey(KeyFactory.createKey(Content.class.getSimpleName(), content.getDisplayName()
-						.toLowerCase().replace(' ', '_')));
+			log("received: " + content.getDisplayName());
+			content.setNameKey(KeyFactory.createKey(Content.class.getSimpleName(), content.getDisplayName()
+					.toLowerCase().replace(' ', '_')));
 
-				Query q = new Query(Content.class.getSimpleName()).setFilter(FilterOperator.EQUAL.of(
-						com.google.appengine.api.datastore.Entity.KEY_RESERVED_PROPERTY, content.getNameKey()));
+			Query q = new Query(Content.class.getSimpleName()).setFilter(FilterOperator.EQUAL.of(
+					com.google.appengine.api.datastore.Entity.KEY_RESERVED_PROPERTY, content.getNameKey()));
 
-				if (DatastoreServiceFactory.getDatastoreService().prepare(q)
-						.asList(FetchOptions.Builder.withDefaults()).size() == 0) {
+			if (DatastoreServiceFactory.getDatastoreService().prepare(q).asList(FetchOptions.Builder.withDefaults())
+					.size() == 0) {
 
-					content.setThumbBlobUrl(srcUri(content.getThumbSourceUrl(), content));
+				content.setThumbBlobUrl(srcUri(content.getThumbSourceUrl(), content));
 
-					pm.makePersistent(content);
-				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				log("errpost: " + e.getMessage());
+				pm.makePersistent(content);
 			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			log.warning("errpost: " + e.getMessage());
 		}
 	}
+//	if (thumbLocaleUrl == null || thumbLocaleUrl.contains("noimage")) {
+//		String thumbnail = OnlineContentServlet.searchThumbnail(this);
+//		thumbLocaleUrl = Receiver.srcUri(thumbnail, this);
+//	}
 
 	public static String srcUri(String thumbUrl, Content content) {
 		if (thumbUrl == null || !thumbUrl.contains("http")) {
-			return "/static/noimage.jpg";
+			return "/static/serve?noimage";
 		}
 		URL surl;
 		FileService fileService = null;
@@ -103,7 +98,7 @@ public class Receiver extends HttpServlet {
 			return "/static/serve?blob-key=" + fileService.getBlobKey(file).getKeyString();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "/static/noimage.gif";
+			return ("/static/serve?noimage=" + content.getNameKey().getName());
 		}
 	}
 }

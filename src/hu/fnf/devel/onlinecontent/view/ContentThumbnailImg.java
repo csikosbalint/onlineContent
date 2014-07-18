@@ -14,7 +14,7 @@ public class ContentThumbnailImg extends SimpleTagSupport {
 		this.content = content;
 
 	}
-	
+
 	@Override
 	public void doTag() throws JspException, IOException {
 		getJspContext().getOut().print(content.getDisplayName());

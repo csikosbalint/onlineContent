@@ -64,7 +64,7 @@ public class EditorConsumer {
 			s.setContentCreation(new Date());
 			try {
 				uploadQueue.put(s);
-				System.out.println("put to uploadQueue");
+				System.out.println("pushed to uploadQueue");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

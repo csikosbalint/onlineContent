@@ -9,6 +9,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.concurrent.BlockingQueue;
 
+import org.mortbay.log.Log;
+
 public class UploaderConsumer implements Runnable {
 	private final BlockingQueue<Content> sharedQueue;
 	private final URL url;
@@ -27,6 +29,7 @@ public class UploaderConsumer implements Runnable {
 			try {
 				content = sharedQueue.take();
 			} catch (InterruptedException ex) {
+				Log.warn("InterruptedException");
 				continue;
 			}
 			HttpURLConnection connection = null;
@@ -45,7 +48,7 @@ public class UploaderConsumer implements Runnable {
 			try {
 				connection.connect();
 			} catch (IOException e) {
-				System.out.println("Unable to upload: " + e.getMessage());
+				System.out.println("Unable to connect: " + e.getMessage());
 				// TODO: handle unsuccessful upload and store data as to-upload
 				continue;
 			}
@@ -56,11 +59,10 @@ public class UploaderConsumer implements Runnable {
 				e.printStackTrace();
 			}
 			try {
-				System.out.println();
 				oos.writeObject(content);
 				oos.flush();
 				oos.close();
-				System.out.print("upload: " + content.getNameKey());
+				System.out.println("upload: " + content.getDisplayName());
 				System.out.println(" res: " + connection.getResponseCode());
 			} catch (IOException e) {
 				System.out.println("Unable to upload: " + e.getMessage());

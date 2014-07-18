@@ -70,7 +70,6 @@ public class SwfCrawler extends WebCrawler {
 			Document doc = Jsoup.parseBodyFragment(html);
 			System.out.println("Title: " + doc.title().split("-")[0]);
 			String name = doc.title().split("-")[0].trim();
-			String nameKey = name.replace(' ', '_');
 			
 			Content content = new Content();
 			content.setDisplayName(name);			

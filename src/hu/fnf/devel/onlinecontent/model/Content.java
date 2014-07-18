@@ -121,11 +121,6 @@ public class Content implements Serializable, Comparable<Content>, DatastoreInte
 	}
 
 	public String getThumbBlobUrl() {
-
-		if (thumbLocaleUrl == null || thumbLocaleUrl.contains("noimage")) {
-			String thumbnail = OnlineContentServlet.searchThumbnail(this);
-			thumbLocaleUrl = Receiver.srcUri(thumbnail, this);
-		}
 		return thumbLocaleUrl;
 	}
 
