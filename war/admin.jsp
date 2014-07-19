@@ -55,4 +55,9 @@
     <input type="text" name="setHourlyLoadContent" value="<%= request.getAttribute("HOURLY_LOAD_CONTENT") %>" />
     <button type="submit">Set Hourly Load Content</button>
 </form>
+<form action="/admin/servlet">
+    <h3>reloadCategories</h3>
+    <input type="text" name="reloadCategories" value="<%= request.getAttribute("HOURLY_LOAD_CONTENT") %>" />
+    <button type="submit">Hourly reLoad categories</button>
+</form>
 </html>

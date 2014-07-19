@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observer;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Multiset.Entry;
 
 public class OnlineContentAdminServlet extends HttpServlet {
 
@@ -36,6 +38,7 @@ public class OnlineContentAdminServlet extends HttpServlet {
 	private static java.util.List<Observer> observers;
 
 	private static Map<String, Content> contents;
+	
 	private static boolean contentsChanged = false;
 	private static Map<String, Language> languages;
 	private static boolean languagesChanged = false;
@@ -45,6 +48,7 @@ public class OnlineContentAdminServlet extends HttpServlet {
 	private static boolean noimagesChanged = false;
 
 	private boolean cronState;
+	private Iterator<Map.Entry<String, Content>> contentsIterator;
 
 	public OnlineContentAdminServlet() {
 		log.info("Admin init.");
@@ -112,6 +116,9 @@ public class OnlineContentAdminServlet extends HttpServlet {
 				} else if ( req.getParameter("notifyObservers") != null ) {
 					log.info("notifiying observers");
 					notifyObservers();
+				} else if ( req.getParameter("loadCategories") != null ) {
+					log.info("scanning categories");
+					loadCategories();
 				}
 			}
 			return;
@@ -121,6 +128,9 @@ public class OnlineContentAdminServlet extends HttpServlet {
 		 */
 		if (req.getParameter("setHourlyLoadContent") != null) {
 			setHourlyLoadContent(req.getParameter("setHourlyLoadContent"));
+		}
+		if (req.getParameter("reloadCategories") != null) {
+			reloadCategories(req.getParameter("reloadCategories"));
 		}
 		if (req.getParameter("changeCronState") != null) {
 			changeCronState();
@@ -146,8 +156,31 @@ public class OnlineContentAdminServlet extends HttpServlet {
 		req.setAttribute(OnlineContentAdminServlet.CRON_STATE, cronState);
 		req.setAttribute("HOURLY_LOAD_CONTENT", HOURLY_LOAD_CONTENT);
 		view.forward(req, resp);
+	}
 
-		// resp.sendRedirect("/admin");
+	private void loadCategories() {
+		if ( contentsIterator == null ) {
+			contentsIterator = contents.entrySet().iterator();
+		}
+		for ( int i = 0; i < OnlineContentAdminServlet.HOURLY_LOAD_CONTENT; i++) {
+			if ( !contentsIterator.hasNext() ) {
+				break;
+			}
+			Content content = contentsIterator.next().getValue();
+			for (String word : content.getDisplayName().toLowerCase().split(" ")) {
+				for (Category category : categories.values()) {
+					if ( category.getKeyWords().contains(word) ) {
+						// TODO: make mutual connection automatic 
+						content.addCategory(category);
+						category.addMember(content);
+					}
+				}
+			}
+		}
+	}
+
+	private void reloadCategories(String parameter) {
+		
 	}
 
 	private void setHourlyLoadContent(String loadNumber) {
