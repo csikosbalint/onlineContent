@@ -13,7 +13,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
 @PersistenceCapable
-public class Language implements Serializable, DatastoreInterface {
+public class Language implements Serializable {
 
 	private static final long serialVersionUID = 345569423630154017L;
 	@PrimaryKey
@@ -44,5 +44,4 @@ public class Language implements Serializable, DatastoreInterface {
 		}
 		return this.nameKey.getName().replace('_', ' ');
 	}
-	
 }

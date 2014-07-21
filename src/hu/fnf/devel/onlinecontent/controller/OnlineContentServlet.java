@@ -3,6 +3,7 @@ package hu.fnf.devel.onlinecontent.controller;
 import hu.fnf.devel.onlinecontent.model.Category;
 import hu.fnf.devel.onlinecontent.model.Content;
 import hu.fnf.devel.onlinecontent.model.Language;
+import hu.fnf.devel.onlinecontent.model.Viewable;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
@@ -78,23 +80,41 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 			view = req.getRequestDispatcher("entity.jsp");
 			req.setAttribute(OnlineContentServlet.CONTENT, content);
 			req.setAttribute(OnlineContentServlet.LIST, recommendations);
+		} else if ( req.getParameter("categorytname") != null) {
+			Content content = contents.get(req.getParameter("contentname"));
+			java.util.Set<Content> recommendations = OnlineContentServlet.getRecommendation(3, content);
 
+			view = req.getRequestDispatcher("entity.jsp");
+			req.setAttribute(OnlineContentServlet.CONTENT, content);
+			req.setAttribute(OnlineContentServlet.LIST, recommendations);
 		} else {
-			Iterator<Content> it = sortedContents.iterator();
-//			for (int i = 0; i < (OnlineContentServlet.PAGESIZE * (pageActual - 1)); i++) {
-//				it.next();
-//			}
-			// create subList from pageSize*pageActual to
-			// pageSize*(pageActual+1)
-			TreeSet<Content> pageContents = new TreeSet<>();
-			while (it.hasNext() ) { //&& pageContents.size() <= OnlineContentServlet.PAGESIZE) {
+			Iterator<Viewable> it = null;
+			TreeSet<Viewable> pageContents = new TreeSet<>();
+			if (req.getParameter("menu") != null) {
+				/*
+				 * MENU ITEMS ...
+				 */
+				if (req.getParameter("menu").equalsIgnoreCase("categories")) {
+					it = (Iterator) categories.values().iterator();
+				}
+			} else {
+				it = (Iterator) sortedContents.iterator();
+			}
+			try {
+				for (int i = 0; i < (OnlineContentServlet.PAGESIZE * (pageActual - 1)); i++) {
+					it.next();
+				}
+			} catch (NoSuchElementException ex) {
+				resp.sendRedirect("/");
+			}
+			while (it.hasNext() && pageContents.size() <= OnlineContentServlet.PAGESIZE) {
 				pageContents.add(it.next());
 			}
 			view = req.getRequestDispatcher("index.jsp");
 			req.setAttribute(OnlineContentServlet.LIST, pageContents);
-			req.setAttribute(OnlineContentServlet.LISTSIZE, (contents.size() / PAGESIZE)+1);
+			req.setAttribute(OnlineContentServlet.LISTSIZE, (contents.size() / PAGESIZE) + 1);
 			req.setAttribute(OnlineContentServlet.PAGEACTUAL, pageActual);
-		}	
+		}
 
 		try {
 			view.forward(req, resp);
@@ -109,7 +129,8 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 		Random rand = new Random();
 		// TODO: do some optimalization, this reorder is called on every entry
 		// page view
-//		Map.Entry<String, Content>[] entries = (Entry<String, Content>[]) contents.entrySet()).toArray();
+		// Map.Entry<String, Content>[] entries = (Entry<String, Content>[])
+		// contents.entrySet()).toArray();
 		java.util.Set<Content> recommendations = new HashSet<>();
 		while (recommendations.size() < limit) {
 			Map.Entry<String, Content> rec = (Entry<String, Content>) contents.entrySet().toArray()[rand
@@ -203,7 +224,7 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 	@Override
 	public void update(Observable o, Object data) {
 		if (data instanceof Map<?, ?>) {
-			log.info("updating " + ((Map<?,?>) data).size() + " data object.");
+			log.info("updating " + ((Map<?, ?>) data).size() + " data object.");
 			if (((Map<?, ?>) data).isEmpty()) {
 				return;
 			}
@@ -214,16 +235,17 @@ public class OnlineContentServlet extends HttpServlet implements Observer {
 				contents.putAll((Map<String, Content>) data);
 				sortedContents.clear();
 				int count = 0;
-				for (Content content : contents.values() ) {
+				for (Content content : contents.values()) {
 					count++;
-					if ( sortedContents.contains(content) ) {
+					if (sortedContents.contains(content)) {
 						log.warning("contains! " + content.getDisplayName());
 					}
-					log.info( count + " adding: " + content.getDisplayName() + "(" + content.toString() + ")");
+					log.info(count + " adding: " + content.getDisplayName() + "(" + content.toString() + ")");
 					sortedContents.add(content);
 				}
-				//sortedContents.addAll( ((Map<String, Content>) data).values());
-				log.info("sorted "  + sortedContents.size() + " Content(s) count");
+				// sortedContents.addAll( ((Map<String, Content>)
+				// data).values());
+				log.info("sorted " + sortedContents.size() + " Content(s) count");
 			} else if (k instanceof Language) {
 				languages.clear();
 				languages.putAll((Map<String, Language>) data);

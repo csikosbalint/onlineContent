@@ -19,7 +19,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unowned;
 
 @PersistenceCapable
-public class Content implements Serializable, Comparable<Content>, DatastoreInterface {
+public class Content implements Serializable, Comparable<Content>, Viewable {
 	/**
 	 * Uploader uploads serialized content
 	 */
@@ -119,15 +119,22 @@ public class Content implements Serializable, Comparable<Content>, DatastoreInte
 	public void setThumbSourceUrl(String thumbSourceUrl) {
 		this.thumbRemoteUrl = thumbSourceUrl;
 	}
-
-	public String getThumbBlobUrl() {
+	
+	public String getThumbLocaleUrl() {
+		if ( thumbLocaleUrl == null ) {
+			if ( categories.size() != 0 ) {
+				return "/static/serve?noimage=" + categories.iterator().next().getNameKey().getName();
+			} else {
+				return "/static/serve?noimage=unknown";
+			}
+		}
 		return thumbLocaleUrl;
 	}
-
-	public void setThumbBlobUrl(String thumbBlobUrl) {
-		this.thumbLocaleUrl = thumbBlobUrl;
+	
+	public void setThumbLocaleUrl(String thumbLocaleUrl) {
+		this.thumbLocaleUrl = thumbLocaleUrl;
 	}
-
+	
 	public String getDescription() {
 		return description;
 	}
@@ -137,7 +144,7 @@ public class Content implements Serializable, Comparable<Content>, DatastoreInte
 	}
 
 	public String getContentSourceUrl() {
-		return contentSourceUrl;
+		return this.contentSourceUrl;
 	}
 
 	public void setContentSourceUrl(String contentSourceUrl) {

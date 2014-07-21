@@ -53,7 +53,7 @@ public class Receiver extends HttpServlet {
 			if (DatastoreServiceFactory.getDatastoreService().prepare(q).asList(FetchOptions.Builder.withDefaults())
 					.size() == 0) {
 
-				content.setThumbBlobUrl(srcUri(content.getThumbSourceUrl(), content));
+				content.setThumbLocaleUrl(srcUri(content.getThumbSourceUrl(), content));
 
 				pm.makePersistent(content);
 			}
@@ -69,7 +69,7 @@ public class Receiver extends HttpServlet {
 
 	public static String srcUri(String thumbUrl, Content content) {
 		if (thumbUrl == null || !thumbUrl.contains("http")) {
-			return "/static/serve?noimage";
+			return null;
 		}
 		URL surl;
 		FileService fileService = null;
@@ -98,7 +98,7 @@ public class Receiver extends HttpServlet {
 			return "/static/serve?blob-key=" + fileService.getBlobKey(file).getKeyString();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return ("/static/serve?noimage=" + content.getNameKey().getName());
+			return null;
 		}
 	}
 }

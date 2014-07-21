@@ -1,6 +1,4 @@
-<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="view" uri="WEB-INF/view.tld" %>
 <%@page language="java" %>
 <%@page import="hu.fnf.devel.onlinecontent.model.Content" %>
 <%@page import="java.util.Iterator"%>
@@ -11,7 +9,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<title>Online Jatek FNF</title>
+<title>Online Jatek FNF: ${content.displayName}</title>
 <meta name="copyright" content="Copyright (c) 2014" >
 <meta name="description" content="Database of online flash games." >
 <meta name="viewport" content="width=device-width, initial-scale=1.0" >
@@ -26,7 +24,8 @@
     <h1 class="span-6"></h1>
     <nav class="span-16 last" style="float:right">
       <ul class="right">
-        <li><a href="http://onlinejatek.fnf.hu">Home</a></li>
+      <!-- TODO: jquery to inclde menu.html -->
+        <li><a href="/">Home</a></li>
         <li><a href="#">Categories</a></li>
         <li><a href="#">Favorites</a></li>
         <li><a href="#">Propose</a></li>
@@ -37,19 +36,16 @@
 </header>
 <div class="separator"></div>
 <section id="recentgames" class="container clearfix" style="margin:0 auto 0 auto;text-align:center;">
-			<embed src="<%=((Content) request.getAttribute("content")).getContentSourceUrl()%>"type="application/x-shockwave-flash" width="950" height="540"></embed>
+			<embed src="${content.contentSourceUrl}" type="application/x-shockwave-flash" width="950" height="540" />
 <div style="position:relative;width:100%;margin:20px auto 0 auto; text-align:center; padding-left:90px;">
  <c:forEach items="${requestScope.entityList}" var="contents">
 		<div class="span-6" style="margin: 5px 10px 5px 10px;text-align:center;">
-		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="?contentname=<%= ((Content) pageContext.getAttribute("contents")).getNameKey().getName() %>"> 
-		<img class="rounded-corners" src="<%= ((Content) pageContext.getAttribute("contents")).getThumbBlobUrl() %>" alt="" style="width:240px;height:119px"></a></div>
-		<h6><view:ContentThumbnailImg content="${contents}"/></h6></div>
+		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="?contentname=${contents.nameKey.name}"> 
+		<img class="rounded-corners" src="${contents.thumbLocaleUrl}" alt="" style="width:240px;height:119px"></a></div>
+		<h6>${contents.displayName}</h6></div>
 	</c:forEach>
 </div>
-	
 </section>
-
-
 <footer class="clearfix">
   <div class="container">
     <div class="about span-6 append-1">

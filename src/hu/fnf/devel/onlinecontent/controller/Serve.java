@@ -1,7 +1,6 @@
 package hu.fnf.devel.onlinecontent.controller;
 
 import java.io.IOException;
-import java.util.Random;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +22,8 @@ public class Serve extends HttpServlet {
 		// res.setHeader("Cache-Control", "public, max-age=3600");
 		if (req.getParameter("noimage") != null) {
 			// TODO: create random noimage thumbs
-			blobstoreService.serve(new BlobKey("1092OaDyeuZuosiC1cmKKA"), res);
+			//blobstoreService.serve(new BlobKey("1092OaDyeuZuosiC1cmKKA"), res);
+			res.sendRedirect("http://placehold.it/250x180&text=" + req.getParameter("noimage"));
 			return;
 		}
 		blobstoreService.serve(new BlobKey(req.getParameter("blob-key")), res);

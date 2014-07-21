@@ -14,7 +14,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.datanucleus.annotations.Unowned;
 
 @PersistenceCapable
-public class Category implements Serializable, DatastoreInterface {
+public class Category implements Serializable, Viewable, Comparable<Category> {
 
 	/**
 	 * 
@@ -24,6 +24,8 @@ public class Category implements Serializable, DatastoreInterface {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key nameKey;
+	@Persistent
+	private String thumbLocaleUrl;
 	@Persistent
 	private java.util.List<String> keyWords;
 	@Persistent
@@ -64,6 +66,30 @@ public class Category implements Serializable, DatastoreInterface {
 	
 	public void addKeyWord(String keyWord) {
 		this.keyWords.add(keyWord);
+	}
+
+	@Override
+	public String getDisplayName() {
+		return getNameKey().getName();
+	}
+
+	@Override
+	public String getThumbLocaleUrl() {
+		if ( thumbLocaleUrl == null ) {
+			return "/static/serve?noimage=" + getNameKey().getName();
+		}
+		return thumbLocaleUrl;
+	}
+
+	@Override
+	public boolean isKeptBack() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int compareTo(Category o) {
+		return this.getDisplayName().compareTo(o.getDisplayName());
 	}
 
 }

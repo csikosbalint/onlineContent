@@ -24,21 +24,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.labs.repackaged.com.google.common.collect.Multiset.Entry;
 
 public class OnlineContentAdminServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = Logger.getLogger(Content.class.getName());
 
-	private static int HOURLY_LOAD_CONTENT = 15;
+	private static int PERIODICAL_LOAD = 30;
 	private static final String CRON_STATE = "cronState";
 
 	private static PersistenceManager pm;
 	private static java.util.List<Observer> observers;
 
 	private static Map<String, Content> contents;
-	
+
 	private static boolean contentsChanged = false;
 	private static Map<String, Language> languages;
 	private static boolean languagesChanged = false;
@@ -48,7 +47,7 @@ public class OnlineContentAdminServlet extends HttpServlet {
 	private static boolean noimagesChanged = false;
 
 	private boolean cronState;
-	private Iterator<Map.Entry<String, Content>> contentsIterator;
+	private Iterator<Map.Entry<String, Content>> contentEntries;
 
 	public OnlineContentAdminServlet() {
 		log.info("Admin init.");
@@ -113,12 +112,12 @@ public class OnlineContentAdminServlet extends HttpServlet {
 				if (req.getParameter("loadContent") != null) {
 					log.info("performing cron actions requested by AppEngine");
 					loadContent();
-				} else if ( req.getParameter("notifyObservers") != null ) {
+				} else if (req.getParameter("notifyObservers") != null) {
 					log.info("notifiying observers");
 					notifyObservers();
-				} else if ( req.getParameter("loadCategories") != null ) {
+				} else if (req.getParameter("loadCategories") != null) {
 					log.info("scanning categories");
-					loadCategories();
+					calcCategories();
 				}
 			}
 			return;
@@ -154,37 +153,50 @@ public class OnlineContentAdminServlet extends HttpServlet {
 		}
 		RequestDispatcher view = req.getRequestDispatcher("/admin");
 		req.setAttribute(OnlineContentAdminServlet.CRON_STATE, cronState);
-		req.setAttribute("HOURLY_LOAD_CONTENT", HOURLY_LOAD_CONTENT);
+		req.setAttribute("HOURLY_LOAD_CONTENT", PERIODICAL_LOAD);
 		view.forward(req, resp);
 	}
 
-	private void loadCategories() {
-		if ( contentsIterator == null ) {
-			contentsIterator = contents.entrySet().iterator();
+	private void calcCategories() {
+		if (contentEntries == null) {
+			contentEntries = contents.entrySet().iterator();
+			log.info("creating new iterator for contents.");
 		}
-		for ( int i = 0; i < OnlineContentAdminServlet.HOURLY_LOAD_CONTENT; i++) {
-			if ( !contentsIterator.hasNext() ) {
+		log.info("contents   size: " + contents.size());
+		log.info("categories size: " + categories.size());
+		CONTENTS: for (int i = 0; i < PERIODICAL_LOAD; i++) {
+			if (!contentEntries.hasNext()) {
+				log.warning("no more content to catagorize!");
 				break;
 			}
-			Content content = contentsIterator.next().getValue();
-			for (String word : content.getDisplayName().toLowerCase().split(" ")) {
+			Content actContent = contentEntries.next().getValue();
+			log.fine("processing: " + actContent.getDisplayName());
+			for (String word : actContent.getDisplayName().toLowerCase().split(" ")) {
 				for (Category category : categories.values()) {
-					if ( category.getKeyWords().contains(word) ) {
-						// TODO: make mutual connection automatic 
-						content.addCategory(category);
-						category.addMember(content);
+					log.fine(word + " against " + category.getKeyWords().toString());
+					if ( category.getMembers().contains(actContent) ) {
+						continue CONTENTS;
+					}
+					if (category.getKeyWords().contains(word.trim())) {
+						// TODO: make mutual connection automatic
+						log.warning("\"" + actContent.getDisplayName() + "\" is now in \"" + category.getNameKey().getName()
+								+ "\"");
+						actContent.addCategory(category);
+						category.addMember(actContent);
 					}
 				}
 			}
 		}
 	}
 
-	private void reloadCategories(String parameter) {
-		
+	private void reloadCategories(String loadNumber) {
+		PERIODICAL_LOAD = Integer.valueOf(loadNumber);
+		contentEntries = contents.entrySet().iterator();
+		calcCategories();
 	}
 
 	private void setHourlyLoadContent(String loadNumber) {
-		HOURLY_LOAD_CONTENT = Integer.valueOf(loadNumber);
+		PERIODICAL_LOAD = Integer.valueOf(loadNumber);
 	}
 
 	private void changeCronState() {
@@ -213,7 +225,7 @@ public class OnlineContentAdminServlet extends HttpServlet {
 		Category category = null;
 		java.util.List<String> keyWords = new ArrayList<String>();
 		for (String word : words.split(",")) {
-			keyWords.add(word);
+			keyWords.add(word.toLowerCase().trim());
 		}
 		try {
 			category = pm.getObjectById(Category.class, nameKey);
@@ -237,14 +249,14 @@ public class OnlineContentAdminServlet extends HttpServlet {
 	private void initMemory() {
 		loadContent();
 		loadLanguage();
-		loadCategory();
+		loadCategories();
 
 		notifyObservers();
 	}
 
 	// TODO: make Generic java method for loading
 	@SuppressWarnings("unchecked")
-	private void loadCategory() {
+	private void loadCategories() {
 		/*
 		 * CATEGORY
 		 */
@@ -275,8 +287,8 @@ public class OnlineContentAdminServlet extends HttpServlet {
 		 * CONTENT
 		 */
 		Query contentq = pm.newQuery(Content.class);
-		log.info("setting range: " + contents.size() + " - " + (contents.size() + HOURLY_LOAD_CONTENT));
-		contentq.setRange(contents.size(), contents.size() + HOURLY_LOAD_CONTENT);
+		log.info("setting range: " + contents.size() + " - " + (contents.size() + PERIODICAL_LOAD));
+		contentq.setRange(contents.size(), contents.size() + PERIODICAL_LOAD);
 		java.util.List<Content> list = (java.util.List<Content>) contentq.execute();
 		if (list != null) {
 			if (list.size() == 0) {

@@ -1,8 +1,8 @@
-<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet" %>
+<%@page language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="view" uri="WEB-INF/view.tld" %>
-<%@page language="java" %>
-<%@page import="hu.fnf.devel.onlinecontent.model.Content" %>
+<%@page import="hu.fnf.devel.onlinecontent.controller.OnlineContentServlet" %>
+<%@page import="hu.fnf.devel.onlinecontent.model.Viewable" %>
 <%@page import="java.util.Iterator"%>
 <%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach" %>
 <%@page import="java.lang.*" %>
@@ -22,13 +22,15 @@
 <body>
 <header class="clearfix">
   <div class="container">
-    <div id="logo" class="span-2"><img src="static/logo.png" alt=""></div>
+    <div id="logo" class="span-2">
+        <a href="/"><img src="static/logo.png" alt="Online Jatek FNF"></a>
+    </div>
     <h1 class="span-6"></h1>
     <nav class="span-16 last" style="float:right">
       <ul class="right">
-        <li class="active"><a href="http://onlinejatek.fnf.hu">Home</a></li>
-        <li><a href="#">Categories</a></li>
-        <li><a href="#">Favorites</a></li>
+        <li class="${param.menu == null ? 'active' : 'inactive'}"><a href="/">Home</a></li>
+        <li class="${param.menu == 'categories' ? 'active' : 'inactive'}"><a href="/?menu=categories">Categories</a></li>
+        <li><a href="/?favorites">Favorites</a></li>
         <li><a href="#">Propose</a></li>
         <li><a href="#">Contact</a></li>
       </ul>
@@ -38,20 +40,30 @@
 <div class="separator"></div>
 <section id="recentgames" class="container clearfix" style="margin:0 auto 0 auto;text-align:center;">
    <c:forEach items="${requestScope.entityList}" var="content">
-		<div class="span-6" style="margin: 5px 10px 5px 10px;text-align:center;">
-		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" > <a href="?contentname=<%= ((Content) pageContext.getAttribute("content")).getNameKey().getName() %>"> 
-		<img class="rounded-corners" src="<%= ((Content) pageContext.getAttribute("content")).getThumbBlobUrl() %>" alt="" style="width:240px;height:119px"></a></div>
-		<h6><view:ContentDisplayName content="${content}"/></h6></div>
+	<div class="span-6" style="margin: 5px 10px 5px 10px;text-align:center;">
+		<div class="image_wrapper " style="border-style:solid;border-width 5px;border-color:black" >
+		  <a href="?contentname=${content.nameKey.name}">
+		      <img class="rounded-corners"
+		          src="${content.thumbLocaleUrl}"
+		          alt="${content.nameKey.name}"
+		          style="width:240px;height:119px"/>
+		  </a>
+		</div>
+		<h6>${content.displayName}</h6>
+    </div>
 	</c:forEach>
 </section>
 
 <div class="page_nav">
-					<hr>
+					<hr> <!-- TODO: page numbering is buggy!!! -->
 							<ul class="inline-list" >
 							<c:choose>
 								<c:when test="${requestScope.pageActual > 4 &&  requestScope.pageActual <= requestScope.listSize-4}">
-									<li><a href="/?page=${requestScope.pageActual - 1}"><view:Interpreter
-														text="prev"></view:Interpreter></a></li>
+									<li>
+									   <a href="/?page=${requestScope.pageActual - 1}">
+									       <view:Interpreter text="prev"></view:Interpreter>
+									   </a>
+                                    </li>
 									<li><a href="/?page=1">1</a></li>
 									<li>...</li>
 									<c:forEach var="i" begin="${requestScope.pageActual-2}" end="${requestScope.pageActual+2}">
