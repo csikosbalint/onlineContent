@@ -22,8 +22,8 @@
 		<page name="Admin" url="/admin" />
 	</admin-console>
 
-	<static-error-handlers>
-		<handler file="/static/pages/over_quota.html" error-code="over_quota" />
-	</static-error-handlers>
+	<!--<static-error-handlers>-->
+	<!--<handler file="static/pages/over_quota.html" error-code="over_quota" />-->
+	<!--</static-error-handlers>-->
 
 </appengine-web-app>

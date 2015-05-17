@@ -9,7 +9,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.concurrent.BlockingQueue;
 
-import org.mortbay.log.Log;
 
 public class UploaderConsumer implements Runnable {
 	private final BlockingQueue<Content> sharedQueue;
@@ -29,7 +28,6 @@ public class UploaderConsumer implements Runnable {
 			try {
 				content = sharedQueue.take();
 			} catch (InterruptedException ex) {
-				Log.warn("InterruptedException");
 				continue;
 			}
 			HttpURLConnection connection = null;
